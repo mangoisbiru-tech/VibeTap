@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Merchants: only the owner can read/write their own document
+    match /merchants/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth != null && request.auth.uid == uid;
+      // Public read for the redirect lookup is handled server-side via Admin SDK
+    }
+
+    // Tap events: owner can read their tap history
+    match /tapEvents/{eventId} {
+      allow read: if request.auth != null &&
+        get(/databases/$(database)/documents/merchants/$(resource.data.merchantId)).data.uid == request.auth.uid;
+      // Writes only via Admin SDK (server-side)
+      allow write: if false;
+    }
+
+    // Cashier sessions: owner can create, no one can edit after creation
+    match /cashierSessions/{sessionId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null;
+      // Updates (marking used=true) done by Admin SDK server-side
+      allow update, delete: if false;
+    }
+  }
+}
