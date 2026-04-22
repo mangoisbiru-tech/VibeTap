@@ -94,10 +94,10 @@ export default function LandingPage() {
             Login
           </Link>
           <Link
-            href="/signup"
+            href="/demo"
             className="text-sm bg-gradient-to-r from-[#6C47FF] to-[#7C5CFF] hover:from-[#7C5CFF] hover:to-[#8C6CFF] text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:-translate-y-0.5"
           >
-            Get Started Free
+            Try Free Demo
           </Link>
         </div>
       </nav>
@@ -125,10 +125,10 @@ export default function LandingPage() {
 
         <div className="flex flex-col sm:flex-row gap-4 mb-16">
           <Link
-            href="/signup"
+            href="/demo"
             className="group flex items-center gap-2 bg-gradient-to-r from-[#6C47FF] to-[#00D4FF] text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-2xl shadow-purple-500/30 hover:shadow-purple-500/50 hover:-translate-y-1 transition-all"
           >
-            Get Your NFC Sticker
+            Try Cashier Demo
             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
           </Link>
           <Link
@@ -345,10 +345,10 @@ export default function LandingPage() {
           Join thousands of Malaysian merchants collecting digital payments with a single tap.
         </p>
         <Link
-          href="/signup"
+          href="/demo"
           className="group inline-flex items-center gap-3 bg-gradient-to-r from-[#6C47FF] to-[#00D4FF] text-white px-10 py-5 rounded-2xl font-bold text-xl shadow-2xl shadow-purple-500/30 hover:shadow-purple-500/50 hover:-translate-y-1 transition-all"
         >
-          Start Free Today
+          Launch Live Demo
           <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
         </Link>
       </section>
