@@ -657,7 +657,7 @@ export default function DemoPage() {
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white flex">
       <Sidebar tab={tab} setTab={setTab} />
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto pb-20 md:pb-0">
         <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8">
           {tab === "overview" && <OverviewTab payments={payments} />}
           {tab === "cashier" && <CashierTab stickers={stickers} setStickers={setStickers} quickAmounts={quickAmounts} setQuickAmounts={setQuickAmounts} activeSessions={activeSessions} setActiveSessions={setActiveSessions} onCompletePayment={handleCompletePayment} />}
@@ -665,6 +665,27 @@ export default function DemoPage() {
           {tab === "settings" && <SettingsTab stickers={stickers} setStickers={setStickers} ttsLang={ttsLang} setTtsLang={setTtsLang} />}
         </div>
       </main>
+
+      {/* Mobile Bottom Nav */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0F0F16]/95 backdrop-blur-md border-t border-white/10 z-50 flex">
+        {[
+          { id: "overview", icon: <BarChart3 size={20} />, label: "Overview" },
+          { id: "cashier", icon: <Calculator size={20} />, label: "Cashier" },
+          { id: "nfc", icon: <Nfc size={20} />, label: "NFC" },
+          { id: "settings", icon: <Settings size={20} />, label: "Settings" },
+        ].map(item => (
+          <button
+            key={item.id}
+            onClick={() => setTab(item.id)}
+            className={`flex-1 flex flex-col items-center justify-center py-3 gap-1 text-[10px] font-semibold transition-colors ${
+              tab === item.id ? "text-purple-400" : "text-gray-500"
+            }`}
+          >
+            <span className={`transition-all ${ tab === item.id ? "scale-110" : "" }`}>{item.icon}</span>
+            {item.label}
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }
