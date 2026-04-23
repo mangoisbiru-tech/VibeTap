@@ -530,43 +530,6 @@ function NfcWriterTab({ stickers, setStickers }: { stickers: Sticker[], setStick
       )}
 
       {/* Toolbox Tabs */}
-      <div className="flex gap-2 border-b border-white/10 pb-4">
-        <button onClick={() => setCurrentTool("write")} className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${currentTool === "write" ? "bg-purple-600 text-white" : "bg-white/5 text-gray-400 hover:text-white"}`}>Write Tag</button>
-        <button onClick={() => setCurrentTool("read")} className={`px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition ${currentTool === "read" ? "bg-blue-600 text-white" : "bg-white/5 text-gray-400 hover:text-white"}`}>
-          <ScanSearch size={14} /> Scan Status
-        </button>
-        <button onClick={() => setCurrentTool("format")} className={`px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition ${currentTool === "format" ? "bg-orange-600 text-white" : "bg-white/5 text-gray-400 hover:text-white"}`}>
-          <Ban size={14} /> Erase
-        </button>
-        <button onClick={() => setCurrentTool("lock")} className={`px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition ${currentTool === "lock" ? "bg-red-600 text-white" : "bg-white/5 text-gray-400 hover:text-white"}`}>
-          <Lock size={14} /> Lock (Danger)
-        </button>
-      </div>
-
-      {stickers.length === 0 && <p className="text-gray-500">No tables defined. Add them in Settings.</p>}
-
-      <div className="space-y-4">
-        {stickers.map(table => (
-          <div key={table.id} className="bg-white/[0.02] border border-white/5 rounded-2xl p-5 flex flex-col lg:flex-row gap-6 hover:bg-white/[0.04] transition-colors">
-            
-            <div className="flex-1 space-y-3">
-              <h3 className="font-bold text-white text-lg flex items-center gap-2 cursor-pointer">
-                {table.name} 
-              </h3>
-              
-              <div>
-                <p className="text-xs text-gray-500 font-bold tracking-wider mb-2">Destination Payment URL</p>
-                <input 
-                  type="url" 
-                  value={table.paymentUrl} 
-                  onChange={(e) => updatePaymentUrl(table.id, e.target.value)}
-                  placeholder="Paste exactly where this sticker will send money (e.g., https://pay.tngdigital.com...)"
-                  className="w-full bg-white/5 border border-white/10 text-white text-sm rounded-lg px-4 py-3 outline-none focus:border-purple-500 transition"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end lg:w-48 pt-4 lg:pt-0">
               <button 
                 onClick={() => runNfcAction(table.slug, table.paymentUrl)}
                 disabled={status === "scanning"}
