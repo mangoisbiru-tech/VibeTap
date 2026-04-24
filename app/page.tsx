@@ -105,30 +105,12 @@ export default function LandingPage() {
         {/* Payment badges */}
         <div className="flex flex-col items-center gap-4">
           <span className="text-slate-400 text-sm font-semibold uppercase tracking-wider">Works seamlessly with</span>
-          <div className="flex items-center gap-4 flex-wrap justify-center mt-2">
-            {/* TNG */}
-            <div className="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-white border-[3px] border-[#00ADEF]/60 shadow-lg shadow-[#00ADEF]/10 hover:-translate-y-1 transition-transform">
-              <div className="bg-[#00ADEF] rounded-xl w-12 h-12 flex items-center justify-center">
-                <span className="text-white font-black italic text-[10px] leading-[1.1] text-center tracking-tighter">Touch<br/>'n Go</span>
-              </div>
-              <span className="text-[#00ADEF] font-black text-2xl pr-3 tracking-tight">TNG</span>
-            </div>
-
-            {/* DuitNow */}
-            <div className="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-white border-[3px] border-[#E63946]/60 shadow-lg shadow-[#E63946]/10 hover:-translate-y-1 transition-transform">
-              <div className="bg-[#E63946] rounded-xl w-12 h-12 flex items-center justify-center" style={{ borderRadius: '12px 24px 24px 12px' }}>
-                <span className="text-white font-black text-3xl">D</span>
-              </div>
-              <span className="text-[#E63946] font-black text-2xl pr-3 tracking-tight">DuitNow</span>
-            </div>
-
-            {/* Grab */}
-            <div className="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-white border-[3px] border-[#00B14F]/60 shadow-lg shadow-[#00B14F]/10 hover:-translate-y-1 transition-transform">
-              <div className="bg-[#00B14F] rounded-full w-12 h-12 flex items-center justify-center">
-                <span className="text-white font-black text-3xl">G</span>
-              </div>
-              <span className="text-[#00B14F] font-black text-2xl pr-3 tracking-tight">Grab</span>
-            </div>
+          <div className="mt-2 w-full max-w-2xl px-4">
+            <img 
+              src="/payment-badges.png.png" 
+              alt="Supported Payment Methods: Touch n Go, DuitNow, GrabPay" 
+              className="w-full h-auto object-contain drop-shadow-xl hover:-translate-y-1 transition-transform duration-300"
+            />
           </div>
         </div>
       </section>
