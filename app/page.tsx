@@ -14,12 +14,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-const PAYMENT_ICONS = [
-  { name: "Touch 'n Go", color: "#00ADEF", abbr: "TNG" },
-  { name: "GrabPay", color: "#00B14F", abbr: "Grab" },
-  { name: "DuitNow", color: "#E63946", abbr: "DuitNow" },
-  { name: "Boost", color: "#FF6B35", abbr: "Boost" },
-];
+
 
 function AnimatedCounter({ end, duration = 2000 }: { end: number; duration?: number }) {
   const [count, setCount] = useState(0);
@@ -110,16 +105,30 @@ export default function LandingPage() {
         {/* Payment badges */}
         <div className="flex flex-col items-center gap-4">
           <span className="text-slate-400 text-sm font-semibold uppercase tracking-wider">Works seamlessly with</span>
-          <div className="flex items-center gap-3 flex-wrap justify-center">
-            {PAYMENT_ICONS.map((p) => (
-              <div
-                key={p.name}
-                className="px-5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-bold shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
-                style={{ color: p.color }}
-              >
-                {p.abbr}
+          <div className="flex items-center gap-4 flex-wrap justify-center mt-2">
+            {/* TNG */}
+            <div className="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-white border-[3px] border-[#00ADEF]/60 shadow-lg shadow-[#00ADEF]/10 hover:-translate-y-1 transition-transform">
+              <div className="bg-[#00ADEF] rounded-xl w-12 h-12 flex items-center justify-center">
+                <span className="text-white font-black italic text-[10px] leading-[1.1] text-center tracking-tighter">Touch<br/>'n Go</span>
               </div>
-            ))}
+              <span className="text-[#00ADEF] font-black text-2xl pr-3 tracking-tight">TNG</span>
+            </div>
+
+            {/* DuitNow */}
+            <div className="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-white border-[3px] border-[#E63946]/60 shadow-lg shadow-[#E63946]/10 hover:-translate-y-1 transition-transform">
+              <div className="bg-[#E63946] rounded-xl w-12 h-12 flex items-center justify-center" style={{ borderRadius: '12px 24px 24px 12px' }}>
+                <span className="text-white font-black text-3xl">D</span>
+              </div>
+              <span className="text-[#E63946] font-black text-2xl pr-3 tracking-tight">DuitNow</span>
+            </div>
+
+            {/* Grab */}
+            <div className="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-white border-[3px] border-[#00B14F]/60 shadow-lg shadow-[#00B14F]/10 hover:-translate-y-1 transition-transform">
+              <div className="bg-[#00B14F] rounded-full w-12 h-12 flex items-center justify-center">
+                <span className="text-white font-black text-3xl">G</span>
+              </div>
+              <span className="text-[#00B14F] font-black text-2xl pr-3 tracking-tight">Grab</span>
+            </div>
           </div>
         </div>
       </section>
