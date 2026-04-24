@@ -103,13 +103,13 @@ export default function LandingPage() {
         </div>
 
         {/* Payment badges */}
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-2">
           <span className="text-slate-400 text-sm font-semibold uppercase tracking-wider">Works seamlessly with</span>
-          <div className="mt-2 w-full max-w-2xl px-4">
+          <div className="w-full max-w-lg px-4 -mt-6">
             <img 
               src="/payment-badges.png.png" 
               alt="Supported Payment Methods: Touch n Go, DuitNow, GrabPay" 
-              className="w-full h-auto object-contain drop-shadow-xl hover:-translate-y-1 transition-transform duration-300"
+              className="w-full h-auto object-contain mix-blend-multiply hover:-translate-y-1 transition-transform duration-300"
             />
           </div>
         </div>
