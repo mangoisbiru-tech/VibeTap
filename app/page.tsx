@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import ParticleBackground from "@/components/ParticleBackground";
 import {
   Zap,
   BarChart3,
@@ -43,11 +44,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans overflow-x-hidden selection:bg-emerald-200">
       
-      {/* Soft background ambient glow */}
-      <div className="fixed inset-0 pointer-events-none -z-10">
-        <div className="absolute top-[-10%] left-[-10%] w-[800px] h-[800px] rounded-full bg-emerald-500/5 blur-[120px]" />
-        <div className="absolute top-[40%] right-[-10%] w-[600px] h-[600px] rounded-full bg-blue-500/5 blur-[100px]" />
-      </div>
+      <ParticleBackground />
 
       {/* Nav */}
       <nav className="relative z-50 flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
