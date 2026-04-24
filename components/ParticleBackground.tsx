@@ -1,152 +1,61 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 
 export default function ParticleBackground() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let animationFrameId: number;
-    let particles: Particle[] = [];
-    let mouse = { x: -1000, y: -1000, radius: 120 };
-
-    // Colors matching the "Gemini" vibe (Blue, Purple, Pink, Emerald)
-    const colors = ["#3b82f6", "#8b5cf6", "#ec4899", "#10b981", "#f59e0b"];
-
-    class Particle {
-      x: number;
-      y: number;
-      baseX: number;
-      baseY: number;
-      size: number;
-      color: string;
-      density: number;
-
-      constructor(x: number, y: number, color: string) {
-        this.x = x;
-        this.y = y;
-        this.baseX = x;
-        this.baseY = y;
-        // Small dots for a clean, subtle look
-        this.size = Math.random() * 1.5 + 0.5;
-        this.color = color;
-        // Randomize how fast they spring back
-        this.density = (Math.random() * 20) + 5;
-      }
-
-      draw() {
-        if (!ctx) return;
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.closePath();
-        ctx.fill();
-      }
-
-      update() {
-        // Calculate distance between mouse and particle
-        let dx = mouse.x - this.x;
-        let dy = mouse.y - this.y;
-        let distance = Math.sqrt(dx * dx + dy * dy);
-        
-        let forceDirectionX = dx / distance;
-        let forceDirectionY = dy / distance;
-        
-        let maxDistance = mouse.radius;
-        // Closer to mouse = stronger push
-        let force = (maxDistance - distance) / maxDistance;
-        let directionX = forceDirectionX * force * this.density;
-        let directionY = forceDirectionY * force * this.density;
-
-        if (distance < mouse.radius) {
-          // Push away from cursor
-          this.x -= directionX;
-          this.y -= directionY;
-        } else {
-          // Slowly spring back to original position
-          if (this.x !== this.baseX) {
-            let dx = this.x - this.baseX;
-            this.x -= dx / 20;
-          }
-          if (this.y !== this.baseY) {
-            let dy = this.y - this.baseY;
-            this.y -= dy / 20;
-          }
-        }
-      }
-    }
-
-    const init = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      particles = [];
-      
-      const spacing = 40; // Base distance between dots
-      
-      // Create a grid of particles with some random offset for an organic feel
-      for (let y = 0; y < canvas.height; y += spacing) {
-        for (let x = 0; x < canvas.width; x += spacing) {
-          // Add some randomness to position so it's not a perfect strict grid
-          const offsetX = x + (Math.random() * 20 - 10);
-          const offsetY = y + (Math.random() * 20 - 10);
-          
-          // Randomly skip some spots for a "cloud/wave" texture
-          if (Math.random() > 0.3) {
-             const color = colors[Math.floor(Math.random() * colors.length)];
-             particles.push(new Particle(offsetX, offsetY, color));
-          }
-        }
-      }
-    };
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = 0; i < particles.length; i++) {
-        particles[i].draw();
-        particles[i].update();
-      }
-      animationFrameId = requestAnimationFrame(animate);
-    };
-
-    init();
-    animate();
-
-    const handleResize = () => {
-      init();
-    };
-
     const handleMouseMove = (e: MouseEvent) => {
-      mouse.x = e.x;
-      mouse.y = e.y;
+      // Calculate mouse position relative to center of screen (-1 to 1)
+      const x = (e.clientX / window.innerWidth) * 2 - 1;
+      const y = (e.clientY / window.innerHeight) * 2 - 1;
+      setMousePosition({ x, y });
     };
 
-    const handleMouseLeave = () => {
-      mouse.x = -1000;
-      mouse.y = -1000;
-    };
-
-    window.addEventListener("resize", handleResize);
     window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseleave", handleMouseLeave);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseleave", handleMouseLeave);
-      cancelAnimationFrame(animationFrameId);
-    };
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0 opacity-40 transition-opacity duration-1000"
-    />
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      {/* Orb 1: Emerald/Mint */}
+      <div 
+        className="absolute w-[600px] h-[600px] sm:w-[800px] sm:h-[800px] rounded-full bg-emerald-400/20 blur-[100px] sm:blur-[140px] mix-blend-multiply transition-transform duration-700 ease-out"
+        style={{ 
+          top: '-10%', 
+          left: '10%',
+          transform: `translate(${mousePosition.x * -40}px, ${mousePosition.y * -40}px)` 
+        }}
+      />
+      
+      {/* Orb 2: Deep Blue */}
+      <div 
+        className="absolute w-[500px] h-[500px] sm:w-[700px] sm:h-[700px] rounded-full bg-blue-400/15 blur-[100px] sm:blur-[120px] mix-blend-multiply transition-transform duration-1000 ease-out"
+        style={{ 
+          top: '30%', 
+          right: '-10%',
+          transform: `translate(${mousePosition.x * -70}px, ${mousePosition.y * -70}px)` 
+        }}
+      />
+
+      {/* Orb 3: Yellow/Gold */}
+      <div 
+        className="absolute w-[600px] h-[600px] sm:w-[900px] sm:h-[900px] rounded-full bg-yellow-300/20 blur-[100px] sm:blur-[150px] mix-blend-multiply transition-transform duration-1000 ease-out"
+        style={{ 
+          bottom: '-20%', 
+          left: '20%',
+          transform: `translate(${mousePosition.x * -30}px, ${mousePosition.y * -30}px)` 
+        }}
+      />
+
+      {/* Noise Texture Overlay for premium frosted look */}
+      <div 
+        className="absolute inset-0 opacity-[0.03] mix-blend-overlay"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+        }}
+      />
+    </div>
   );
 }
