@@ -46,7 +46,7 @@ function Sidebar({ tab, setTab }: { tab: string; setTab: (t: string) => void }) 
     { id: "cashier", icon: <Calculator size={18} />, label: "Cashier Mode" },
     { id: "nfc", icon: <Nfc size={18} />, label: "NFC Writer" },
     { id: "settings", icon: <Settings size={18} />, label: "Settings" },
-    { id: "testing", icon: <Zap size={18} />, label: "Testing Phase" },
+    { id: "testing", icon: <Zap size={18} />, label: "Testing Phase 2" },
   ];
   return (
     <div className="w-64 bg-[#0F0F16] border-r border-white/5 flex-col hidden md:flex sticky top-0 h-screen">
@@ -626,14 +626,14 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang }: { stickers:
 // ─── TESTING PHASE TAB ────────────────────────────────────────────────────────
 function TestingPhaseTab() {
   const pay = () => {
-    const data = "00020101021126600015my.com.duitnow0123000000000000000963381480204648752045999530345854042.505802MY5909NG SOH AI6007Puchong6304A25F";
+    const data = "00020101021126600015my.com.duitnow012300000000000000096338148020464875204599953034585802MY5909NG SOH AI6007Puchong63048599";
     window.location.href = "tngdwallet://pay?data=" + data;
   };
 
   return (
     <div className="max-w-4xl space-y-6">
       <div>
-        <h1 className="text-2xl font-black text-white flex items-center gap-2"><Zap size={24} className="text-yellow-400" /> Testing Phase</h1>
+        <h1 className="text-2xl font-black text-white flex items-center gap-2"><Zap size={24} className="text-yellow-400" /> Testing Phase 2</h1>
         <p className="text-gray-500 text-sm mt-1">Experimental features and deep link testing.</p>
       </div>
 
@@ -705,7 +705,7 @@ export default function DemoPage() {
           { id: "cashier", icon: <Calculator size={20} />, label: "Cashier" },
           { id: "nfc", icon: <Nfc size={20} />, label: "NFC" },
           { id: "settings", icon: <Settings size={20} />, label: "Settings" },
-          { id: "testing", icon: <Zap size={20} />, label: "Testing" },
+          { id: "testing", icon: <Zap size={20} />, label: "Testing 2" },
         ].map(item => (
           <button
             key={item.id}
