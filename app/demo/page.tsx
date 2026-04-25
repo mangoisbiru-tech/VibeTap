@@ -46,6 +46,7 @@ function Sidebar({ tab, setTab }: { tab: string; setTab: (t: string) => void }) 
     { id: "cashier", icon: <Calculator size={18} />, label: "Cashier Mode" },
     { id: "nfc", icon: <Nfc size={18} />, label: "NFC Writer" },
     { id: "settings", icon: <Settings size={18} />, label: "Settings" },
+    { id: "testing", icon: <Zap size={18} />, label: "Testing Phase" },
   ];
   return (
     <div className="w-64 bg-[#0F0F16] border-r border-white/5 flex-col hidden md:flex sticky top-0 h-screen">
@@ -622,6 +623,36 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang }: { stickers:
   );
 }
 
+// ─── TESTING PHASE TAB ────────────────────────────────────────────────────────
+function TestingPhaseTab() {
+  const pay = () => {
+    const data = "00020101021126380009my.com.btpn011101221996360204123452045999530345854041.115802MY630419AE";
+    window.location.href = "tngdwallet://pay?data=" + data;
+  };
+
+  return (
+    <div className="max-w-4xl space-y-6">
+      <div>
+        <h1 className="text-2xl font-black text-white flex items-center gap-2"><Zap size={24} className="text-yellow-400" /> Testing Phase</h1>
+        <p className="text-gray-500 text-sm mt-1">Experimental features and deep link testing.</p>
+      </div>
+
+      <div className="bg-[#1A1A24] border border-yellow-500/20 rounded-2xl p-8 text-center mt-10">
+        <h2 className="text-xl font-bold text-white mb-4">Deep Link Test (TNG)</h2>
+        <p className="text-gray-400 text-sm mb-8 max-w-sm mx-auto">
+          Test the dynamic EMVCo string payload by executing the TNG deep link directly.
+        </p>
+        <button 
+          onClick={pay} 
+          className="bg-yellow-500 hover:bg-yellow-400 text-black px-12 py-6 rounded-2xl font-black text-2xl shadow-xl shadow-yellow-500/20 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto"
+        >
+          Execute TNG Deep Link
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ─── MAIN PAGE ────────────────────────────────────────────────────────────────
 export default function DemoPage() {
   const [tab, setTab] = useState("overview");
@@ -663,6 +694,7 @@ export default function DemoPage() {
           {tab === "cashier" && <CashierTab stickers={stickers} setStickers={setStickers} quickAmounts={quickAmounts} setQuickAmounts={setQuickAmounts} activeSessions={activeSessions} setActiveSessions={setActiveSessions} onCompletePayment={handleCompletePayment} />}
           {tab === "nfc" && <NfcWriterTab stickers={stickers} setStickers={setStickers} />}
           {tab === "settings" && <SettingsTab stickers={stickers} setStickers={setStickers} ttsLang={ttsLang} setTtsLang={setTtsLang} />}
+          {tab === "testing" && <TestingPhaseTab />}
         </div>
       </main>
 
@@ -673,6 +705,7 @@ export default function DemoPage() {
           { id: "cashier", icon: <Calculator size={20} />, label: "Cashier" },
           { id: "nfc", icon: <Nfc size={20} />, label: "NFC" },
           { id: "settings", icon: <Settings size={20} />, label: "Settings" },
+          { id: "testing", icon: <Zap size={20} />, label: "Testing" },
         ].map(item => (
           <button
             key={item.id}
