@@ -626,7 +626,7 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang }: { stickers:
 // ─── TESTING PHASE TAB ────────────────────────────────────────────────────────
 function TestingPhaseTab() {
   const pay = () => {
-    const data = "00020101021126380009my.com.btpn011101221996360204123452045999530345854041.115802MY630419AE";
+    const data = "00020101021126600015my.com.duitnow0123000000000000000963381480204648752045999530345854042.505802MY5909NG SOH AI6007Puchong6304A25F";
     window.location.href = "tngdwallet://pay?data=" + data;
   };
 
