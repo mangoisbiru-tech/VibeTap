@@ -527,7 +527,7 @@ function NfcWriterTab({ stickers, setStickers }: { stickers: Sticker[], setStick
 }
 
 // ─── SETTINGS TAB ─────────────────────────────────────────────────────────────
-function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, mode, setMode, menuItems, setMenuItems }: { 
+function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, mode, setMode, menuItems, setMenuItems, storeName, setStoreName }: { 
   stickers: Sticker[], 
   setStickers: (s: Sticker[]) => void, 
   ttsLang: string, 
@@ -535,9 +535,10 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, mode, setMode
   mode: "redirect" | "menu",
   setMode: (m: "redirect" | "menu") => void,
   menuItems: any[],
-  setMenuItems: (m: any[]) => void
+  setMenuItems: (m: any[]) => void,
+  storeName: string,
+  setStoreName: (n: string) => void
 }) {
-  const [storeName, setStoreName] = useState("Demo Kopitiam");
   const [phone, setPhone] = useState("+60 12-345 6789");
   const [securityEnabled, setSecurityEnabled] = useState(false);
   const [pin, setPin] = useState("");
@@ -695,13 +696,19 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, mode, setMode
 }
 
 // ─── CUSTOMER MENU TAB ────────────────────────────────────────────────────────
-function CustomerMenuTab({ menuItems, mode }: { menuItems: any[], mode: string }) {
+function CustomerMenuTab({ menuItems, mode, storeName }: { menuItems: any[], mode: string, storeName: string }) {
   const [cart, setCart] = useState<Record<number, number>>({});
   const total = menuItems.reduce((sum, item, idx) => sum + (item.price * (cart[idx] || 0)), 0);
   const itemCount = Object.values(cart).reduce((a, b) => a + b, 0);
 
   const updateQuantity = (idx: number, delta: number) => {
     setCart(prev => ({ ...prev, [idx]: Math.max(0, (prev[idx] || 0) + delta) }));
+  };
+
+  const handlePay = () => {
+    if (total <= 0) return;
+    const data = "00020101021126600015my.com.duitnow012300000000000000096338148020464875204599953034585802MY5909NG SOH AI6007Puchong63048599";
+    window.location.href = "tngdwallet://pay?data=" + data;
   };
 
   if (mode === "redirect") {
@@ -725,11 +732,8 @@ function CustomerMenuTab({ menuItems, mode }: { menuItems: any[], mode: string }
   return (
     <div className="max-w-md mx-auto relative min-h-[600px] border border-white/10 rounded-[3rem] p-1 bg-black/40 overflow-hidden shadow-2xl">
       {/* Mobile Frame Header */}
-      <div className="pt-10 pb-6 px-6 text-center">
-        <div className="w-12 h-12 bg-gradient-to-tr from-purple-600 to-blue-500 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-xl">
-          <Zap className="text-white fill-white" size={24} />
-        </div>
-        <h2 className="text-xl font-black text-white">Demo Kopitiam</h2>
+      <div className="pt-14 pb-6 px-6 text-center">
+        <h2 className="text-xl font-black text-white">{storeName}</h2>
         <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-1">Digital Menu</p>
       </div>
 
@@ -757,7 +761,10 @@ function CustomerMenuTab({ menuItems, mode }: { menuItems: any[], mode: string }
               <p className="text-lg font-black text-white">RM {total.toFixed(2)}</p>
               <p className="text-xs font-bold text-blue-400">{itemCount} Items</p>
             </div>
-            <button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-black py-3 rounded-2xl flex items-center justify-center gap-2 text-sm shadow-xl shadow-purple-600/20">
+            <button 
+              onClick={handlePay}
+              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-black py-3 rounded-2xl flex items-center justify-center gap-2 text-sm shadow-xl shadow-purple-600/20 transition-all active:scale-95"
+            >
               PAY WITH TNG <ChevronRight size={16} />
             </button>
           </div>
@@ -807,6 +814,7 @@ export default function DemoPage() {
   const [ttsLang, setTtsLang] = useState("en-US");
   const [mode, setMode] = useState<"redirect" | "menu">("menu");
   const [menuItems, setMenuItems] = useState(INITIAL_MENU_ITEMS);
+  const [storeName, setStoreName] = useState("Demo Kopitiam");
 
   const playVoiceOfSuccess = (amount: number, stickerName: string) => {
     if (!("speechSynthesis" in window)) return;
@@ -839,8 +847,8 @@ export default function DemoPage() {
           {tab === "overview" && <OverviewTab payments={payments} />}
           {tab === "cashier" && <CashierTab stickers={stickers} setStickers={setStickers} quickAmounts={quickAmounts} setQuickAmounts={setQuickAmounts} activeSessions={activeSessions} setActiveSessions={setActiveSessions} onCompletePayment={handleCompletePayment} />}
           {tab === "nfc" && <NfcWriterTab stickers={stickers} setStickers={setStickers} />}
-          {tab === "settings" && <SettingsTab stickers={stickers} setStickers={setStickers} ttsLang={ttsLang} setTtsLang={setTtsLang} mode={mode} setMode={setMode} menuItems={menuItems} setMenuItems={setMenuItems} />}
-          {tab === "menu" && <CustomerMenuTab menuItems={menuItems} mode={mode} />}
+          {tab === "settings" && <SettingsTab stickers={stickers} setStickers={setStickers} ttsLang={ttsLang} setTtsLang={setTtsLang} mode={mode} setMode={setMode} menuItems={menuItems} setMenuItems={setMenuItems} storeName={storeName} setStoreName={setStoreName} />}
+          {tab === "menu" && <CustomerMenuTab menuItems={menuItems} mode={mode} storeName={storeName} />}
           {tab === "testing" && <TestingPhaseTab />}
         </div>
       </main>

@@ -43,10 +43,7 @@ export default function MenuClient({
       <ParticleBackground />
 
       {/* Header */}
-      <header className="relative z-10 pt-12 pb-6 px-6 text-center">
-        <div className="w-16 h-16 bg-gradient-to-tr from-purple-600 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-purple-500/20">
-          <Zap className="text-white fill-white" size={32} />
-        </div>
+      <header className="relative z-10 pt-16 pb-6 px-6 text-center">
         <h1 className="text-3xl font-black tracking-tight">{name}</h1>
         <p className="text-gray-400 text-sm mt-2 font-medium opacity-80 uppercase tracking-widest">Digital Menu</p>
       </header>
