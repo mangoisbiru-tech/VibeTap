@@ -24,6 +24,11 @@ import {
   Lock,
   ScanSearch,
   Store,
+  UtensilsCrossed,
+  ExternalLink,
+  ChevronRight,
+  Minus,
+  ShoppingBag,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -38,6 +43,11 @@ const INITIAL_STICKERS: Sticker[] = [
   { id: "s3", name: "Takeaway", slug: "demo-t3", paymentUrl: "" },
 ];
 const INITIAL_QUICK_AMOUNTS = [1, 2, 5, 10, 15, 20];
+const INITIAL_MENU_ITEMS = [
+  { name: "Teh Tarik", price: 3.5, emoji: "☕" },
+  { name: "Nasi Lemak", price: 12.0, emoji: "🍱" },
+  { name: "Roti Canai", price: 2.5, emoji: "🥞" },
+];
 
 // ─── SIDEBAR ──────────────────────────────────────────────────────────────────
 function Sidebar({ tab, setTab }: { tab: string; setTab: (t: string) => void }) {
@@ -46,6 +56,7 @@ function Sidebar({ tab, setTab }: { tab: string; setTab: (t: string) => void }) 
     { id: "cashier", icon: <Calculator size={18} />, label: "Cashier Mode" },
     { id: "nfc", icon: <Nfc size={18} />, label: "NFC Writer" },
     { id: "settings", icon: <Settings size={18} />, label: "Settings" },
+    { id: "menu", icon: <UtensilsCrossed size={18} />, label: "Customer View" },
     { id: "testing", icon: <Zap size={18} />, label: "Testing Phase 2" },
   ];
   return (
@@ -516,7 +527,16 @@ function NfcWriterTab({ stickers, setStickers }: { stickers: Sticker[], setStick
 }
 
 // ─── SETTINGS TAB ─────────────────────────────────────────────────────────────
-function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang }: { stickers: Sticker[], setStickers: (s: Sticker[]) => void, ttsLang: string, setTtsLang: (l: string) => void }) {
+function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, mode, setMode, menuItems, setMenuItems }: { 
+  stickers: Sticker[], 
+  setStickers: (s: Sticker[]) => void, 
+  ttsLang: string, 
+  setTtsLang: (l: string) => void,
+  mode: "redirect" | "menu",
+  setMode: (m: "redirect" | "menu") => void,
+  menuItems: any[],
+  setMenuItems: (m: any[]) => void
+}) {
   const [storeName, setStoreName] = useState("Demo Kopitiam");
   const [phone, setPhone] = useState("+60 12-345 6789");
   const [securityEnabled, setSecurityEnabled] = useState(false);
@@ -530,6 +550,19 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang }: { stickers:
   const removeSticker = (id: string) => setStickers(stickers.filter(s => s.id !== id));
   const updateStickerName = (id: string, name: string) => setStickers(stickers.map(s => s.id === id ? { ...s, name } : s));
 
+  const addItem = () => {
+    if (menuItems.length >= 5) return;
+    setMenuItems([...menuItems, { name: "New Item", price: 0, emoji: "🍱" }]);
+  };
+
+  const updateItem = (index: number, field: string, value: any) => {
+    const next = [...menuItems];
+    next[index] = { ...next[index], [field]: value };
+    setMenuItems(next);
+  };
+
+  const removeItem = (idx: number) => setMenuItems(menuItems.filter((_, i) => i !== idx));
+
   const LANGS = [
     { code: "en-US", name: "English" },
     { code: "ms-MY", name: "Bahasa Melayu" },
@@ -542,8 +575,40 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang }: { stickers:
         <h1 className="text-2xl font-black text-white">Merchant Settings</h1>
         <p className="text-gray-500 text-sm mt-1">Configure your store, manage hardware tables, and adjust audio notifications.</p>
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-8">
+          {/* Mode Switch */}
+          <div className="bg-[#1A1A24] border border-white/10 rounded-2xl p-6 shadow-lg">
+            <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">Merchant Mode</h2>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setMode("redirect")}
+                className={`p-4 rounded-2xl border text-left transition-all ${
+                  mode === "redirect"
+                    ? "bg-purple-500/10 border-purple-500/40 text-purple-300 shadow-lg shadow-purple-500/5"
+                    : "bg-white/5 border-white/10 text-gray-500 hover:bg-white/[0.08]"
+                }`}
+              >
+                <ExternalLink size={20} className="mb-2" />
+                <p className="font-bold text-sm">Simple Redirect</p>
+                <p className="text-[10px] opacity-60">Go straight to TNG</p>
+              </button>
+              <button
+                onClick={() => setMode("menu")}
+                className={`p-4 rounded-2xl border text-left transition-all ${
+                  mode === "menu"
+                    ? "bg-blue-500/10 border-blue-500/40 text-blue-300 shadow-lg shadow-blue-500/5"
+                    : "bg-white/5 border-white/10 text-gray-500 hover:bg-white/[0.08]"
+                }`}
+              >
+                <UtensilsCrossed size={20} className="mb-2" />
+                <p className="font-bold text-sm">Mini Menu</p>
+                <p className="text-[10px] opacity-60">Customers select items first</p>
+              </button>
+            </div>
+          </div>
+
           <div className="bg-[#1A1A24] border border-white/10 rounded-2xl p-6 shadow-lg">
             <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4"><Store size={18} className="text-purple-400" /> Store Profile</h2>
             <div className="space-y-4">
@@ -557,40 +622,52 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang }: { stickers:
               </div>
             </div>
           </div>
-          <div className="bg-[#1A1A24] border border-white/10 rounded-2xl p-6 shadow-lg">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-2"><Volume2 size={18} className="text-blue-400" /> Voice of Success</h2>
-            <p className="text-xs text-gray-400 mb-5 leading-relaxed">When a payment is verified, your device will announce the amount out loud.</p>
-            <div className="grid grid-cols-1 gap-3">
-              {LANGS.map(lang => (
-                <button key={lang.code} onClick={() => setTtsLang(lang.code)}
-                  className={`px-4 py-3 rounded-xl border text-sm font-bold flex items-center justify-between transition-all ${ttsLang === lang.code ? "bg-blue-500/20 border-blue-500 text-blue-400" : "bg-white/5 border-white/5 text-gray-400 hover:bg-white/10 hover:text-white"}`}>
-                  {lang.name}{ttsLang === lang.code && <CheckCircle2 size={16} />}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="bg-[#1A1A24] border border-white/10 rounded-2xl p-6 shadow-lg">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-1"><Lock size={18} className={securityEnabled ? "text-green-400" : "text-gray-400"} /> Cashier Security</h2>
-                <p className="text-xs text-gray-400">Optional: Require PIN to access settings.</p>
-              </div>
-              <button onClick={() => setSecurityEnabled(!securityEnabled)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${securityEnabled ? "bg-purple-600" : "bg-white/10"}`}>
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${securityEnabled ? "translate-x-6" : "translate-x-1"}`} />
-              </button>
-            </div>
-            {securityEnabled && (
-              <div className="pt-4 border-t border-white/5">
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Access PIN</label>
-                <div className="flex gap-2">
-                  <input type="password" value={pin} onChange={e => setPin(e.target.value)} placeholder="4-digit PIN" maxLength={4} className="w-32 bg-white/5 border border-white/10 text-white rounded-lg px-4 py-2 focus:outline-none focus:border-purple-500 transition-colors tracking-widest text-center" />
-                  <button className="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">Save PIN</button>
-                </div>
-              </div>
-            )}
-          </div>
         </div>
-        <div>
+
+        <div className="space-y-8">
+          {mode === "menu" && (
+            <div className="bg-[#1A1A24] border border-blue-500/20 rounded-2xl p-6 shadow-lg animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-bold text-white flex items-center gap-2">Menu Items ({menuItems.length}/5)</h2>
+                {menuItems.length < 5 && (
+                  <button onClick={addItem} className="text-xs bg-white/5 hover:bg-white/10 text-white px-3 py-1.5 rounded-lg flex items-center gap-1 transition-all">
+                    <Plus size={14} /> Add Item
+                  </button>
+                )}
+              </div>
+              <div className="space-y-3">
+                {menuItems.map((item, idx) => (
+                  <div key={idx} className="bg-white/5 border border-white/5 rounded-2xl p-4 flex gap-3 items-start group">
+                    <input
+                      type="text"
+                      value={item.emoji}
+                      onChange={(e) => updateItem(idx, "emoji", e.target.value)}
+                      className="w-10 h-10 bg-white/5 rounded-xl text-center text-xl focus:outline-none"
+                    />
+                    <div className="flex-1 space-y-2">
+                      <input
+                        type="text"
+                        value={item.name}
+                        onChange={(e) => updateItem(idx, "name", e.target.value)}
+                        className="w-full bg-transparent border-b border-white/10 text-white text-sm py-1 focus:outline-none focus:border-purple-500/50"
+                      />
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-500 font-bold uppercase">RM</span>
+                        <input
+                          type="number"
+                          value={item.price}
+                          onChange={(e) => updateItem(idx, "price", parseFloat(e.target.value) || 0)}
+                          className="bg-transparent text-white text-sm font-bold focus:outline-none w-20"
+                        />
+                      </div>
+                    </div>
+                    <button onClick={() => removeItem(idx)} className="p-2 text-gray-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"><Trash2 size={16} /></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="bg-[#1A1A24] border border-white/10 rounded-2xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-2">
               <h2 className="text-lg font-bold text-white flex items-center gap-2"><Nfc size={18} className="text-purple-400" /> Active Tables ({stickers.length}/8)</h2>
@@ -609,16 +686,83 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang }: { stickers:
                   <button onClick={() => removeSticker(sticker.id)} className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors opacity-50 group-hover:opacity-100"><Trash2 size={16} /></button>
                 </div>
               ))}
-              {stickers.length === 0 && (
-                <div className="text-center py-12 border-2 border-dashed border-white/10 rounded-xl">
-                  <p className="text-sm font-bold text-gray-400">No active tables.</p>
-                  <button onClick={addSticker} className="text-purple-400 text-sm font-semibold mt-2 hover:underline">Create your first table</button>
-                </div>
-              )}
             </div>
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ─── CUSTOMER MENU TAB ────────────────────────────────────────────────────────
+function CustomerMenuTab({ menuItems, mode }: { menuItems: any[], mode: string }) {
+  const [cart, setCart] = useState<Record<number, number>>({});
+  const total = menuItems.reduce((sum, item, idx) => sum + (item.price * (cart[idx] || 0)), 0);
+  const itemCount = Object.values(cart).reduce((a, b) => a + b, 0);
+
+  const updateQuantity = (idx: number, delta: number) => {
+    setCart(prev => ({ ...prev, [idx]: Math.max(0, (prev[idx] || 0) + delta) }));
+  };
+
+  if (mode === "redirect") {
+    return (
+      <div className="max-w-md mx-auto text-center py-20 animate-in fade-in zoom-in duration-500">
+        <div className="w-24 h-24 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-purple-500/20">
+          <Zap className="text-purple-400 fill-purple-400 animate-pulse" size={48} />
+        </div>
+        <h1 className="text-2xl font-black text-white mb-2">Direct Redirect Active</h1>
+        <p className="text-gray-500">Customers will skip this page and go straight to your TNG / Wallet.</p>
+        <div className="mt-8 bg-white/5 p-4 rounded-2xl border border-white/10">
+          <p className="text-xs text-gray-400 uppercase tracking-widest font-bold mb-4">Simulating Redirect...</p>
+          <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+            <div className="h-full bg-purple-500 w-2/3 animate-[loading_2s_infinite]"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-md mx-auto relative min-h-[600px] border border-white/10 rounded-[3rem] p-1 bg-black/40 overflow-hidden shadow-2xl">
+      {/* Mobile Frame Header */}
+      <div className="pt-10 pb-6 px-6 text-center">
+        <div className="w-12 h-12 bg-gradient-to-tr from-purple-600 to-blue-500 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-xl">
+          <Zap className="text-white fill-white" size={24} />
+        </div>
+        <h2 className="text-xl font-black text-white">Demo Kopitiam</h2>
+        <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-1">Digital Menu</p>
+      </div>
+
+      <div className="px-6 space-y-3 pb-32">
+        {menuItems.map((item, idx) => (
+          <div key={idx} className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center gap-3">
+            <div className="text-2xl w-10 h-10 flex items-center justify-center bg-white/5 rounded-lg">{item.emoji}</div>
+            <div className="flex-1">
+              <p className="font-bold text-sm text-white/90">{item.name}</p>
+              <p className="text-blue-400 text-xs font-black">RM {item.price.toFixed(2)}</p>
+            </div>
+            <div className="flex items-center gap-2 bg-black/40 rounded-xl p-1 border border-white/5">
+              <button onClick={() => updateQuantity(idx, -1)} className="w-6 h-6 flex items-center justify-center hover:bg-white/10 rounded-md transition-colors"><Minus size={14} /></button>
+              <span className="text-xs font-bold w-4 text-center">{cart[idx] || 0}</span>
+              <button onClick={() => updateQuantity(idx, 1)} className="w-6 h-6 bg-purple-600 flex items-center justify-center hover:bg-purple-500 rounded-md transition-colors"><Plus size={14} /></button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {itemCount > 0 && (
+        <div className="absolute bottom-4 left-4 right-4 animate-in slide-in-from-bottom-10 duration-500">
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-4 shadow-2xl">
+            <div className="flex justify-between items-center mb-3 px-2">
+              <p className="text-lg font-black text-white">RM {total.toFixed(2)}</p>
+              <p className="text-xs font-bold text-blue-400">{itemCount} Items</p>
+            </div>
+            <button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-black py-3 rounded-2xl flex items-center justify-center gap-2 text-sm shadow-xl shadow-purple-600/20">
+              PAY WITH TNG <ChevronRight size={16} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -661,6 +805,8 @@ export default function DemoPage() {
   const [activeSessions, setActiveSessions] = useState<ActiveSession[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [ttsLang, setTtsLang] = useState("en-US");
+  const [mode, setMode] = useState<"redirect" | "menu">("menu");
+  const [menuItems, setMenuItems] = useState(INITIAL_MENU_ITEMS);
 
   const playVoiceOfSuccess = (amount: number, stickerName: string) => {
     if (!("speechSynthesis" in window)) return;
@@ -693,7 +839,8 @@ export default function DemoPage() {
           {tab === "overview" && <OverviewTab payments={payments} />}
           {tab === "cashier" && <CashierTab stickers={stickers} setStickers={setStickers} quickAmounts={quickAmounts} setQuickAmounts={setQuickAmounts} activeSessions={activeSessions} setActiveSessions={setActiveSessions} onCompletePayment={handleCompletePayment} />}
           {tab === "nfc" && <NfcWriterTab stickers={stickers} setStickers={setStickers} />}
-          {tab === "settings" && <SettingsTab stickers={stickers} setStickers={setStickers} ttsLang={ttsLang} setTtsLang={setTtsLang} />}
+          {tab === "settings" && <SettingsTab stickers={stickers} setStickers={setStickers} ttsLang={ttsLang} setTtsLang={setTtsLang} mode={mode} setMode={setMode} menuItems={menuItems} setMenuItems={setMenuItems} />}
+          {tab === "menu" && <CustomerMenuTab menuItems={menuItems} mode={mode} />}
           {tab === "testing" && <TestingPhaseTab />}
         </div>
       </main>
@@ -705,6 +852,7 @@ export default function DemoPage() {
           { id: "cashier", icon: <Calculator size={20} />, label: "Cashier" },
           { id: "nfc", icon: <Nfc size={20} />, label: "NFC" },
           { id: "settings", icon: <Settings size={20} />, label: "Settings" },
+          { id: "menu", icon: <UtensilsCrossed size={20} />, label: "Menu" },
           { id: "testing", icon: <Zap size={20} />, label: "Testing 2" },
         ].map(item => (
           <button
