@@ -26,6 +26,7 @@ export default async function MenuPage(props: { params: Promise<{ slug: string }
       name={merchant.name} 
       menuItems={merchant.menuItems || []} 
       paymentUrl={merchant.paymentUrl} 
+      staticQrData={merchant.staticQrData}
     />
   );
 }

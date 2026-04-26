@@ -44,9 +44,9 @@ const INITIAL_STICKERS: Sticker[] = [
 ];
 const INITIAL_QUICK_AMOUNTS = [1, 2, 5, 10, 15, 20];
 const INITIAL_MENU_ITEMS = [
-  { name: "Teh Tarik", price: 3.5, emoji: "☕" },
-  { name: "Nasi Lemak", price: 12.0, emoji: "🍱" },
-  { name: "Roti Canai", price: 2.5, emoji: "🥞" },
+  { name: "Teh Tarik", price: 3.5 },
+  { name: "Nasi Lemak", price: 12.0 },
+  { name: "Roti Canai", price: 2.5 },
 ];
 
 // ─── SIDEBAR ──────────────────────────────────────────────────────────────────
@@ -553,7 +553,7 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, mode, setMode
 
   const addItem = () => {
     if (menuItems.length >= 5) return;
-    setMenuItems([...menuItems, { name: "New Item", price: 0, emoji: "🍱" }]);
+    setMenuItems([...menuItems, { name: "New Item", price: 0 }]);
   };
 
   const updateItem = (index: number, field: string, value: any) => {
@@ -639,12 +639,6 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, mode, setMode
               <div className="space-y-3">
                 {menuItems.map((item, idx) => (
                   <div key={idx} className="bg-white/5 border border-white/5 rounded-2xl p-4 flex gap-3 items-start group">
-                    <input
-                      type="text"
-                      value={item.emoji}
-                      onChange={(e) => updateItem(idx, "emoji", e.target.value)}
-                      className="w-10 h-10 bg-white/5 rounded-xl text-center text-xl focus:outline-none"
-                    />
                     <div className="flex-1 space-y-2">
                       <input
                         type="text"
@@ -739,8 +733,7 @@ function CustomerMenuTab({ menuItems, mode, storeName }: { menuItems: any[], mod
 
       <div className="px-6 space-y-3 pb-32">
         {menuItems.map((item, idx) => (
-          <div key={idx} className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center gap-3">
-            <div className="text-2xl w-10 h-10 flex items-center justify-center bg-white/5 rounded-lg">{item.emoji}</div>
+          <div key={idx} className="bg-white/5 border border-white/10 rounded-2xl p-5 flex items-center gap-3">
             <div className="flex-1">
               <p className="font-bold text-sm text-white/90">{item.name}</p>
               <p className="text-blue-400 text-xs font-black">RM {item.price.toFixed(2)}</p>

@@ -1,19 +1,37 @@
 "use client";
 
 import { useState } from "react";
-import { ShoppingBag, ChevronRight, Plus, Minus, Zap } from "lucide-react";
+import { ShoppingBag, ChevronRight, Plus, Minus } from "lucide-react";
 import ParticleBackground from "@/components/ParticleBackground";
 
-type MenuItem = { name: string; price: number; emoji: string };
+type MenuItem = { name: string; price: number };
+
+// Helper to calculate CRC16 for EMVCo (DuitNow/TNG)
+function crc16(data: string): string {
+  let crc = 0xFFFF;
+  for (let i = 0; i < data.length; i++) {
+    crc ^= data.charCodeAt(i) << 8;
+    for (let j = 0; j < 8; j++) {
+      if ((crc & 0x8000) !== 0) {
+        crc = (crc << 1) ^ 0x1021;
+      } else {
+        crc = crc << 1;
+      }
+    }
+  }
+  return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, "0");
+}
 
 export default function MenuClient({ 
   name, 
   menuItems, 
-  paymentUrl 
+  paymentUrl,
+  staticQrData
 }: { 
   name: string; 
   menuItems: MenuItem[]; 
   paymentUrl: string;
+  staticQrData?: string;
 }) {
   const [cart, setCart] = useState<Record<number, number>>({});
 
@@ -33,9 +51,35 @@ export default function MenuClient({
 
   const handlePay = () => {
     if (total <= 0) return;
-    // For now, we redirect to the static payment URL.
-    // In the future, we will bake the 'total' into a deep link string here.
-    window.location.href = paymentUrl;
+
+    // If we have static QR data, we generate a dynamic payload with the amount
+    if (staticQrData && staticQrData.length > 20) {
+      let payload = staticQrData;
+      
+      // Remove existing CRC (last 4 chars) if it exists after 6304
+      if (payload.includes("6304")) {
+        payload = payload.substring(0, payload.indexOf("6304") + 4);
+      } else {
+        payload += "6304";
+      }
+
+      // Prepare Amount Field (Tag 54)
+      const amtStr = total.toFixed(2);
+      const amtField = `54${amtStr.length.toString().padStart(2, "0")}${amtStr}`;
+
+      // We need to insert Field 54 before Field 63
+      // Simplified: Find where 6304 is, insert amtField before it.
+      const base = payload.substring(0, payload.indexOf("6304"));
+      const dynamicPayload = base + amtField + "6304";
+      
+      // Calculate new CRC
+      const finalPayload = dynamicPayload + crc16(dynamicPayload);
+      
+      window.location.href = `tngdwallet://pay?data=${finalPayload}`;
+    } else {
+      // Fallback to the static payment URL if no QR data provided
+      window.location.href = paymentUrl;
+    }
   };
 
   return (
@@ -54,11 +98,8 @@ export default function MenuClient({
           {menuItems.map((item, idx) => (
             <div 
               key={idx} 
-              className="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-3xl p-5 flex items-center gap-4 hover:bg-white/[0.05] transition-all"
+              className="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-3xl p-6 flex items-center gap-4 hover:bg-white/[0.05] transition-all"
             >
-              <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-3xl shadow-inner">
-                {item.emoji}
-              </div>
               <div className="flex-1">
                 <h3 className="font-bold text-lg text-white/90">{item.name}</h3>
                 <p className="text-purple-400 font-black text-sm">RM {item.price.toFixed(2)}</p>

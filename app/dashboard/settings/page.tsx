@@ -6,7 +6,7 @@ import { doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/client";
 import { Settings, Loader2, CheckCircle2, Link, Plus, Trash2, UtensilsCrossed, ExternalLink } from "lucide-react";
 
-type MenuItem = { name: string; price: number; emoji: string };
+type MenuItem = { name: string; price: number };
 
 export default function SettingsPage() {
   const [uid, setUid] = useState<string | null>(null);
@@ -17,9 +17,11 @@ export default function SettingsPage() {
     isActive: boolean;
     mode?: "redirect" | "menu";
     menuItems?: MenuItem[];
+    staticQrData?: string;
   } | null>(null);
   const [name, setName] = useState("");
   const [paymentUrl, setPaymentUrl] = useState("");
+  const [staticQrData, setStaticQrData] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [mode, setMode] = useState<"redirect" | "menu">("redirect");
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
@@ -36,6 +38,7 @@ export default function SettingsPage() {
           setMerchantData(d as any);
           setName(d.name || "");
           setPaymentUrl(d.paymentUrl || "");
+          setStaticQrData(d.staticQrData || "");
           setIsActive(d.isActive ?? true);
           setMode(d.mode || "redirect");
           setMenuItems(d.menuItems || []);
@@ -53,6 +56,7 @@ export default function SettingsPage() {
       await updateDoc(doc(db, "merchants", uid), {
         name,
         paymentUrl,
+        staticQrData,
         isActive,
         mode,
         menuItems,
@@ -66,7 +70,7 @@ export default function SettingsPage() {
 
   const addItem = () => {
     if (menuItems.length >= 5) return;
-    setMenuItems([...menuItems, { name: "", price: 0, emoji: "🍱" }]);
+    setMenuItems([...menuItems, { name: "", price: 0 }]);
   };
 
   const updateItem = (index: number, field: keyof MenuItem, value: string | number) => {
@@ -129,6 +133,24 @@ export default function SettingsPage() {
             /m/{merchantData.slug}
           </div>
           <p className="text-xs text-gray-600 mt-1">Slug is permanent after creation</p>
+        </div>
+
+        <div>
+          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Static QR Data (Optional)</label>
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-purple-400 transition-colors">
+              <Zap size={18} />
+            </div>
+            <input
+              id="static-qr-data"
+              type="text"
+              value={staticQrData}
+              onChange={(e) => setStaticQrData(e.target.value)}
+              placeholder="00020101021126..."
+              className="w-full bg-[#1A1A24] border border-white/10 text-white rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:border-purple-500 transition-colors placeholder:text-gray-700"
+            />
+          </div>
+          <p className="text-[10px] text-gray-600 mt-2">Paste your TNG/DuitNow QR string here to enable auto-filled amounts.</p>
         </div>
 
         <div className="flex items-center justify-between py-2">
@@ -195,14 +217,6 @@ export default function SettingsPage() {
               <div className="space-y-3">
                 {menuItems.map((item, idx) => (
                   <div key={idx} className="bg-white/5 border border-white/5 rounded-2xl p-4 flex gap-3 items-start group">
-                    <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-2xl">
-                      <input
-                        type="text"
-                        value={item.emoji}
-                        onChange={(e) => updateItem(idx, "emoji", e.target.value)}
-                        className="w-full bg-transparent text-center focus:outline-none"
-                      />
-                    </div>
                     <div className="flex-1 space-y-2">
                       <input
                         type="text"
