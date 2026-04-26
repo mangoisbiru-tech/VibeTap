@@ -30,6 +30,17 @@ export async function GET(
       return NextResponse.redirect(new URL("/not-found", request.url));
     }
 
+    // IF MODE IS MENU, REDIRECT TO MENU PAGE INSTEAD OF TNG
+    if (merchant.mode === "menu") {
+      // Still log analytics before redirecting to the menu page
+      const response = NextResponse.redirect(new URL(`/menu/${id}`, request.url), { status: 302 });
+      
+      // Perform analytics in background
+      await logAnalytics(merchantDoc, id, request, null);
+      
+      return response;
+    }
+
     // 2. Check for active cashier session (EFTPOS mode)
     let paymentUrl = merchant.paymentUrl as string;
 
@@ -43,10 +54,12 @@ export async function GET(
       .limit(1)
       .get();
 
+    let sessionAmount = null;
     if (!sessionSnapshot.empty) {
       const session = sessionSnapshot.docs[0];
       const sessionData = session.data();
       const amount = sessionData.amount as number; // in RM, e.g. 12.50
+      sessionAmount = amount;
 
       // Append amount to payment URL if it supports it
       try {
@@ -63,49 +76,48 @@ export async function GET(
       await session.ref.update({ used: true, usedAt: FieldValue.serverTimestamp() });
     }
 
-    // 3. Analytics — increment tap count & log tap event (non-blocking)
-    const ipRaw =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-      request.headers.get("x-real-ip") ||
-      "unknown";
+    // 3. Analytics — increment tap count & log tap event
+    await logAnalytics(merchantDoc, id, request, sessionAmount);
 
-    // Simple hash for privacy (not cryptographic)
-    const ipHash = Buffer.from(ipRaw).toString("base64").slice(0, 12);
-    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    // 4. Execute the 302 redirect
+    return NextResponse.redirect(paymentUrl, { status: 302 });
+  } catch (error) {
+    console.error("[VibeTap] Redirect error:", error);
+    // Fail gracefully — redirect to homepage
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+}
 
-    // Fire-and-forget analytics (don't await to keep redirect fast)
-    const analyticsPromise = Promise.all([
-      // Increment total tap count on merchant document
+async function logAnalytics(
+  merchantDoc: any,
+  id: string,
+  request: NextRequest,
+  sessionAmount: number | null
+) {
+  const ipRaw =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    request.headers.get("x-real-ip") ||
+    "unknown";
+
+  const ipHash = Buffer.from(ipRaw).toString("base64").slice(0, 12);
+  const today = new Date().toISOString().slice(0, 10);
+
+  try {
+    await Promise.all([
       merchantDoc.ref.update({
         tapCount: FieldValue.increment(1),
         lastTappedAt: FieldValue.serverTimestamp(),
         [`dailyTaps.${today}`]: FieldValue.increment(1),
       }),
-      // Log individual tap event
       adminDb.collection("tapEvents").add({
         merchantId: merchantDoc.id,
         merchantSlug: id,
         tappedAt: FieldValue.serverTimestamp(),
         ipHash,
-        sessionAmount: sessionSnapshot.empty
-          ? null
-          : sessionSnapshot.docs[0].data().amount,
+        sessionAmount,
       }),
-    ]).catch((err) => {
-      console.error("[VibeTap] Analytics write failed:", err);
-    });
-
-    // 4. Execute the 302 redirect immediately (don't wait for analytics)
-    const response = NextResponse.redirect(paymentUrl, { status: 302 });
-
-    // Keep the analytics promise running in background
-    // (Vercel/Node will complete it before the edge function closes)
-    await analyticsPromise;
-
-    return response;
-  } catch (error) {
-    console.error("[VibeTap] Redirect error:", error);
-    // Fail gracefully — redirect to homepage
-    return NextResponse.redirect(new URL("/", request.url));
+    ]);
+  } catch (err) {
+    console.error("[VibeTap] Analytics write failed:", err);
   }
 }

@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/client";
-import { Settings, Loader2, CheckCircle2, Link } from "lucide-react";
+import { Settings, Loader2, CheckCircle2, Link, Plus, Trash2, UtensilsCrossed, ExternalLink } from "lucide-react";
+
+type MenuItem = { name: string; price: number; emoji: string };
 
 export default function SettingsPage() {
   const [uid, setUid] = useState<string | null>(null);
@@ -13,10 +15,14 @@ export default function SettingsPage() {
     slug: string;
     paymentUrl: string;
     isActive: boolean;
+    mode?: "redirect" | "menu";
+    menuItems?: MenuItem[];
   } | null>(null);
   const [name, setName] = useState("");
   const [paymentUrl, setPaymentUrl] = useState("");
   const [isActive, setIsActive] = useState(true);
+  const [mode, setMode] = useState<"redirect" | "menu">("redirect");
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -27,10 +33,12 @@ export default function SettingsPage() {
       const unsubSnap = onSnapshot(doc(db, "merchants", user.uid), (snap) => {
         if (snap.exists()) {
           const d = snap.data();
-          setMerchantData(d as typeof merchantData extends null ? never : typeof merchantData);
+          setMerchantData(d as any);
           setName(d.name || "");
           setPaymentUrl(d.paymentUrl || "");
           setIsActive(d.isActive ?? true);
+          setMode(d.mode || "redirect");
+          setMenuItems(d.menuItems || []);
         }
       });
       return unsubSnap;
@@ -46,6 +54,8 @@ export default function SettingsPage() {
         name,
         paymentUrl,
         isActive,
+        mode,
+        menuItems,
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
@@ -53,6 +63,21 @@ export default function SettingsPage() {
       setSaving(false);
     }
   }
+
+  const addItem = () => {
+    if (menuItems.length >= 5) return;
+    setMenuItems([...menuItems, { name: "", price: 0, emoji: "🍱" }]);
+  };
+
+  const updateItem = (index: number, field: keyof MenuItem, value: string | number) => {
+    const newItems = [...menuItems];
+    newItems[index] = { ...newItems[index], [field]: value };
+    setMenuItems(newItems);
+  };
+
+  const removeItem = (index: number) => {
+    setMenuItems(menuItems.filter((_, i) => i !== index));
+  };
 
   if (!merchantData) {
     return (
@@ -120,6 +145,98 @@ export default function SettingsPage() {
               className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform ${isActive ? "translate-x-6" : "translate-x-0"}`}
             />
           </button>
+        </div>
+
+        <div className="pt-4 border-t border-white/5 space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-3">Merchant Mode</label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setMode("redirect")}
+                className={`p-4 rounded-2xl border text-left transition-all ${
+                  mode === "redirect"
+                    ? "bg-purple-500/10 border-purple-500/40 text-purple-300 shadow-lg shadow-purple-500/5"
+                    : "bg-white/5 border-white/10 text-gray-500 hover:bg-white/[0.08]"
+                }`}
+              >
+                <ExternalLink size={20} className="mb-2" />
+                <p className="font-bold text-sm">Simple Redirect</p>
+                <p className="text-[10px] opacity-60">Go straight to TNG</p>
+              </button>
+              <button
+                onClick={() => setMode("menu")}
+                className={`p-4 rounded-2xl border text-left transition-all ${
+                  mode === "menu"
+                    ? "bg-blue-500/10 border-blue-500/40 text-blue-300 shadow-lg shadow-blue-500/5"
+                    : "bg-white/5 border-white/10 text-gray-500 hover:bg-white/[0.08]"
+                }`}
+              >
+                <UtensilsCrossed size={20} className="mb-2" />
+                <p className="font-bold text-sm">Mini Menu</p>
+                <p className="text-[10px] opacity-60">Customers select items first</p>
+              </button>
+            </div>
+          </div>
+
+          {mode === "menu" && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="flex justify-between items-center">
+                <label className="text-sm font-medium text-gray-300">Menu Items ({menuItems.length}/5)</label>
+                {menuItems.length < 5 && (
+                  <button
+                    onClick={addItem}
+                    className="text-xs bg-white/5 hover:bg-white/10 text-white px-3 py-1.5 rounded-lg flex items-center gap-1 transition-all"
+                  >
+                    <Plus size={14} /> Add Item
+                  </button>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                {menuItems.map((item, idx) => (
+                  <div key={idx} className="bg-white/5 border border-white/5 rounded-2xl p-4 flex gap-3 items-start group">
+                    <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-2xl">
+                      <input
+                        type="text"
+                        value={item.emoji}
+                        onChange={(e) => updateItem(idx, "emoji", e.target.value)}
+                        className="w-full bg-transparent text-center focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex-1 space-y-2">
+                      <input
+                        type="text"
+                        value={item.name}
+                        onChange={(e) => updateItem(idx, "name", e.target.value)}
+                        placeholder="Item name (e.g. Nasi Lemak)"
+                        className="w-full bg-transparent border-b border-white/10 text-white text-sm py-1 focus:outline-none focus:border-purple-500/50"
+                      />
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-500 font-bold uppercase">RM</span>
+                        <input
+                          type="number"
+                          value={item.price}
+                          onChange={(e) => updateItem(idx, "price", parseFloat(e.target.value) || 0)}
+                          className="bg-transparent text-white text-sm font-bold focus:outline-none w-20"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => removeItem(idx)}
+                      className="p-2 text-gray-600 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                ))}
+                {menuItems.length === 0 && (
+                  <div className="text-center py-8 border-2 border-dashed border-white/5 rounded-2xl">
+                    <p className="text-gray-600 text-sm">No items added yet</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         <button
