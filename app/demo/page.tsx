@@ -49,6 +49,22 @@ const INITIAL_MENU_ITEMS = [
   { name: "Roti Canai", price: 2.5 },
 ];
 
+// Helper to calculate CRC16 for EMVCo (DuitNow/TNG)
+function crc16(data: string): string {
+  let crc = 0xFFFF;
+  for (let i = 0; i < data.length; i++) {
+    crc ^= data.charCodeAt(i) << 8;
+    for (let j = 0; j < 8; j++) {
+      if ((crc & 0x8000) !== 0) {
+        crc = (crc << 1) ^ 0x1021;
+      } else {
+        crc = crc << 1;
+      }
+    }
+  }
+  return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, "0");
+}
+
 // ─── SIDEBAR ──────────────────────────────────────────────────────────────────
 function Sidebar({ tab, setTab }: { tab: string; setTab: (t: string) => void }) {
   const navItems = [
@@ -701,8 +717,23 @@ function CustomerMenuTab({ menuItems, mode, storeName }: { menuItems: any[], mod
 
   const handlePay = () => {
     if (total <= 0) return;
-    const data = "00020101021126600015my.com.duitnow012300000000000000096338148020464875204599953034585802MY5909NG SOH AI6007Puchong63048599";
-    window.location.href = "tngdwallet://pay?data=" + data;
+    
+    // In demo, we use a test payload if none provided
+    const testData = "00020101021126600015my.com.duitnow012300000000000000096338148020464875204599953034585802MY5909NG SOH AI6007Puchong63048599";
+    const baseData = testData; // In real app, this is merchant.staticQrData
+    
+    let payload = baseData.split("6304")[0];
+    const tag54Index = payload.indexOf("540");
+    if (tag54Index !== -1) {
+      const len = parseInt(payload.substring(tag54Index + 2, tag54Index + 4));
+      payload = payload.substring(0, tag54Index) + payload.substring(tag54Index + 4 + len);
+    }
+    const amtStr = total.toFixed(2);
+    const amtField = `54${amtStr.length.toString().padStart(2, "0")}${amtStr}`;
+    const dynamicPayload = payload + amtField + "6304";
+    const finalPayload = dynamicPayload + crc16(dynamicPayload);
+    
+    window.location.href = "tngdwallet://pay?data=" + finalPayload;
   };
 
   if (mode === "redirect") {

@@ -52,32 +52,32 @@ export default function MenuClient({
   const handlePay = () => {
     if (total <= 0) return;
 
-    // If we have static QR data, we generate a dynamic payload with the amount
     if (staticQrData && staticQrData.length > 20) {
-      let payload = staticQrData;
-      
-      // Remove existing CRC (last 4 chars) if it exists after 6304
-      if (payload.includes("6304")) {
-        payload = payload.substring(0, payload.indexOf("6304") + 4);
-      } else {
-        payload += "6304";
+      // 1. Remove existing CRC (Tag 63) - it must be at the very end
+      let payload = staticQrData.split("6304")[0];
+
+      // 2. Remove existing Amount (Tag 54) if present
+      // Tag 54 format: 54{length}{value}
+      const tag54Index = payload.indexOf("540");
+      if (tag54Index !== -1) {
+        // Find length of amount value
+        const len = parseInt(payload.substring(tag54Index + 2, tag54Index + 4));
+        // Remove the whole tag (Tag ID 2 + Length 2 + Value len)
+        payload = payload.substring(0, tag54Index) + payload.substring(tag54Index + 4 + len);
       }
 
-      // Prepare Amount Field (Tag 54)
+      // 3. Add new Amount (Tag 54)
       const amtStr = total.toFixed(2);
       const amtField = `54${amtStr.length.toString().padStart(2, "0")}${amtStr}`;
-
-      // We need to insert Field 54 before Field 63
-      // Simplified: Find where 6304 is, insert amtField before it.
-      const base = payload.substring(0, payload.indexOf("6304"));
-      const dynamicPayload = base + amtField + "6304";
       
-      // Calculate new CRC
+      // 4. Reconstruct with Tag 6304 header
+      const dynamicPayload = payload + amtField + "6304";
+      
+      // 5. Calculate CCITT-FALSE CRC
       const finalPayload = dynamicPayload + crc16(dynamicPayload);
       
       window.location.href = `tngdwallet://pay?data=${finalPayload}`;
     } else {
-      // Fallback to the static payment URL if no QR data provided
       window.location.href = paymentUrl;
     }
   };
