@@ -136,7 +136,9 @@ export default function SettingsPage() {
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Static QR Data (Optional)</label>
+          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+            Static QR Data (FOR AUTO-RM AMOUNT)
+          </label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-purple-400 transition-colors">
               <Zap size={18} />
@@ -150,7 +152,9 @@ export default function SettingsPage() {
               className="w-full bg-[#1A1A24] border border-white/10 text-white rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:border-purple-500 transition-colors placeholder:text-gray-700"
             />
           </div>
-          <p className="text-[10px] text-gray-600 mt-2">Paste your TNG/DuitNow QR string here to enable auto-filled amounts.</p>
+          <p className="text-[10px] text-gray-600 mt-2">
+            Paste the 000201... code here. Do NOT put the https:// link here.
+          </p>
         </div>
 
         <div className="flex items-center justify-between py-2">
