@@ -44,7 +44,7 @@ const INITIAL_STICKERS: Sticker[] = [
 ];
 const INITIAL_QUICK_AMOUNTS = [1, 2, 5, 10, 15, 20];
 const INITIAL_MENU_ITEMS = [
-  { name: "TEH TARIK (NO EMOJI)", price: 3.5 },
+  { name: "Teh Tarik", price: 3.5 },
   { name: "Nasi Lemak", price: 12.0 },
   { name: "Roti Canai", price: 2.5 },
 ];

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/client";
-import { Settings, Loader2, CheckCircle2, Link, Plus, Trash2, UtensilsCrossed, ExternalLink } from "lucide-react";
+import { Settings, Loader2, CheckCircle2, Link, Plus, Trash2, UtensilsCrossed, ExternalLink, Zap } from "lucide-react";
 
 type MenuItem = { name: string; price: number };
 
