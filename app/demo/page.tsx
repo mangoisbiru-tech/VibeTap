@@ -553,7 +553,9 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, mode, setMode
   menuItems: any[],
   setMenuItems: (m: any[]) => void,
   storeName: string,
-  setStoreName: (n: string) => void
+  setStoreName: (n: string) => void,
+  staticQrData: string,
+  setStaticQrData: (d: string) => void
 }) {
   const [phone, setPhone] = useState("+60 12-345 6789");
   const [securityEnabled, setSecurityEnabled] = useState(false);
@@ -639,6 +641,23 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, mode, setMode
               </div>
             </div>
           </div>
+
+          <div className="bg-[#1A1A24] border border-white/10 rounded-2xl p-6 shadow-lg">
+            <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4"><Zap size={18} className="text-purple-400" /> TNG Auto-Amount</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Static QR Data (000201...)</label>
+                <input 
+                  type="text" 
+                  value={staticQrData} 
+                  onChange={e => setStaticQrData(e.target.value)} 
+                  placeholder="Paste your 000201 code here to test"
+                  className="w-full bg-[#0F0F16] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500 transition-all font-mono"
+                />
+                <p className="text-[10px] text-gray-500 mt-2">Paste your real TNG/DuitNow code here to see the RM amount auto-fill in the TNG app.</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="space-y-8">
@@ -706,7 +725,7 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, mode, setMode
 }
 
 // ─── CUSTOMER MENU TAB ────────────────────────────────────────────────────────
-function CustomerMenuTab({ menuItems, mode, storeName }: { menuItems: any[], mode: string, storeName: string }) {
+function CustomerMenuTab({ menuItems, mode, storeName, staticQrData }: { menuItems: any[], mode: string, storeName: string, staticQrData: string }) {
   const [cart, setCart] = useState<Record<number, number>>({});
   const total = menuItems.reduce((sum, item, idx) => sum + (item.price * (cart[idx] || 0)), 0);
   const itemCount = Object.values(cart).reduce((a, b) => a + b, 0);
@@ -719,8 +738,7 @@ function CustomerMenuTab({ menuItems, mode, storeName }: { menuItems: any[], mod
     if (total <= 0) return;
     
     // In demo, we use a test payload if none provided
-    const testData = "00020101021126600015my.com.duitnow012300000000000000096338148020464875204599953034585802MY5909NG SOH AI6007Puchong63048599";
-    const baseData = testData; // In real app, this is merchant.staticQrData
+    const baseData = staticQrData && staticQrData.length > 20 ? staticQrData : testData;
     
     let payload = baseData.split("6304")[0];
     const tag54Index = payload.indexOf("540");
@@ -839,6 +857,7 @@ export default function DemoPage() {
   const [mode, setMode] = useState<"redirect" | "menu">("menu");
   const [menuItems, setMenuItems] = useState(INITIAL_MENU_ITEMS);
   const [storeName, setStoreName] = useState("Demo Kopitiam");
+  const [staticQrData, setStaticQrData] = useState("");
 
   const playVoiceOfSuccess = (amount: number, stickerName: string) => {
     if (!("speechSynthesis" in window)) return;
@@ -871,8 +890,8 @@ export default function DemoPage() {
           {tab === "overview" && <OverviewTab payments={payments} />}
           {tab === "cashier" && <CashierTab stickers={stickers} setStickers={setStickers} quickAmounts={quickAmounts} setQuickAmounts={setQuickAmounts} activeSessions={activeSessions} setActiveSessions={setActiveSessions} onCompletePayment={handleCompletePayment} />}
           {tab === "nfc" && <NfcWriterTab stickers={stickers} setStickers={setStickers} />}
-          {tab === "settings" && <SettingsTab stickers={stickers} setStickers={setStickers} ttsLang={ttsLang} setTtsLang={setTtsLang} mode={mode} setMode={setMode} menuItems={menuItems} setMenuItems={setMenuItems} storeName={storeName} setStoreName={setStoreName} />}
-          {tab === "menu" && <CustomerMenuTab menuItems={menuItems} mode={mode} storeName={storeName} />}
+          {tab === "settings" && <SettingsTab stickers={stickers} setStickers={setStickers} ttsLang={ttsLang} setTtsLang={setTtsLang} mode={mode} setMode={setMode} menuItems={menuItems} setMenuItems={setMenuItems} storeName={storeName} setStoreName={setStoreName} staticQrData={staticQrData} setStaticQrData={setStaticQrData} />}
+          {tab === "menu" && <CustomerMenuTab menuItems={menuItems} mode={mode} storeName={storeName} staticQrData={staticQrData} />}
           {tab === "testing" && <TestingPhaseTab />}
         </div>
       </main>
