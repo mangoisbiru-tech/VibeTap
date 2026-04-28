@@ -174,11 +174,16 @@ function OverviewTab({ payments }: { payments: Payment[] }) {
 }
 
 // ─── CASHIER TAB ──────────────────────────────────────────────────────────────
-function CashierTab({ stickers, setStickers, quickAmounts, setQuickAmounts, activeSessions, setActiveSessions, onCompletePayment }: {
+function CashierTab({ stickers, setStickers, quickAmounts, setQuickAmounts, activeSessions, setActiveSessions, onCompletePayment, plan, pushedBill, setPushedBill, billRequests, setBillRequests }: {
   stickers: Sticker[]; setStickers: (s: Sticker[]) => void;
   quickAmounts: number[]; setQuickAmounts: (a: number[]) => void;
   activeSessions: ActiveSession[]; setActiveSessions: (s: ActiveSession[]) => void;
   onCompletePayment: (amount: number, sticker: Sticker) => void;
+  plan: string;
+  pushedBill: { stickerId: string; stickerName: string; amount: number } | null;
+  setPushedBill: (b: { stickerId: string; stickerName: string; amount: number } | null) => void;
+  billRequests: { id: string; stickerName: string; wantsReceipt: boolean; time: number }[];
+  setBillRequests: (r: any[]) => void;
 }) {
   const [currentAmount, setCurrentAmount] = useState("0");
   const [editingQuick, setEditingQuick] = useState(false);
@@ -318,6 +323,58 @@ function CashierTab({ stickers, setStickers, quickAmounts, setQuickAmounts, acti
           );
         })}
       </div>
+
+      {/* Plan 2: Push Bill to Table */}
+      {plan === "plan2" && (
+        <div className="lg:col-span-2 bg-[#1A1A24] border border-blue-500/20 rounded-2xl p-6 space-y-4">
+          <h2 className="text-lg font-bold text-white flex items-center gap-2"><Zap size={18} className="text-blue-400" /> Push Bill to Table <span className="text-xs bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full font-medium">Plan 2</span></h2>
+          <p className="text-sm text-gray-400">Enter the total RM on your numpad above, pick a table, and hit Push. Customer taps their sticker and sees the amount instantly.</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {stickers.map(s => {
+              const isActive = pushedBill?.stickerId === s.id;
+              return (
+                <button key={s.id} onClick={() => { const a = parseFloat((parseInt(currentAmount, 10) / 100).toFixed(2)); if (a <= 0) return; setPushedBill({ stickerId: s.id, stickerName: s.name, amount: a }); setCurrentAmount("0"); }}
+                  className={`p-4 rounded-xl border text-left transition-all ${isActive ? "bg-blue-500/20 border-blue-500/50" : "bg-white/5 border-white/10 hover:border-blue-500/40"}`}>
+                  <p className="font-bold text-white text-sm">{s.name}</p>
+                  {isActive ? <p className="text-blue-300 font-black text-lg">RM {pushedBill!.amount.toFixed(2)}</p> : <p className="text-gray-500 text-xs">Tap to push bill</p>}
+                </button>
+              );
+            })}
+          </div>
+          {pushedBill && (
+            <div className="flex items-center justify-between bg-blue-500/10 border border-blue-500/20 rounded-xl px-4 py-3">
+              <p className="text-sm text-blue-300">Bill pushed to <span className="font-bold text-white">{pushedBill.stickerName}</span> — RM {pushedBill.amount.toFixed(2)}</p>
+              <button onClick={() => setPushedBill(null)} className="text-xs text-red-400 hover:text-red-300 bg-red-500/10 px-3 py-1 rounded-lg">Clear</button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Plan 3: Bill Requests from customers */}
+      {plan === "plan3" && (
+        <div className="lg:col-span-2 bg-[#1A1A24] border border-orange-500/20 rounded-2xl p-6 space-y-4">
+          <h2 className="text-lg font-bold text-white flex items-center gap-2"><AlertCircle size={18} className="text-orange-400" /> Bill Requests <span className="text-xs bg-orange-500/20 text-orange-300 px-2 py-0.5 rounded-full font-medium">Plan 3</span></h2>
+          <p className="text-sm text-gray-400">Customers tap the sticker and request a bill. You'll see it appear here in real-time.</p>
+          {billRequests.length === 0 ? (
+            <div className="text-center py-8 border-2 border-dashed border-white/5 rounded-2xl">
+              <p className="text-gray-500 text-sm">No bill requests yet.</p>
+              <p className="text-gray-600 text-xs mt-1">Go to Customer View tab and tap "Bill Please" to simulate.</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {billRequests.map(req => (
+                <div key={req.id} className="flex items-center justify-between bg-orange-500/10 border border-orange-500/20 rounded-xl px-4 py-3">
+                  <div>
+                    <p className="font-bold text-white">{req.stickerName}</p>
+                    <p className="text-xs text-orange-300 mt-0.5">{req.wantsReceipt ? "Wants receipt" : "No receipt needed"} · {new Date(req.time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>
+                  </div>
+                  <button onClick={() => setBillRequests(billRequests.filter(r => r.id !== req.id))} className="text-xs text-green-400 hover:text-green-300 bg-green-500/10 px-3 py-1.5 rounded-lg font-medium">Done</button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -543,19 +600,14 @@ function NfcWriterTab({ stickers, setStickers }: { stickers: Sticker[], setStick
 }
 
 // ─── SETTINGS TAB ─────────────────────────────────────────────────────────────
-function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, mode, setMode, menuItems, setMenuItems, storeName, setStoreName }: { 
-  stickers: Sticker[], 
-  setStickers: (s: Sticker[]) => void, 
-  ttsLang: string, 
-  setTtsLang: (l: string) => void,
-  mode: "redirect" | "menu",
-  setMode: (m: "redirect" | "menu") => void,
-  menuItems: any[],
-  setMenuItems: (m: any[]) => void,
-  storeName: string,
-  setStoreName: (n: string) => void,
-  staticQrData: string,
-  setStaticQrData: (d: string) => void
+function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, plan, setPlan, paymentUrl, setPaymentUrl, menuItems, setMenuItems, storeName, setStoreName, staticQrData, setStaticQrData }: { 
+  stickers: Sticker[], setStickers: (s: Sticker[]) => void, 
+  ttsLang: string, setTtsLang: (l: string) => void,
+  plan: "plan1" | "plan2" | "plan3", setPlan: (p: "plan1" | "plan2" | "plan3") => void,
+  paymentUrl: string, setPaymentUrl: (u: string) => void,
+  menuItems: any[], setMenuItems: (m: any[]) => void,
+  storeName: string, setStoreName: (n: string) => void,
+  staticQrData: string, setStaticQrData: (d: string) => void
 }) {
   const [phone, setPhone] = useState("+60 12-345 6789");
   const [securityEnabled, setSecurityEnabled] = useState(false);
@@ -595,38 +647,65 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, mode, setMode
         <p className="text-gray-500 text-sm mt-1">Configure your store, manage hardware tables, and adjust audio notifications.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="space-y-8">
-          {/* Mode Switch */}
-          <div className="bg-[#1A1A24] border border-white/10 rounded-2xl p-6 shadow-lg">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">Merchant Mode</h2>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() => setMode("redirect")}
-                className={`p-4 rounded-2xl border text-left transition-all ${
-                  mode === "redirect"
-                    ? "bg-purple-500/10 border-purple-500/40 text-purple-300 shadow-lg shadow-purple-500/5"
-                    : "bg-white/5 border-white/10 text-gray-500 hover:bg-white/[0.08]"
-                }`}
-              >
-                <ExternalLink size={20} className="mb-2" />
-                <p className="font-bold text-sm">Simple Redirect</p>
-                <p className="text-[10px] opacity-60">Go straight to TNG</p>
-              </button>
-              <button
-                onClick={() => setMode("menu")}
-                className={`p-4 rounded-2xl border text-left transition-all ${
-                  mode === "menu"
-                    ? "bg-blue-500/10 border-blue-500/40 text-blue-300 shadow-lg shadow-blue-500/5"
-                    : "bg-white/5 border-white/10 text-gray-500 hover:bg-white/[0.08]"
-                }`}
-              >
-                <UtensilsCrossed size={20} className="mb-2" />
-                <p className="font-bold text-sm">Mini Menu</p>
-                <p className="text-[10px] opacity-60">Customers select items first</p>
-              </button>
+      {/* Plan Selector */}
+      <div className="bg-[#1A1A24] border border-white/10 rounded-2xl p-6 shadow-lg">
+        <h2 className="text-lg font-bold text-white mb-2">Choose Your Plan</h2>
+        <p className="text-sm text-gray-500 mb-4">This controls what customers see when they tap the NFC sticker.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {([
+            { id: "plan1", label: "Plan 1", sub: "Direct TNG", desc: "Sticker opens TNG app directly. Customer types amount.", color: "purple" },
+            { id: "plan2", label: "Plan 2", sub: "Show Bill First", desc: "You push a bill amount from Cashier. Customer sees it and pays.", color: "blue" },
+            { id: "plan3", label: "Plan 3", sub: "Bill Please", desc: "Customer requests the bill. You bring it and handle payment.", color: "orange" },
+          ] as const).map(p => (
+            <button key={p.id} onClick={() => setPlan(p.id)}
+              className={`p-4 rounded-2xl border text-left transition-all ${
+                plan === p.id
+                  ? p.color === "purple" ? "bg-purple-500/15 border-purple-500/50 shadow-lg" : p.color === "blue" ? "bg-blue-500/15 border-blue-500/50 shadow-lg" : "bg-orange-500/15 border-orange-500/50 shadow-lg"
+                  : "bg-white/5 border-white/10 hover:bg-white/[0.08]"
+              }`}>
+              <p className={`font-black text-sm ${plan === p.id ? p.color === "purple" ? "text-purple-300" : p.color === "blue" ? "text-blue-300" : "text-orange-300" : "text-white"}`}>{p.label} — {p.sub}</p>
+              <p className="text-[11px] text-gray-500 mt-1 leading-snug">{p.desc}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Plan-specific URL info */}
+      <div className="bg-[#1A1A24] border border-white/10 rounded-2xl p-6 shadow-lg">
+        <h2 className="text-lg font-bold text-white mb-4">What URL Goes in the Sticker?</h2>
+        {plan === "plan1" && (
+          <div className="space-y-3">
+            <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-4">
+              <p className="text-xs text-purple-300 font-bold uppercase tracking-widest mb-1">Write this URL into the sticker</p>
+              <input type="text" value={paymentUrl} onChange={e => setPaymentUrl(e.target.value)} placeholder="https://payment.tngdigital.com.my/sc/..." className="w-full bg-[#0F0F16] border border-white/10 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-purple-500" />
+              <p className="text-[10px] text-gray-500 mt-2">Paste your TNG short link here. This URL goes directly into the NFC sticker via the NFC Writer tab.</p>
             </div>
           </div>
+        )}
+        {plan === "plan2" && (
+          <div className="space-y-3">
+            <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
+              <p className="text-xs text-blue-300 font-bold uppercase tracking-widest mb-1">Write this VibeTap URL into the sticker</p>
+              <div className="w-full bg-[#0F0F16] border border-white/10 rounded-lg px-3 py-2 text-sm text-blue-300 font-mono">https://vibe-tap-kpk2-one.vercel.app/m/&#123;your-slug&#125;</div>
+              <p className="text-[10px] text-gray-500 mt-2">NOT the TNG link. Customer will see the bill amount you pushed from your Cashier tab, then tap Pay with TNG.</p>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Your TNG QR Data (000201...) for auto-amount</label>
+              <input type="text" value={staticQrData} onChange={e => setStaticQrData(e.target.value)} placeholder="Paste 000201... code here" className="w-full bg-[#0F0F16] border border-white/10 rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-blue-500" />
+            </div>
+          </div>
+        )}
+        {plan === "plan3" && (
+          <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-4">
+            <p className="text-xs text-orange-300 font-bold uppercase tracking-widest mb-1">Write this VibeTap URL into the sticker</p>
+            <div className="w-full bg-[#0F0F16] border border-white/10 rounded-lg px-3 py-2 text-sm text-orange-300 font-mono">https://vibe-tap-kpk2-one.vercel.app/m/&#123;your-slug&#125;</div>
+            <p className="text-[10px] text-gray-500 mt-2">Customer taps the sticker, clicks "Bill Please", and you get notified in the Cashier tab. You then handle payment at the counter.</p>
+          </div>
+        )}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="space-y-8">
 
           <div className="bg-[#1A1A24] border border-white/10 rounded-2xl p-6 shadow-lg">
             <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4"><Store size={18} className="text-purple-400" /> Store Profile</h2>
@@ -661,7 +740,7 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, mode, setMode
         </div>
 
         <div className="space-y-8">
-          {mode === "menu" && (
+          {plan === "plan2" && (
             <div className="bg-[#1A1A24] border border-blue-500/20 rounded-2xl p-6 shadow-lg animate-in fade-in slide-in-from-right-4 duration-500">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-bold text-white flex items-center gap-2">Menu Items ({menuItems.length}/5)</h2>
@@ -725,96 +804,157 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, mode, setMode
 }
 
 // ─── CUSTOMER MENU TAB ────────────────────────────────────────────────────────
-function CustomerMenuTab({ menuItems, mode, storeName, staticQrData }: { menuItems: any[], mode: string, storeName: string, staticQrData: string }) {
+function CustomerMenuTab({ plan, paymentUrl, menuItems, storeName, staticQrData, pushedBill, onBillRequest }: {
+  plan: string; paymentUrl: string; menuItems: any[]; storeName: string;
+  staticQrData: string;
+  pushedBill: { stickerId: string; stickerName: string; amount: number } | null;
+  onBillRequest: (req: { id: string; stickerName: string; wantsReceipt: boolean; time: number }) => void;
+}) {
   const [cart, setCart] = useState<Record<number, number>>({});
+  const [wantsReceipt, setWantsReceipt] = useState(false);
+  const [billSent, setBillSent] = useState(false);
   const total = menuItems.reduce((sum, item, idx) => sum + (item.price * (cart[idx] || 0)), 0);
   const itemCount = Object.values(cart).reduce((a, b) => a + b, 0);
+  const updateQuantity = (idx: number, delta: number) => setCart(prev => ({ ...prev, [idx]: Math.max(0, (prev[idx] || 0) + delta) }));
 
-  const updateQuantity = (idx: number, delta: number) => {
-    setCart(prev => ({ ...prev, [idx]: Math.max(0, (prev[idx] || 0) + delta) }));
-  };
-
-  const handlePay = () => {
-    if (total <= 0) return;
-    
-    // In demo, we use a test payload if none provided
+  const buildTngPayload = (amount: number) => {
+    const testData = "00020101021126600015my.com.duitnow012300000000000000096338148020464875204599953034585802MY5909NG SOH AI6007Puchong63048599";
     const baseData = staticQrData && staticQrData.length > 20 ? staticQrData : testData;
-    
     let payload = baseData.split("6304")[0];
     const tag54Index = payload.indexOf("540");
-    if (tag54Index !== -1) {
-      const len = parseInt(payload.substring(tag54Index + 2, tag54Index + 4));
-      payload = payload.substring(0, tag54Index) + payload.substring(tag54Index + 4 + len);
-    }
-    const amtStr = total.toFixed(2);
+    if (tag54Index !== -1) { const len = parseInt(payload.substring(tag54Index + 2, tag54Index + 4)); payload = payload.substring(0, tag54Index) + payload.substring(tag54Index + 4 + len); }
+    const amtStr = amount.toFixed(2);
     const amtField = `54${amtStr.length.toString().padStart(2, "0")}${amtStr}`;
     const dynamicPayload = payload + amtField + "6304";
-    const finalPayload = dynamicPayload + crc16(dynamicPayload);
-    
-    window.location.href = "tngdwallet://pay?data=" + finalPayload;
+    return dynamicPayload + crc16(dynamicPayload);
   };
 
-  if (mode === "redirect") {
+  const PhoneFrame = ({ children }: { children: React.ReactNode }) => (
+    <div className="max-w-sm mx-auto relative min-h-[600px] border border-white/10 rounded-[3rem] p-1 bg-black/40 overflow-hidden shadow-2xl">
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 w-20 h-1.5 bg-white/20 rounded-full" />
+      {children}
+    </div>
+  );
+
+  // ── PLAN 1: Direct TNG ───────────────────────────────────────────────────────
+  if (plan === "plan1") {
     return (
-      <div className="max-w-md mx-auto text-center py-20 animate-in fade-in zoom-in duration-500">
-        <div className="w-24 h-24 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-purple-500/20">
-          <Zap className="text-purple-400 fill-purple-400 animate-pulse" size={48} />
+      <div className="space-y-4">
+        <div className="bg-purple-500/10 border border-purple-500/20 rounded-2xl p-4 text-sm text-purple-300">
+          <span className="font-bold">Plan 1 — Direct TNG:</span> Customer taps the sticker → phone opens TNG app directly → customer types amount manually.
         </div>
-        <h1 className="text-2xl font-black text-white mb-2">Direct Redirect Active</h1>
-        <p className="text-gray-500">Customers will skip this page and go straight to your TNG / Wallet.</p>
-        <div className="mt-8 bg-white/5 p-4 rounded-2xl border border-white/10">
-          <p className="text-xs text-gray-400 uppercase tracking-widest font-bold mb-4">Simulating Redirect...</p>
-          <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-            <div className="h-full bg-purple-500 w-2/3 animate-[loading_2s_infinite]"></div>
+        <PhoneFrame>
+          <div className="pt-14 pb-6 px-6 text-center">
+            <h2 className="text-xl font-black text-white">{storeName}</h2>
+            <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Tap initiated</p>
           </div>
-        </div>
+          <div className="px-6 text-center space-y-6 mt-4">
+            <div className="w-20 h-20 bg-[#00AEEF]/10 border border-[#00AEEF]/30 rounded-full flex items-center justify-center mx-auto">
+              <Zap size={36} className="text-[#00AEEF]" />
+            </div>
+            <div>
+              <p className="text-white font-bold text-lg">Opening TNG eWallet...</p>
+              <p className="text-gray-500 text-sm mt-1">You will enter the amount in TNG</p>
+            </div>
+            <button onClick={() => window.location.href = paymentUrl}
+              className="w-full bg-[#00AEEF] hover:bg-[#00AEEF]/80 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-xl shadow-[#00AEEF]/20">
+              Open TNG eWallet <ChevronRight size={18} />
+            </button>
+            <p className="text-[10px] text-gray-600">No amount is pre-filled. Customer types it in TNG.</p>
+          </div>
+        </PhoneFrame>
       </div>
     );
   }
 
-  return (
-    <div className="max-w-md mx-auto relative min-h-[600px] border border-white/10 rounded-[3rem] p-1 bg-black/40 overflow-hidden shadow-2xl">
-      {/* Mobile Frame Header */}
-      <div className="pt-14 pb-6 px-6 text-center">
-        <h2 className="text-xl font-black text-white">{storeName}</h2>
-        <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-1">Digital Menu</p>
-      </div>
-
-      <div className="px-6 space-y-3 pb-32">
-        {menuItems.map((item, idx) => (
-          <div key={idx} className="bg-white/5 border border-white/10 rounded-2xl p-5 flex items-center gap-3">
-            <div className="flex-1">
-              <p className="font-bold text-sm text-white/90">{item.name}</p>
-              <p className="text-blue-400 text-xs font-black">RM {item.price.toFixed(2)}</p>
-            </div>
-            <div className="flex items-center gap-2 bg-black/40 rounded-xl p-1 border border-white/5">
-              <button onClick={() => updateQuantity(idx, -1)} className="w-6 h-6 flex items-center justify-center hover:bg-white/10 rounded-md transition-colors"><Minus size={14} /></button>
-              <span className="text-xs font-bold w-4 text-center">{cart[idx] || 0}</span>
-              <button onClick={() => updateQuantity(idx, 1)} className="w-6 h-6 bg-purple-600 flex items-center justify-center hover:bg-purple-500 rounded-md transition-colors"><Plus size={14} /></button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {itemCount > 0 && (
-        <div className="absolute bottom-4 left-4 right-4 animate-in slide-in-from-bottom-10 duration-500">
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-4 shadow-2xl">
-            <div className="flex justify-between items-center mb-3 px-2">
-              <p className="text-lg font-black text-white">RM {total.toFixed(2)}</p>
-              <p className="text-xs font-bold text-blue-400">{itemCount} Items</p>
-            </div>
-            <button 
-              onClick={handlePay}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-black py-3 rounded-2xl flex items-center justify-center gap-2 text-sm shadow-xl shadow-purple-600/20 transition-all active:scale-95"
-            >
-              PAY WITH TNG <ChevronRight size={16} />
-            </button>
-          </div>
+  // ── PLAN 2: Show Bill First ──────────────────────────────────────────────────
+  if (plan === "plan2") {
+    return (
+      <div className="space-y-4">
+        <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-4 text-sm text-blue-300">
+          <span className="font-bold">Plan 2 — Show Bill First:</span> Go to Cashier tab → type amount → click a table to push the bill. Then come back here to see the customer experience.
         </div>
-      )}
+        <PhoneFrame>
+          <div className="pt-14 pb-6 px-6 text-center">
+            <h2 className="text-xl font-black text-white">{storeName}</h2>
+            <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">{pushedBill ? pushedBill.stickerName : "Waiting..."}</p>
+          </div>
+          <div className="px-6 space-y-4">
+            {!pushedBill ? (
+              <div className="text-center py-12 space-y-3">
+                <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto border border-white/10">
+                  <Timer size={28} className="text-gray-500 animate-pulse" />
+                </div>
+                <p className="text-gray-400 font-medium">Waiting for bill...</p>
+                <p className="text-gray-600 text-xs">Your boss is preparing the bill</p>
+              </div>
+            ) : (
+              <div className="space-y-4 pt-4">
+                <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-5 text-center">
+                  <p className="text-xs text-blue-300 uppercase tracking-widest font-bold mb-1">Amount Due</p>
+                  <p className="text-5xl font-black text-white">RM {pushedBill.amount.toFixed(2)}</p>
+                  <p className="text-gray-500 text-xs mt-2">{pushedBill.stickerName}</p>
+                </div>
+                <button onClick={() => window.location.href = "tngdwallet://pay?data=" + buildTngPayload(pushedBill.amount)}
+                  className="w-full bg-gradient-to-r from-[#00AEEF] to-blue-600 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-xl shadow-blue-600/20">
+                  PAY RM {pushedBill.amount.toFixed(2)} WITH TNG <ChevronRight size={18} />
+                </button>
+                <p className="text-[10px] text-gray-600 text-center">Amount is pre-filled. Just confirm in TNG.</p>
+              </div>
+            )}
+          </div>
+        </PhoneFrame>
+      </div>
+    );
+  }
+
+  // ── PLAN 3: Bill Please ──────────────────────────────────────────────────────
+  return (
+    <div className="space-y-4">
+      <div className="bg-orange-500/10 border border-orange-500/20 rounded-2xl p-4 text-sm text-orange-300">
+        <span className="font-bold">Plan 3 — Bill Please:</span> Customer taps sticker → requests bill → you see the request in Cashier tab → handle payment at counter.
+      </div>
+      <PhoneFrame>
+        <div className="pt-14 pb-6 px-6 text-center">
+          <h2 className="text-xl font-black text-white">{storeName}</h2>
+          <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Table Service</p>
+        </div>
+        <div className="px-6 space-y-4">
+          {billSent ? (
+            <div className="text-center py-10 space-y-3 animate-in fade-in zoom-in duration-500">
+              <div className="w-20 h-20 bg-green-500/10 border border-green-500/30 rounded-full flex items-center justify-center mx-auto">
+                <CheckCircle2 size={40} className="text-green-400" />
+              </div>
+              <p className="text-white font-bold text-lg">Bill Requested!</p>
+              <p className="text-gray-400 text-sm">Your boss has been notified.<br />They will come to your table shortly.</p>
+              <button onClick={() => setBillSent(false)} className="text-xs text-gray-600 hover:text-gray-400 underline mt-4">Reset (demo only)</button>
+            </div>
+          ) : (
+            <div className="space-y-5 pt-4">
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 text-center">
+                <p className="text-gray-400 text-sm mb-1">Ready to pay?</p>
+                <p className="text-white font-bold text-lg">Request your bill below</p>
+              </div>
+              <div onClick={() => setWantsReceipt(!wantsReceipt)}
+                className={`flex items-center gap-3 p-4 rounded-2xl border cursor-pointer transition-all ${wantsReceipt ? "bg-orange-500/10 border-orange-500/30" : "bg-white/5 border-white/10"}`}>
+                <div className={`w-5 h-5 rounded flex items-center justify-center border transition-all ${wantsReceipt ? "bg-orange-500 border-orange-500" : "border-white/20"}`}>
+                  {wantsReceipt && <Check size={12} className="text-white" />}
+                </div>
+                <p className="text-sm text-white font-medium">I want a receipt</p>
+              </div>
+              <button
+                onClick={() => { onBillRequest({ id: Date.now().toString(), stickerName: "Demo Table", wantsReceipt, time: Date.now() }); setBillSent(true); }}
+                className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-xl shadow-orange-500/20">
+                Bill Please <ChevronRight size={18} />
+              </button>
+            </div>
+          )}
+        </div>
+      </PhoneFrame>
     </div>
   );
 }
+
 
 // ─── TESTING PHASE TAB ────────────────────────────────────────────────────────
 function TestingPhaseTab() {
@@ -854,10 +994,13 @@ export default function DemoPage() {
   const [activeSessions, setActiveSessions] = useState<ActiveSession[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [ttsLang, setTtsLang] = useState("en-US");
-  const [mode, setMode] = useState<"redirect" | "menu">("menu");
+  const [plan, setPlan] = useState<"plan1" | "plan2" | "plan3">("plan1");
+  const [paymentUrl, setPaymentUrl] = useState("https://payment.tngdigital.com.my/sc/YOUR_LINK_HERE");
   const [menuItems, setMenuItems] = useState(INITIAL_MENU_ITEMS);
   const [storeName, setStoreName] = useState("Demo Kopitiam");
   const [staticQrData, setStaticQrData] = useState("");
+  const [pushedBill, setPushedBill] = useState<{ stickerId: string; stickerName: string; amount: number } | null>(null);
+  const [billRequests, setBillRequests] = useState<{ id: string; stickerName: string; wantsReceipt: boolean; time: number }[]>([]);
 
   const playVoiceOfSuccess = (amount: number, stickerName: string) => {
     if (!("speechSynthesis" in window)) return;
@@ -888,10 +1031,10 @@ export default function DemoPage() {
       <main className="flex-1 overflow-auto pb-20 md:pb-0">
         <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8">
           {tab === "overview" && <OverviewTab payments={payments} />}
-          {tab === "cashier" && <CashierTab stickers={stickers} setStickers={setStickers} quickAmounts={quickAmounts} setQuickAmounts={setQuickAmounts} activeSessions={activeSessions} setActiveSessions={setActiveSessions} onCompletePayment={handleCompletePayment} />}
+          {tab === "cashier" && <CashierTab stickers={stickers} setStickers={setStickers} quickAmounts={quickAmounts} setQuickAmounts={setQuickAmounts} activeSessions={activeSessions} setActiveSessions={setActiveSessions} onCompletePayment={handleCompletePayment} plan={plan} pushedBill={pushedBill} setPushedBill={setPushedBill} billRequests={billRequests} setBillRequests={setBillRequests} />}
           {tab === "nfc" && <NfcWriterTab stickers={stickers} setStickers={setStickers} />}
-          {tab === "settings" && <SettingsTab stickers={stickers} setStickers={setStickers} ttsLang={ttsLang} setTtsLang={setTtsLang} mode={mode} setMode={setMode} menuItems={menuItems} setMenuItems={setMenuItems} storeName={storeName} setStoreName={setStoreName} staticQrData={staticQrData} setStaticQrData={setStaticQrData} />}
-          {tab === "menu" && <CustomerMenuTab menuItems={menuItems} mode={mode} storeName={storeName} staticQrData={staticQrData} />}
+          {tab === "settings" && <SettingsTab stickers={stickers} setStickers={setStickers} ttsLang={ttsLang} setTtsLang={setTtsLang} plan={plan} setPlan={setPlan} paymentUrl={paymentUrl} setPaymentUrl={setPaymentUrl} menuItems={menuItems} setMenuItems={setMenuItems} storeName={storeName} setStoreName={setStoreName} staticQrData={staticQrData} setStaticQrData={setStaticQrData} />}
+          {tab === "menu" && <CustomerMenuTab plan={plan} paymentUrl={paymentUrl} menuItems={menuItems} storeName={storeName} staticQrData={staticQrData} pushedBill={pushedBill} onBillRequest={(req) => setBillRequests(prev => [...prev, req])} />}
           {tab === "testing" && <TestingPhaseTab />}
         </div>
       </main>
