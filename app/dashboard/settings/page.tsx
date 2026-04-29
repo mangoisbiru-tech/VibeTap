@@ -391,13 +391,13 @@ export default function SettingsPage() {
         </div>
       )}
 
-      {/* ── NFC Sticker Manager ───────────────────────────────────────── */}
+      {/* ── Table Management ───────────────────────────────────────── */}
       <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 space-y-4">
         <h2 className="text-lg font-bold flex items-center gap-2">
-          <Nfc size={18} className="text-purple-400" /> NFC Stickers
+          <UtensilsCrossed size={18} className="text-purple-400" /> Table Management
         </h2>
         <p className="text-sm text-gray-400 leading-relaxed">
-          Each sticker has a <span className="text-white font-semibold">unique URL</span>. Write that URL into the physical NFC sticker using the NFC Writer. The URL tells the system which table it belongs to.
+          Add your tables here (e.g., Table 1, VIP Room). Once created, you can write them to your physical stickers using the <span className="text-white font-semibold">NFC Writer</span> tab on the left.
         </p>
 
         {/* URL format explainer */}
@@ -427,7 +427,7 @@ export default function SettingsPage() {
         <div className="space-y-3">
           {stickers.length === 0 && (
             <p className="text-gray-600 text-sm py-4 text-center border-2 border-dashed border-white/5 rounded-xl">
-              No stickers yet. Add one below.
+              No tables yet. Add one below.
             </p>
           )}
           {stickers.map((s) => (

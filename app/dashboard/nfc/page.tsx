@@ -18,7 +18,6 @@ export default function NfcToolPage() {
   const [plan, setPlan] = useState<"plan1" | "plan2" | "plan3">("plan1");
   const [paymentUrl, setPaymentUrl] = useState("");
   const [stickers, setStickers] = useState<Sticker[]>([]);
-  const [loading, setLoading] = useState(true);
 
   // NFC State
   const [activeTab, setActiveTab] = useState<"read" | "write" | "other">("write");
@@ -54,7 +53,6 @@ export default function NfcToolPage() {
             tableName: d.data().tableName,
           }))
         );
-        setLoading(false);
       });
 
       return () => {
@@ -145,13 +143,7 @@ export default function NfcToolPage() {
     { id: "other" as const, label: "Other Tools", icon: <Settings size={14} /> },
   ];
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
+
 
   return (
     <div className="max-w-4xl space-y-6 pb-16">
