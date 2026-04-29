@@ -16,14 +16,7 @@ export default function ShowBill({
   staticQrData: string;
   tngPaymentUrl: string;
 }) {
-  const handlePay = () => {
-    if (staticQrData && staticQrData.length > 20) {
-      const payload = buildTngPayload(staticQrData, amount);
-      window.location.href = `tngdwallet://pay?data=${payload}`;
-    } else {
-      window.location.href = tngPaymentUrl;
-    }
-  };
+  // Removed handlePay as we are using a direct anchor tag now for better deep linking
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white flex flex-col items-center justify-center p-6">
@@ -44,13 +37,17 @@ export default function ShowBill({
         </div>
 
         {/* Pay Button */}
-        <button
-          onClick={handlePay}
+        <a
+          href={
+            staticQrData && staticQrData.length > 20
+              ? `tngdwallet://pay?data=${buildTngPayload(staticQrData, amount)}`
+              : tngPaymentUrl
+          }
           className="w-full bg-gradient-to-r from-[#00AEEF] to-blue-600 text-white font-black py-5 rounded-2xl flex items-center justify-center gap-3 text-lg transition-all active:scale-95 shadow-xl shadow-blue-600/25"
         >
           PAY RM {amount.toFixed(2)} WITH TNG
           <ChevronRight size={22} />
-        </button>
+        </a>
 
         <p className="text-center text-xs text-gray-600">
           Amount is pre-filled. Just confirm in TNG eWallet.
