@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/client";
 import LiveSticker from "./LiveSticker";
@@ -29,7 +30,17 @@ export default async function StickerPage(props: {
   // We do this server-side so Android can intercept the HTTP 307 redirect and open the native app
   if (activePlan === "plan1") {
     if (!tngPaymentUrl) notFound();
-    redirect(tngPaymentUrl);
+
+    // Check if user is on Android to force the TNG App via Intent
+    const headersList = await headers();
+    const userAgent = headersList.get("user-agent") || "";
+    if (/android/i.test(userAgent) && tngPaymentUrl.startsWith("https://")) {
+      const withoutScheme = tngPaymentUrl.substring(8);
+      const intentUrl = `intent://${withoutScheme}#Intent;scheme=https;package=my.com.tngdigital.ewallet;end;`;
+      redirect(intentUrl);
+    } else {
+      redirect(tngPaymentUrl);
+    }
   }
 
   // ── PLAN 2 & 3: Interactive real-time component

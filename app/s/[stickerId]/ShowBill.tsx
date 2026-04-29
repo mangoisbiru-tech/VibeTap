@@ -16,7 +16,22 @@ export default function ShowBill({
   staticQrData: string;
   tngPaymentUrl: string;
 }) {
-  // Removed handlePay as we are using a direct anchor tag now for better deep linking
+  // Generate the proper deep link to force the TNG App to open
+  const getPaymentLink = () => {
+    if (staticQrData && staticQrData.length > 20) {
+      return `tngdwallet://pay?data=${buildTngPayload(staticQrData, amount)}`;
+    }
+    
+    // Force Android to open the native app using Intent
+    if (typeof window !== "undefined" && /android/i.test(navigator.userAgent)) {
+      if (tngPaymentUrl.startsWith("https://")) {
+        const withoutScheme = tngPaymentUrl.substring(8);
+        return `intent://${withoutScheme}#Intent;scheme=https;package=my.com.tngdigital.ewallet;end;`;
+      }
+    }
+    
+    return tngPaymentUrl;
+  };
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white flex flex-col items-center justify-center p-6">
@@ -38,11 +53,7 @@ export default function ShowBill({
 
         {/* Pay Button */}
         <a
-          href={
-            staticQrData && staticQrData.length > 20
-              ? `tngdwallet://pay?data=${buildTngPayload(staticQrData, amount)}`
-              : tngPaymentUrl
-          }
+          href={getPaymentLink()}
           className="w-full bg-gradient-to-r from-[#00AEEF] to-blue-600 text-white font-black py-5 rounded-2xl flex items-center justify-center gap-3 text-lg transition-all active:scale-95 shadow-xl shadow-blue-600/25"
         >
           PAY RM {amount.toFixed(2)} WITH TNG
