@@ -200,7 +200,7 @@ export default function DashboardPage() {
         <StatCard
           icon={<TrendingUp size={18} />}
           label="All Time Taps"
-          value={merchant.tapCount.toLocaleString()}
+          value={(merchant.tapCount || 0).toLocaleString()}
           color="#A78BFA"
           sub={`Since ${merchant.createdAt?.toDate ? merchant.createdAt.toDate().toLocaleDateString("en-MY") : "—"}`}
         />
