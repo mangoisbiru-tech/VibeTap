@@ -73,8 +73,6 @@ function Sidebar({ tab, setTab }: { tab: string; setTab: (t: string) => void }) 
     { id: "cashier", icon: <Calculator size={18} />, label: "Cashier Mode" },
     { id: "nfc", icon: <Nfc size={18} />, label: "NFC Writer" },
     { id: "settings", icon: <Settings size={18} />, label: "Settings" },
-    { id: "menu", icon: <UtensilsCrossed size={18} />, label: "Customer View" },
-    { id: "testing", icon: <Zap size={18} />, label: "Testing Phase 2" },
   ];
   return (
     <div className="w-64 bg-[#0F0F16] border-r border-white/5 flex-col hidden md:flex sticky top-0 h-screen">
@@ -593,7 +591,7 @@ function NfcWriterTab({ stickers, setStickers, plan, paymentUrl }: {
                 </div>
               )}
               {stickers.map(table => {
-                const stickerUrl = `https://vibe-tap-kpk2-one.vercel.app/s/${table.id}`;
+                const stickerUrl = table.paymentUrl || `https://vibe-tap-kpk2-one.vercel.app/s/${table.id}`;
                 return (
                   <div key={table.id} className="bg-[#1A1A24] border border-white/10 rounded-2xl p-5 space-y-4">
                     <div className="flex items-center gap-2">
@@ -714,41 +712,59 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, plan, setPlan
           </span>
         </p>
 
-        <div className="space-y-2 mt-4">
+        <div className="space-y-4 mt-4">
           {/* Plan 1 URL */}
-          <div className="bg-black/40 rounded-xl p-3 flex items-center gap-3">
-            <div className="flex-1 min-w-0">
-              <p className="text-[10px] text-purple-400 font-bold uppercase tracking-widest mb-0.5">Plan 1 — write this TNG link directly</p>
-              <p className="font-mono text-xs text-gray-300 truncate">
-                {paymentUrl || "⚠ Paste your TNG link in Business Info below"}
-              </p>
+          {plan === "plan1" && (
+            <div className="bg-black/40 rounded-xl p-4 space-y-2">
+              <p className="text-[10px] text-purple-400 font-bold uppercase tracking-widest">Plan 1 — write this TNG link directly</p>
+              <input 
+                type="text" 
+                value={paymentUrl} 
+                onChange={e => setPaymentUrl(e.target.value)} 
+                placeholder="https://payment.tngdigital.com.my/sc/..." 
+                className="w-full bg-[#0F0F16] border border-white/10 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-purple-500" 
+              />
             </div>
-          </div>
+          )}
 
           {/* Plans 2 & 3 — sticker-specific URLs */}
-          <div className="bg-black/40 rounded-xl p-3">
-            <p className="text-[10px] text-blue-400 font-bold uppercase tracking-widest mb-2">Plans 2 & 3 — unique URL per table (from Active Tables below)</p>
-            {stickers.length === 0 ? (
-              <p className="text-xs text-gray-600 italic">Add tables below — each gets its own unique URL</p>
-            ) : (
-              <div className="space-y-1.5">
-                {stickers.map((s) => {
-                  const url = `https://vibe-tap-kpk2-one.vercel.app/s/${s.id}`;
-                  return (
-                    <div key={s.id} className="flex items-center gap-2">
-                      <p className="flex-1 font-mono text-xs text-gray-300 truncate">{url}</p>
-                      <button
-                        onClick={() => { navigator.clipboard.writeText(url); setCopiedId(s.id); setTimeout(() => setCopiedId(null), 2000); }}
-                        className="flex-shrink-0 flex items-center gap-1 text-[10px] font-bold bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 px-2 py-1 rounded-lg transition-all"
-                      >
-                        {copiedId === s.id ? <><Check size={10} /> Copied!</> : <><Copy size={10} /> {s.name}</>}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+          {(plan === "plan2" || plan === "plan3") && (
+            <div className="bg-black/40 rounded-xl p-4">
+              <p className="text-[10px] text-blue-400 font-bold uppercase tracking-widest mb-3">Plans 2 & 3 — unique URL per table</p>
+              {stickers.length === 0 ? (
+                <p className="text-xs text-gray-600 italic">Add tables below — each gets its own editable URL</p>
+              ) : (
+                <div className="space-y-3">
+                  {stickers.map((s) => {
+                    // Default to vibetap url if paymentUrl is empty
+                    const url = s.paymentUrl || `https://vibe-tap-kpk2-one.vercel.app/s/${s.id}`;
+                    return (
+                      <div key={s.id} className="flex flex-col gap-1">
+                        <label className="text-xs text-gray-400 font-semibold">{s.name}</label>
+                        <div className="flex items-center gap-2">
+                          <input 
+                            type="text" 
+                            value={url} 
+                            onChange={(e) => {
+                              const newUrl = e.target.value;
+                              setStickers(stickers.map(st => st.id === s.id ? { ...st, paymentUrl: newUrl } : st));
+                            }}
+                            className="flex-1 bg-[#0F0F16] border border-white/10 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-blue-500"
+                          />
+                          <button
+                            onClick={() => { navigator.clipboard.writeText(url); setCopiedId(s.id); setTimeout(() => setCopiedId(null), 2000); }}
+                            className="flex-shrink-0 flex items-center gap-1 text-[10px] font-bold bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 px-3 py-2 rounded-lg transition-all"
+                          >
+                            {copiedId === s.id ? <><Check size={12} /> Copied</> : <><Copy size={12} /> Copy</>}
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -1105,8 +1121,6 @@ export default function DemoPage() {
           {tab === "cashier" && <CashierTab stickers={stickers} setStickers={setStickers} quickAmounts={quickAmounts} setQuickAmounts={setQuickAmounts} activeSessions={activeSessions} setActiveSessions={setActiveSessions} onCompletePayment={handleCompletePayment} plan={plan} pushedBill={pushedBill} setPushedBill={setPushedBill} billRequests={billRequests} setBillRequests={setBillRequests} />}
           {tab === "nfc" && <NfcWriterTab stickers={stickers} setStickers={setStickers} plan={plan} paymentUrl={paymentUrl} />}
           {tab === "settings" && <SettingsTab stickers={stickers} setStickers={setStickers} ttsLang={ttsLang} setTtsLang={setTtsLang} plan={plan} setPlan={setPlan} paymentUrl={paymentUrl} setPaymentUrl={setPaymentUrl} menuItems={menuItems} setMenuItems={setMenuItems} storeName={storeName} setStoreName={setStoreName} staticQrData={staticQrData} setStaticQrData={setStaticQrData} />}
-          {tab === "menu" && <CustomerMenuTab plan={plan} paymentUrl={paymentUrl} menuItems={menuItems} storeName={storeName} staticQrData={staticQrData} pushedBill={pushedBill} onBillRequest={(req) => setBillRequests(prev => [...prev, req])} />}
-          {tab === "testing" && <TestingPhaseTab />}
         </div>
       </main>
 
@@ -1117,8 +1131,6 @@ export default function DemoPage() {
           { id: "cashier", icon: <Calculator size={20} />, label: "Cashier" },
           { id: "nfc", icon: <Nfc size={20} />, label: "NFC" },
           { id: "settings", icon: <Settings size={20} />, label: "Settings" },
-          { id: "menu", icon: <UtensilsCrossed size={20} />, label: "Menu" },
-          { id: "testing", icon: <Zap size={20} />, label: "Testing 2" },
         ].map(item => (
           <button
             key={item.id}
