@@ -591,7 +591,7 @@ function NfcWriterTab({ stickers, setStickers, plan, paymentUrl }: {
                 </div>
               )}
               {stickers.map(table => {
-                const stickerUrl = table.paymentUrl || `https://vibe-tap-kpk2-one.vercel.app/s/${table.id}`;
+                const stickerUrl = table.paymentUrl || `https://vibe-tap-kpk2-one.vercel.app/demo/s/${table.id}?plan=${plan}`;
                 return (
                   <div key={table.id} className="bg-[#1A1A24] border border-white/10 rounded-2xl p-5 space-y-4">
                     <div className="flex items-center gap-2">
@@ -737,7 +737,7 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, plan, setPlan
                 <div className="space-y-3">
                   {stickers.map((s) => {
                     // Default to vibetap url if paymentUrl is empty
-                    const url = s.paymentUrl || `https://vibe-tap-kpk2-one.vercel.app/s/${s.id}`;
+                    const url = s.paymentUrl || `https://vibe-tap-kpk2-one.vercel.app/demo/s/${s.id}?plan=${plan}`;
                     return (
                       <div key={s.id} className="flex flex-col gap-1">
                         <label className="text-xs text-gray-400 font-semibold">{s.name}</label>
