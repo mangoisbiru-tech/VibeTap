@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import {
   doc,
-  updateDoc,
+  setDoc,
   onSnapshot,
   collection,
   addDoc,
@@ -122,7 +122,8 @@ export default function SettingsPage() {
     if (!uid) return;
     setSaving(true);
     try {
-      await updateDoc(doc(db, "merchants", uid), {
+      await setDoc(doc(db, "merchants", uid), {
+        uid, // Ensure uid is set
         name,
         tngPaymentUrl,
         paymentUrl: tngPaymentUrl, // keep backward compat
@@ -130,9 +131,12 @@ export default function SettingsPage() {
         isActive,
         plan,
         menuItems,
-      });
+      }, { merge: true });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
+    } catch (e: any) {
+      console.error("Failed to save settings:", e);
+      alert(`Failed to save settings: ${e.message}`);
     } finally {
       setSaving(false);
     }
