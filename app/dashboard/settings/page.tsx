@@ -61,6 +61,7 @@ const PLANS = [
 
 export default function SettingsPage() {
   const [uid, setUid] = useState<string | null>(null);
+  const [slug, setSlug] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [tngPaymentUrl, setTngPaymentUrl] = useState("");
   const [staticQrData, setStaticQrData] = useState("");
@@ -71,6 +72,7 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [copiedSlug, setCopiedSlug] = useState(false);
   const [addingSticker, setAddingSticker] = useState(false);
   const [newTableName, setNewTableName] = useState("");
 
@@ -84,6 +86,7 @@ export default function SettingsPage() {
         if (snap.exists()) {
           const d = snap.data();
           setName(d.name || "");
+          setSlug(d.slug || null);
           setTngPaymentUrl(d.tngPaymentUrl || d.paymentUrl || "");
           setStaticQrData(d.staticQrData || "");
           setIsActive(d.isActive ?? true);
@@ -186,6 +189,62 @@ export default function SettingsPage() {
         <p className="text-gray-500 text-sm mt-1">
           Configure your store, choose your plan, and manage your NFC stickers.
         </p>
+      </div>
+
+      {/* ── YOUR NFC URL ─ shown prominently at the top ──────────────── */}
+      <div className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/30 rounded-2xl p-5 space-y-3">
+        <h2 className="text-base font-bold text-white flex items-center gap-2">
+          <Nfc size={18} className="text-purple-400" /> Your NFC Sticker URL
+        </h2>
+        <p className="text-sm text-gray-400 leading-relaxed">
+          This is the URL to write into your NFC sticker. It is unique to your account.{" "}
+          <span className="text-yellow-400 font-semibold">
+            Do NOT make up anything — copy it exactly from here.
+          </span>
+        </p>
+
+        {slug ? (
+          <div className="space-y-2">
+            {/* Plan 1 URL */}
+            <div className="bg-black/40 rounded-xl p-3 flex items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] text-purple-400 font-bold uppercase tracking-widest mb-0.5">Plan 1 — write this TNG link directly</p>
+                <p className="font-mono text-xs text-gray-300 truncate">
+                  {tngPaymentUrl || "⚠ Paste your TNG link in Business Info below"}
+                </p>
+              </div>
+            </div>
+
+            {/* Plans 2 & 3 — sticker-specific URLs */}
+            <div className="bg-black/40 rounded-xl p-3">
+              <p className="text-[10px] text-blue-400 font-bold uppercase tracking-widest mb-2">Plans 2 & 3 — unique URL per table (from NFC Stickers below)</p>
+              {stickers.length === 0 ? (
+                <p className="text-xs text-gray-600 italic">Add stickers below — each gets its own unique URL</p>
+              ) : (
+                <div className="space-y-1.5">
+                  {stickers.map((s) => {
+                    const url = `${SITE_URL}/s/${s.id}`;
+                    return (
+                      <div key={s.id} className="flex items-center gap-2">
+                        <p className="flex-1 font-mono text-xs text-gray-300 truncate">{url}</p>
+                        <button
+                          onClick={() => { navigator.clipboard.writeText(url); setCopiedId(s.id); setTimeout(() => setCopiedId(null), 2000); }}
+                          className="flex-shrink-0 flex items-center gap-1 text-[10px] font-bold bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 px-2 py-1 rounded-lg transition-all"
+                        >
+                          {copiedId === s.id ? <><Check size={10} /> Copied!</> : <><Copy size={10} /> {s.tableName}</>}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="bg-black/40 rounded-xl p-3 text-center">
+            <div className="w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin mx-auto" />
+          </div>
+        )}
       </div>
 
       {/* ── Plan Selector ────────────────────────────────────────────── */}
