@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { ChevronRight } from "lucide-react";
 import { buildTngPayload } from "@/lib/crc16";
 
@@ -16,22 +17,21 @@ export default function ShowBill({
   staticQrData: string;
   tngPaymentUrl: string;
 }) {
-  // Generate the proper deep link to force the TNG App to open
-  const getPaymentLink = () => {
+  const [paymentHref, setPaymentHref] = useState(tngPaymentUrl);
+
+  useEffect(() => {
     if (staticQrData && staticQrData.length > 20) {
-      return `tngdwallet://pay?data=${buildTngPayload(staticQrData, amount)}`;
+      setPaymentHref(`tngdwallet://pay?data=${buildTngPayload(staticQrData, amount)}`);
+      return;
     }
-    
-    // Force Android to open the native app using Intent
-    if (typeof window !== "undefined" && /android/i.test(navigator.userAgent)) {
-      if (tngPaymentUrl.startsWith("https://")) {
-        const withoutScheme = tngPaymentUrl.substring(8);
-        return `intent://${withoutScheme}#Intent;scheme=https;package=my.com.tngdigital.ewallet;end;`;
-      }
+
+    if (/android/i.test(navigator.userAgent) && tngPaymentUrl.startsWith("https://")) {
+      const withoutScheme = tngPaymentUrl.substring(8);
+      setPaymentHref(`intent://${withoutScheme}#Intent;scheme=https;package=my.com.tngdigital.ewallet;end;`);
+    } else {
+      setPaymentHref(tngPaymentUrl);
     }
-    
-    return tngPaymentUrl;
-  };
+  }, [tngPaymentUrl, staticQrData, amount]);
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white flex flex-col items-center justify-center p-6">
@@ -53,11 +53,10 @@ export default function ShowBill({
 
         {/* Pay Button */}
         <a
-          href={getPaymentLink()}
-          className="w-full bg-gradient-to-r from-[#00AEEF] to-blue-600 text-white font-black py-5 rounded-2xl flex items-center justify-center gap-3 text-lg transition-all active:scale-95 shadow-xl shadow-blue-600/25"
+          href={paymentHref}
+          className="w-full bg-gradient-to-r from-[#00AEEF] to-blue-600 text-white font-black py-5 rounded-2xl flex items-center justify-center gap-3 text-lg transition-all active:scale-95 shadow-xl shadow-blue-600/25 block text-center"
         >
           PAY RM {amount.toFixed(2)} WITH TNG
-          <ChevronRight size={22} />
         </a>
 
         <p className="text-center text-xs text-gray-600">
