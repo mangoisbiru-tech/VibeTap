@@ -203,7 +203,7 @@ export default function SettingsPage() {
           </span>
         </p>
 
-        {slug ? (
+        {uid ? (
           <div className="space-y-2">
             {/* Plan 1 URL */}
             <div className="bg-black/40 rounded-xl p-3 flex items-center gap-3">
@@ -315,7 +315,7 @@ export default function SettingsPage() {
         <div>
           <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
             Static QR Data{" "}
-            <span className="text-blue-400">(Plans 2 & 3 — scan your QR sticker with a scanner app)</span>
+            <span className="text-blue-400">(Plans 2 & 3 — paste your TNG Merchant QR Code data)</span>
           </label>
           <input
             type="text"
@@ -325,7 +325,7 @@ export default function SettingsPage() {
             placeholder="000201010211..."
           />
           <p className="text-[10px] text-gray-600 mt-1">
-            Scan your physical TNG/DuitNow QR with a normal QR scanner app → copy the long code → paste here.
+            Scan your physical TNG/DuitNow QR with a normal QR scanner app (or upload a screenshot) → copy the long code → paste here.
           </p>
         </div>
 
