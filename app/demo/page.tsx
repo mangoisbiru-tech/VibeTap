@@ -23,6 +23,7 @@ import {
   Ban,
   Lock,
   ScanSearch,
+  Copy,
   Store,
   UtensilsCrossed,
   ExternalLink,
@@ -692,11 +693,63 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, plan, setPlan
     { code: "zh-CN", name: "中文 (Mandarin)" },
   ];
 
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
   return (
     <div className="max-w-4xl space-y-8 pb-12">
       <div>
         <h1 className="text-2xl font-black text-white">Merchant Settings</h1>
-        <p className="text-gray-500 text-sm mt-1">Configure your store, manage hardware tables, and adjust audio notifications.</p>
+        <p className="text-gray-500 text-sm mt-1">Configure your store, choose your plan, and manage your NFC stickers.</p>
+      </div>
+
+      {/* ── YOUR NFC URL ─ shown prominently at the top ──────────────── */}
+      <div className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/30 rounded-2xl p-5 space-y-3 shadow-lg">
+        <h2 className="text-base font-bold text-white flex items-center gap-2">
+          <Nfc size={18} className="text-purple-400" /> Your NFC Sticker URL
+        </h2>
+        <p className="text-sm text-gray-400 leading-relaxed">
+          This is the URL to write into your NFC sticker. It tells the system which table was tapped.{" "}
+          <span className="text-yellow-400 font-semibold">
+            In the real app, this is auto-generated per sticker.
+          </span>
+        </p>
+
+        <div className="space-y-2 mt-4">
+          {/* Plan 1 URL */}
+          <div className="bg-black/40 rounded-xl p-3 flex items-center gap-3">
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] text-purple-400 font-bold uppercase tracking-widest mb-0.5">Plan 1 — write this TNG link directly</p>
+              <p className="font-mono text-xs text-gray-300 truncate">
+                {paymentUrl || "⚠ Paste your TNG link in Business Info below"}
+              </p>
+            </div>
+          </div>
+
+          {/* Plans 2 & 3 — sticker-specific URLs */}
+          <div className="bg-black/40 rounded-xl p-3">
+            <p className="text-[10px] text-blue-400 font-bold uppercase tracking-widest mb-2">Plans 2 & 3 — unique URL per table (from Active Tables below)</p>
+            {stickers.length === 0 ? (
+              <p className="text-xs text-gray-600 italic">Add tables below — each gets its own unique URL</p>
+            ) : (
+              <div className="space-y-1.5">
+                {stickers.map((s) => {
+                  const url = `https://vibe-tap-kpk2-one.vercel.app/s/${s.id}`;
+                  return (
+                    <div key={s.id} className="flex items-center gap-2">
+                      <p className="flex-1 font-mono text-xs text-gray-300 truncate">{url}</p>
+                      <button
+                        onClick={() => { navigator.clipboard.writeText(url); setCopiedId(s.id); setTimeout(() => setCopiedId(null), 2000); }}
+                        className="flex-shrink-0 flex items-center gap-1 text-[10px] font-bold bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 px-2 py-1 rounded-lg transition-all"
+                      >
+                        {copiedId === s.id ? <><Check size={10} /> Copied!</> : <><Copy size={10} /> {s.name}</>}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Plan Selector */}
@@ -720,40 +773,6 @@ function SettingsTab({ stickers, setStickers, ttsLang, setTtsLang, plan, setPlan
             </button>
           ))}
         </div>
-      </div>
-
-      {/* Plan-specific URL info */}
-      <div className="bg-[#1A1A24] border border-white/10 rounded-2xl p-6 shadow-lg">
-        <h2 className="text-lg font-bold text-white mb-4">What URL Goes in the Sticker?</h2>
-        {plan === "plan1" && (
-          <div className="space-y-3">
-            <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-4">
-              <p className="text-xs text-purple-300 font-bold uppercase tracking-widest mb-1">Write this URL into the sticker</p>
-              <input type="text" value={paymentUrl} onChange={e => setPaymentUrl(e.target.value)} placeholder="https://payment.tngdigital.com.my/sc/..." className="w-full bg-[#0F0F16] border border-white/10 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-purple-500" />
-              <p className="text-[10px] text-gray-500 mt-2">Paste your TNG short link here. This URL goes directly into the NFC sticker via the NFC Writer tab.</p>
-            </div>
-          </div>
-        )}
-        {plan === "plan2" && (
-          <div className="space-y-3">
-            <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
-              <p className="text-xs text-blue-300 font-bold uppercase tracking-widest mb-1">Write this VibeTap URL into the sticker</p>
-              <div className="w-full bg-[#0F0F16] border border-white/10 rounded-lg px-3 py-2 text-sm text-blue-300 font-mono">https://vibe-tap-kpk2-one.vercel.app/m/&#123;your-slug&#125;</div>
-              <p className="text-[10px] text-gray-500 mt-2">NOT the TNG link. Customer will see the bill amount you pushed from your Cashier tab, then tap Pay with TNG.</p>
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Your TNG QR Data (000201...) for auto-amount</label>
-              <input type="text" value={staticQrData} onChange={e => setStaticQrData(e.target.value)} placeholder="Paste 000201... code here" className="w-full bg-[#0F0F16] border border-white/10 rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-blue-500" />
-            </div>
-          </div>
-        )}
-        {plan === "plan3" && (
-          <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-4">
-            <p className="text-xs text-orange-300 font-bold uppercase tracking-widest mb-1">Write this VibeTap URL into the sticker</p>
-            <div className="w-full bg-[#0F0F16] border border-white/10 rounded-lg px-3 py-2 text-sm text-orange-300 font-mono">https://vibe-tap-kpk2-one.vercel.app/m/&#123;your-slug&#125;</div>
-            <p className="text-[10px] text-gray-500 mt-2">Customer taps the sticker, clicks "Bill Please", and you get notified in the Cashier tab. You then handle payment at the counter.</p>
-          </div>
-        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
