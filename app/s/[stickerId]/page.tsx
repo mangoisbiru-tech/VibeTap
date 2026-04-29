@@ -72,13 +72,14 @@ export default function StickerPage(props: {
     );
   }
 
-  const { tableName, plan, pushedBill } = sticker;
+  const { tableName, pushedBill } = sticker;
   const merchantName = merchant.name as string;
   const tngPaymentUrl = (merchant.tngPaymentUrl || merchant.paymentUrl || "") as string;
   const staticQrData = (merchant.staticQrData || "") as string;
+  const activePlan = merchant.plan || sticker.plan || "plan1";
 
   // ── PLAN 1: Direct redirect to TNG
-  if (plan === "plan1") {
+  if (activePlan === "plan1") {
     if (tngPaymentUrl) {
       window.location.href = tngPaymentUrl;
       return null;
@@ -87,7 +88,7 @@ export default function StickerPage(props: {
   }
 
   // ── PLAN 2: Show pre-pushed bill amount
-  if (plan === "plan2") {
+  if (activePlan === "plan2") {
     const amount = pushedBill?.amount as number | undefined;
     if (!amount || amount <= 0) {
       return (
