@@ -248,25 +248,29 @@ export default function NfcToolPage() {
                   {paymentUrl || "⚠ No TNG URL set — go to Settings → Business Info → paste your TNG link"}
                 </p>
               </div>
-              {paymentUrl && (
-                <button onClick={() => handleWrite(paymentUrl)} disabled={status === "scanning"}
-                  className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white px-8 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-purple-900/20">
-                  <Nfc size={16} /> {status === "scanning" ? "Waiting for tag..." : "Write to Tag"}
-                </button>
-              )}
+              <button 
+                onClick={() => handleWrite(paymentUrl)} 
+                disabled={status === "scanning" || !paymentUrl}
+                className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white px-8 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-purple-900/20"
+              >
+                <Nfc size={16} /> 
+                {!paymentUrl ? "Missing TNG URL (Fix in Settings)" : status === "scanning" ? "Waiting for tag..." : "Write to Tag"}
+              </button>
             </div>
           )}
 
-          {(plan === "plan2" || plan === "plan3") && (
-            <>
-              {stickers.length === 0 && (
-                <div className="text-center py-12 border-2 border-dashed border-white/10 rounded-2xl">
-                  <p className="text-gray-500 text-sm">No tables configured yet.</p>
-                  <p className="text-gray-600 text-xs mt-1">Go to Settings → NFC Stickers → Add your tables first.</p>
-                </div>
-              )}
+          {/* Show the table list for ALL plans so they don't think it's broken when they add tables */}
+          <div className="pt-4 border-t border-white/10">
+            <h3 className="font-bold text-white mb-4">Your Tables</h3>
+            {stickers.length === 0 && (
+              <div className="text-center py-12 border-2 border-dashed border-white/10 rounded-2xl">
+                <p className="text-gray-500 text-sm">No tables configured yet.</p>
+                <p className="text-gray-600 text-xs mt-1">Go to Settings → Table Management → Add your tables first.</p>
+              </div>
+            )}
+            <div className="space-y-4">
               {stickers.map(table => {
-                const stickerUrl = `${SITE_URL}/s/${table.id}`;
+                const stickerUrl = plan === "plan1" ? paymentUrl : `${SITE_URL}/s/${table.id}`;
                 return (
                   <div key={table.id} className="bg-[#1A1A24] border border-white/10 rounded-2xl p-5 space-y-4">
                     <div className="flex items-center gap-2">
@@ -275,17 +279,21 @@ export default function NfcToolPage() {
                     </div>
                     <div className="bg-black/30 border border-white/10 rounded-xl px-4 py-3">
                       <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-1">URL to write</p>
-                      <p className="font-mono text-sm text-blue-300 break-all">{stickerUrl}</p>
+                      <p className="font-mono text-sm text-blue-300 break-all">{stickerUrl || "⚠ Missing TNG URL (Fix in Settings)"}</p>
                     </div>
-                    <button onClick={() => handleWrite(stickerUrl)} disabled={status === "scanning"}
-                      className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white px-8 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-purple-900/20">
-                      <Nfc size={16} /> {status === "scanning" ? "Waiting for tag..." : `Write to ${table.tableName}`}
+                    <button 
+                      onClick={() => handleWrite(stickerUrl)} 
+                      disabled={status === "scanning" || !stickerUrl}
+                      className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white px-8 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-purple-900/20"
+                    >
+                      <Nfc size={16} /> 
+                      {!stickerUrl ? "Missing TNG URL" : status === "scanning" ? "Waiting for tag..." : `Write to ${table.tableName}`}
                     </button>
                   </div>
                 );
               })}
-            </>
-          )}
+            </div>
+          </div>
         </div>
       )}
 

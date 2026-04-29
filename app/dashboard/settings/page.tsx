@@ -150,6 +150,9 @@ export default function SettingsPage() {
         createdAt: serverTimestamp(),
       });
       setNewTableName("");
+    } catch (e: any) {
+      console.error("Failed to add sticker:", e);
+      alert(`Failed to add table: ${e.message}`);
     } finally {
       setAddingSticker(false);
     }
