@@ -380,7 +380,12 @@ function CashierTab({ stickers, setStickers, quickAmounts, setQuickAmounts, acti
 }
 
 // ─── NFC WRITER TAB ───────────────────────────────────────────────────────────
-function NfcWriterTab({ stickers, setStickers }: { stickers: Sticker[], setStickers: (s: Sticker[]) => void }) {
+function NfcWriterTab({ stickers, setStickers, plan, paymentUrl }: { 
+  stickers: Sticker[]; 
+  setStickers: (s: Sticker[]) => void;
+  plan: string;
+  paymentUrl: string;
+}) {
   const [activeTab, setActiveTab] = useState<"read" | "write" | "other">("read");
   const [status, setStatus] = useState<"idle" | "scanning" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -533,33 +538,80 @@ function NfcWriterTab({ stickers, setStickers }: { stickers: Sticker[], setStick
       {/* WRITE TAB */}
       {activeTab === "write" && (
         <div className="space-y-4">
-          <div className="bg-purple-500/5 border border-purple-500/20 rounded-xl px-4 py-3 text-sm text-purple-300">
-            <strong>How to use:</strong> Paste your payment link (e.g. TNG, DuitNow URL) below, tap "Write to Tag", then hold your Android phone against the sticker.
-          </div>
-          {stickers.length === 0 && (
-            <div className="text-center py-12 border-2 border-dashed border-white/10 rounded-2xl">
-              <p className="text-gray-500 text-sm">No tables configured.</p>
-              <p className="text-gray-600 text-xs mt-1">Go to Settings → Add tables first.</p>
+          {/* Step-by-step instructions */}
+          <div className="bg-purple-500/10 border border-purple-500/30 rounded-2xl p-5 space-y-4">
+            <h3 className="font-bold text-white text-sm">How to write a URL to your physical NFC sticker</h3>
+            <div className="space-y-3">
+              {[
+                { step: "1", text: "Find the correct URL below (auto-filled from your Settings)." },
+                { step: "2", text: "This page must be open on your Android phone in Chrome (Web NFC only works on Android Chrome)." },
+                { step: "3", text: 'Click the blue \"Write to Tag\" button on the table you want to program.' },
+                { step: "4", text: "Hold the back of your Android phone flat against the physical NFC sticker." },
+                { step: "5", text: "Wait for the success message — done!" },
+              ].map(({ step, text }) => (
+                <div key={step} className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center text-white font-black text-xs flex-shrink-0 mt-0.5">{step}</div>
+                  <p className="text-sm text-gray-300 leading-snug">{text}</p>
+                </div>
+              ))}
             </div>
-          )}
-          {stickers.map(table => (
-            <div key={table.id} className="bg-[#1A1A24] border border-white/10 rounded-2xl p-5 space-y-4">
+          </div>
+
+          {/* Plan 1: one URL for all stickers */}
+          {plan === "plan1" && (
+            <div className="bg-[#1A1A24] border border-purple-500/20 rounded-2xl p-5 space-y-4">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center"><Nfc size={14} className="text-purple-400" /></div>
-                <h3 className="font-bold text-white">{table.name}</h3>
+                <div>
+                  <h3 className="font-bold text-white">Plan 1 — All Stickers</h3>
+                  <p className="text-xs text-gray-500">Write the same TNG URL into every sticker</p>
+                </div>
               </div>
-              <div>
-                <label className="block text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">Payment URL to write onto this sticker</label>
-                <input type="url" value={table.paymentUrl} onChange={e => updatePaymentUrl(table.id, e.target.value)}
-                  placeholder="https://pay.tngdigital.com.my/sc/yourname"
-                  className="w-full bg-black/30 border border-white/10 text-white text-sm rounded-xl px-4 py-3 outline-none focus:border-purple-500 transition placeholder-gray-600" />
+              <div className="bg-black/30 border border-white/10 rounded-xl px-4 py-3">
+                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-1">URL to write</p>
+                <p className="font-mono text-sm text-purple-300 break-all">
+                  {paymentUrl || "⚠ No TNG URL set — go to Settings → Business Info → paste your TNG link"}
+                </p>
               </div>
-              <button onClick={() => handleWrite(table.paymentUrl)} disabled={status === "scanning" || !table.paymentUrl.trim()}
-                className="w-full sm:w-auto bg-purple-600 hover:bg-purple-500 disabled:opacity-40 disabled:cursor-not-allowed text-white px-8 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-purple-900/20">
-                <Nfc size={16} /> {status === "scanning" ? "Waiting for tag..." : "Write to Tag"}
-              </button>
+              {paymentUrl && (
+                <button onClick={() => handleWrite(paymentUrl)} disabled={status === "scanning"}
+                  className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white px-8 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-purple-900/20">
+                  <Nfc size={16} /> {status === "scanning" ? "Waiting for tag..." : "Write to Tag"}
+                </button>
+              )}
             </div>
-          ))}
+          )}
+
+          {/* Plans 2 & 3: unique URL per sticker */}
+          {(plan === "plan2" || plan === "plan3") && (
+            <>
+              {stickers.length === 0 && (
+                <div className="text-center py-12 border-2 border-dashed border-white/10 rounded-2xl">
+                  <p className="text-gray-500 text-sm">No tables configured yet.</p>
+                  <p className="text-gray-600 text-xs mt-1">Go to Settings → NFC Stickers → Add your tables first.</p>
+                </div>
+              )}
+              {stickers.map(table => {
+                const stickerUrl = `https://vibe-tap-kpk2-one.vercel.app/s/${table.id}`;
+                return (
+                  <div key={table.id} className="bg-[#1A1A24] border border-white/10 rounded-2xl p-5 space-y-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center"><Nfc size={14} className="text-purple-400" /></div>
+                      <h3 className="font-bold text-white">{table.name}</h3>
+                    </div>
+                    <div className="bg-black/30 border border-white/10 rounded-xl px-4 py-3">
+                      <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-1">URL to write</p>
+                      <p className="font-mono text-sm text-blue-300 break-all">{stickerUrl}</p>
+                    </div>
+                    <button onClick={() => handleWrite(stickerUrl)} disabled={status === "scanning"}
+                      className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white px-8 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-purple-900/20">
+                      <Nfc size={16} /> {status === "scanning" ? "Waiting for tag..." : `Write to ${table.name}`}
+                    </button>
+                  </div>
+                );
+              })}
+            </>
+          )}
         </div>
       )}
 
@@ -1032,7 +1084,7 @@ export default function DemoPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8">
           {tab === "overview" && <OverviewTab payments={payments} />}
           {tab === "cashier" && <CashierTab stickers={stickers} setStickers={setStickers} quickAmounts={quickAmounts} setQuickAmounts={setQuickAmounts} activeSessions={activeSessions} setActiveSessions={setActiveSessions} onCompletePayment={handleCompletePayment} plan={plan} pushedBill={pushedBill} setPushedBill={setPushedBill} billRequests={billRequests} setBillRequests={setBillRequests} />}
-          {tab === "nfc" && <NfcWriterTab stickers={stickers} setStickers={setStickers} />}
+          {tab === "nfc" && <NfcWriterTab stickers={stickers} setStickers={setStickers} plan={plan} paymentUrl={paymentUrl} />}
           {tab === "settings" && <SettingsTab stickers={stickers} setStickers={setStickers} ttsLang={ttsLang} setTtsLang={setTtsLang} plan={plan} setPlan={setPlan} paymentUrl={paymentUrl} setPaymentUrl={setPaymentUrl} menuItems={menuItems} setMenuItems={setMenuItems} storeName={storeName} setStoreName={setStoreName} staticQrData={staticQrData} setStaticQrData={setStaticQrData} />}
           {tab === "menu" && <CustomerMenuTab plan={plan} paymentUrl={paymentUrl} menuItems={menuItems} storeName={storeName} staticQrData={staticQrData} pushedBill={pushedBill} onBillRequest={(req) => setBillRequests(prev => [...prev, req])} />}
           {tab === "testing" && <TestingPhaseTab />}
