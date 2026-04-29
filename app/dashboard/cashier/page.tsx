@@ -2,7 +2,17 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc, collection, addDoc, Timestamp } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  onSnapshot,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/client";
 import {
   Zap,
@@ -10,19 +20,28 @@ import {
   CheckCircle2,
   Timer,
   AlertCircle,
+  Bell,
+  Receipt,
+  Nfc,
 } from "lucide-react";
 
-const QUICK_AMOUNTS = [1, 2, 5, 10, 20, 50];
-const SESSION_TTL_MINUTES = 5;
+type Sticker = { id: string; tableName: string };
+type BillRequest = {
+  id: string;
+  tableName: string;
+  wantsReceipt: boolean;
+  createdAt: any;
+};
 
 export default function CashierPage() {
   const [uid, setUid] = useState<string | null>(null);
-  const [merchantId, setMerchantId] = useState<string | null>(null);
+  const [plan, setPlan] = useState<"plan1" | "plan2" | "plan3">("plan1");
+  const [rawCents, setRawCents] = useState(0);
   const [input, setInput] = useState("0.00");
-  const [rawCents, setRawCents] = useState(0); // store as cents to avoid float issues
-  const [sessionActive, setSessionActive] = useState(false);
-  const [sessionExpiresAt, setSessionExpiresAt] = useState<Date | null>(null);
-  const [timeLeft, setTimeLeft] = useState(0);
+  const [stickers, setStickers] = useState<Sticker[]>([]);
+  const [pushedStickerId, setPushedStickerId] = useState<string | null>(null);
+  const [pushedAmount, setPushedAmount] = useState<number | null>(null);
+  const [billRequests, setBillRequests] = useState<BillRequest[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -30,158 +49,124 @@ export default function CashierPage() {
     const unsub = onAuthStateChanged(auth, async (user) => {
       if (!user) return;
       setUid(user.uid);
-      const snap = await getDoc(doc(db, "merchants", user.uid));
-      if (snap.exists()) {
-        setMerchantId(snap.id);
+
+      // Get merchant plan
+      const merchantSnap = await getDoc(doc(db, "merchants", user.uid));
+      if (merchantSnap.exists()) {
+        setPlan(merchantSnap.data().plan || "plan1");
       }
+
+      // Listen to stickers
+      const stickersQ = query(
+        collection(db, "stickers"),
+        where("merchantId", "==", user.uid)
+      );
+      const unsubStickers = onSnapshot(stickersQ, (snap) => {
+        setStickers(snap.docs.map((d) => ({ id: d.id, tableName: d.data().tableName })));
+      });
+
+      // Listen to bill requests (plan 3)
+      const reqQ = query(
+        collection(db, "billRequests"),
+        where("merchantId", "==", user.uid),
+        where("status", "==", "pending")
+      );
+      const unsubReqs = onSnapshot(reqQ, (snap) => {
+        setBillRequests(
+          snap.docs.map((d) => ({
+            id: d.id,
+            tableName: d.data().tableName,
+            wantsReceipt: d.data().wantsReceipt,
+            createdAt: d.data().createdAt,
+          }))
+        );
+      });
+
+      return () => {
+        unsubStickers();
+        unsubReqs();
+      };
     });
     return () => unsub();
   }, []);
 
-  // Countdown timer
-  useEffect(() => {
-    if (!sessionActive || !sessionExpiresAt) return;
-    const interval = setInterval(() => {
-      const remaining = Math.max(
-        0,
-        Math.floor((sessionExpiresAt.getTime() - Date.now()) / 1000)
-      );
-      setTimeLeft(remaining);
-      if (remaining === 0) {
-        setSessionActive(false);
-        setSessionExpiresAt(null);
-      }
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [sessionActive, sessionExpiresAt]);
+  // ── Numpad helpers ──────────────────────────────────────────────────────────
+  const formatDisplay = (cents: number) => {
+    const r = Math.floor(cents / 100);
+    const s = cents % 100;
+    return `${r}.${s.toString().padStart(2, "0")}`;
+  };
+  const pressDigit = (d: string) => {
+    if (rawCents >= 9999900) return;
+    const n = rawCents * 10 + parseInt(d);
+    setRawCents(n);
+    setInput(formatDisplay(n));
+  };
+  const pressBackspace = () => {
+    const n = Math.floor(rawCents / 10);
+    setRawCents(n);
+    setInput(formatDisplay(n));
+  };
+  const pressClear = () => { setRawCents(0); setInput("0.00"); };
+  const pressQuick = (rm: number) => {
+    const c = rm * 100;
+    setRawCents(c);
+    setInput(formatDisplay(c));
+  };
 
-  function formatDisplay(cents: number): string {
-    const ringgit = Math.floor(cents / 100);
-    const sen = cents % 100;
-    return `${ringgit}.${sen.toString().padStart(2, "0")}`;
-  }
-
-  function pressDigit(digit: string) {
-    if (rawCents >= 9999900) return; // cap at RM 99,999
-    const newCents = rawCents * 10 + parseInt(digit);
-    setRawCents(newCents);
-    setInput(formatDisplay(newCents));
-  }
-
-  function pressBackspace() {
-    const newCents = Math.floor(rawCents / 10);
-    setRawCents(newCents);
-    setInput(formatDisplay(newCents));
-  }
-
-  function pressClear() {
-    setRawCents(0);
-    setInput("0.00");
-  }
-
-  function pressQuick(rm: number) {
-    const cents = rm * 100;
-    setRawCents(cents);
-    setInput(formatDisplay(cents));
-  }
-
-  const handleActivateSession = useCallback(async () => {
-    if (!merchantId || rawCents === 0) {
-      setError("Please enter an amount greater than RM 0.00");
-      return;
-    }
+  // ── Plan 2: Push bill to a sticker ─────────────────────────────────────────
+  const handlePushBill = useCallback(async (stickerId: string, tableName: string) => {
+    if (rawCents === 0) { setError("Enter an amount first."); return; }
     setError("");
     setLoading(true);
     try {
-      const expiresAt = new Date(Date.now() + SESSION_TTL_MINUTES * 60 * 1000);
-      await addDoc(collection(db, "cashierSessions"), {
-        merchantId,
-        amount: rawCents / 100, // store as RM float
-        amountCents: rawCents,
-        used: false,
-        expiresAt: Timestamp.fromDate(expiresAt),
-        createdAt: Timestamp.now(),
-        createdBy: uid,
+      const amount = rawCents / 100;
+      await updateDoc(doc(db, "stickers", stickerId), {
+        pushedBill: { amount, pushedAt: serverTimestamp() },
       });
-      setSessionActive(true);
-      setSessionExpiresAt(expiresAt);
-      setTimeLeft(SESSION_TTL_MINUTES * 60);
+      setPushedStickerId(stickerId);
+      setPushedAmount(amount);
+      pressClear();
     } catch {
-      setError("Failed to start session. Please try again.");
+      setError("Failed to push bill.");
     } finally {
       setLoading(false);
     }
-  }, [merchantId, rawCents, uid]);
+  }, [rawCents]);
 
-  function handleCancelSession() {
-    setSessionActive(false);
-    setSessionExpiresAt(null);
-    setTimeLeft(0);
-    pressClear();
-  }
+  const handleClearBill = async (stickerId: string) => {
+    await updateDoc(doc(db, "stickers", stickerId), { pushedBill: null });
+    if (pushedStickerId === stickerId) { setPushedStickerId(null); setPushedAmount(null); }
+  };
 
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${s.toString().padStart(2, "0")}`;
+  // ── Plan 3: Mark request as done ───────────────────────────────────────────
+  const handleDoneRequest = async (reqId: string) => {
+    await deleteDoc(doc(db, "billRequests", reqId));
   };
 
   const amountRM = rawCents / 100;
+  const QUICK_AMOUNTS = [1, 2, 5, 10, 20, 50];
 
   return (
-    <div className="space-y-6 max-w-sm mx-auto">
+    <div className="space-y-6 max-w-sm mx-auto pb-16">
       <div>
-        <h1 className="text-2xl font-black">Cashier Mode</h1>
+        <h1 className="text-2xl font-black">Cashier</h1>
         <p className="text-gray-500 text-sm mt-1">
-          Set the amount — customer taps to pay
+          {plan === "plan1" && "Plan 1: Customers pay directly via TNG link."}
+          {plan === "plan2" && "Plan 2: Enter amount → push to a table."}
+          {plan === "plan3" && "Plan 3: Customers send bill requests. You handle payment here."}
         </p>
       </div>
 
-      {/* Active session banner */}
-      {sessionActive && (
-        <div className="bg-green-500/10 border border-green-500/30 rounded-2xl p-5 animate-pulse">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-3 h-3 rounded-full bg-green-400 animate-ping" />
-            <span className="text-green-400 font-bold text-lg">Session Active</span>
-          </div>
-          <p className="text-white text-3xl font-black mb-2">
-            RM {amountRM.toFixed(2)}
-          </p>
-          <div className="flex items-center gap-2 text-gray-400 text-sm mb-4">
-            <Timer size={16} className="text-yellow-400" />
-            <span>
-              Expires in{" "}
-              <span className={`font-mono font-bold ${timeLeft < 60 ? "text-red-400" : "text-yellow-400"}`}>
-                {formatTime(timeLeft)}
-              </span>
-            </span>
-          </div>
-          <p className="text-gray-400 text-xs mb-4">
-            👋 Ask customer to tap the NFC sticker now. Payment will auto-fill RM {amountRM.toFixed(2)}.
-          </p>
-          <button
-            id="cancel-session"
-            onClick={handleCancelSession}
-            className="text-sm text-red-400 hover:text-red-300 transition-colors font-medium"
-          >
-            Cancel Session
-          </button>
-        </div>
-      )}
-
-      {/* Amount display */}
-      {!sessionActive && (
+      {/* ── Numpad (Plan 1 & 2) ──────────────────────────────────────────────── */}
+      {(plan === "plan1" || plan === "plan2") && (
         <>
+          {/* Amount display */}
           <div className="bg-white/[0.03] border border-white/5 rounded-3xl p-8 text-center">
             <p className="text-gray-500 text-sm mb-2">Amount (RM)</p>
             <div className="text-6xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
               {amountRM.toFixed(2)}
             </div>
-            {rawCents > 0 && (
-              <p className="text-gray-600 text-xs mt-2">
-                = {rawCents} sen
-              </p>
-            )}
           </div>
 
           {/* Quick amounts */}
@@ -189,7 +174,6 @@ export default function CashierPage() {
             {QUICK_AMOUNTS.map((rm) => (
               <button
                 key={rm}
-                id={`quick-${rm}`}
                 onClick={() => pressQuick(rm)}
                 className="py-2.5 rounded-xl bg-white/[0.04] border border-white/5 hover:bg-purple-500/20 hover:border-purple-500/30 text-sm font-medium text-gray-300 hover:text-white transition-all"
               >
@@ -201,83 +185,131 @@ export default function CashierPage() {
           {/* Numpad */}
           <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4">
             <div className="grid grid-cols-3 gap-2">
-              {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((d) => (
-                <button
-                  key={d}
-                  id={`numpad-${d}`}
-                  onClick={() => pressDigit(d)}
-                  className="h-14 rounded-xl bg-white/5 hover:bg-white/10 active:bg-white/15 text-xl font-bold transition-all active:scale-95"
-                >
+              {["1","2","3","4","5","6","7","8","9"].map((d) => (
+                <button key={d} onClick={() => pressDigit(d)}
+                  className="h-14 rounded-xl bg-white/5 hover:bg-white/10 active:bg-white/15 text-xl font-bold transition-all active:scale-95">
                   {d}
                 </button>
               ))}
-              <button
-                id="numpad-clear"
-                onClick={pressClear}
-                className="h-14 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold text-sm transition-all active:scale-95"
-              >
+              <button onClick={pressClear}
+                className="h-14 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold text-sm transition-all active:scale-95">
                 CLR
               </button>
-              <button
-                id="numpad-0"
-                onClick={() => pressDigit("0")}
-                className="h-14 rounded-xl bg-white/5 hover:bg-white/10 text-xl font-bold transition-all active:scale-95"
-              >
+              <button onClick={() => pressDigit("0")}
+                className="h-14 rounded-xl bg-white/5 hover:bg-white/10 text-xl font-bold transition-all active:scale-95">
                 0
               </button>
-              <button
-                id="numpad-backspace"
-                onClick={pressBackspace}
-                className="h-14 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all active:scale-95"
-              >
+              <button onClick={pressBackspace}
+                className="h-14 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all active:scale-95">
                 <Delete size={20} className="text-gray-400" />
               </button>
             </div>
           </div>
 
-          {/* Error */}
           {error && (
             <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 rounded-xl">
-              <AlertCircle size={16} />
-              {error}
+              <AlertCircle size={16} /> {error}
             </div>
           )}
-
-          {/* Activate button */}
-          <button
-            id="activate-session"
-            onClick={handleActivateSession}
-            disabled={loading || rawCents === 0}
-            className="w-full bg-gradient-to-r from-[#6C47FF] to-[#00D4FF] text-white py-4 rounded-2xl font-bold text-lg shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all flex items-center justify-center gap-2"
-          >
-            {loading ? (
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <>
-                <Zap size={20} />
-                Start RM {amountRM.toFixed(2)} Session
-              </>
-            )}
-          </button>
-
-          <p className="text-center text-xs text-gray-600">
-            Session lasts {SESSION_TTL_MINUTES} minutes · One use per session
-          </p>
         </>
       )}
 
-      {/* Success state */}
-      {sessionActive && timeLeft === 0 && (
-        <div className="text-center py-8">
-          <CheckCircle2 size={48} className="text-green-400 mx-auto mb-3" />
-          <p className="font-bold text-lg">Session Completed!</p>
-          <p className="text-gray-400 text-sm">Customer has tapped and paid.</p>
-          <button
-            onClick={pressClear}
-            className="mt-4 text-purple-400 hover:text-purple-300 text-sm font-medium"
-          >
-            Start New Session
-          </button>
+      {/* ── Plan 1: No table selection needed ───────────────────────────────── */}
+      {plan === "plan1" && (
+        <div className="bg-purple-500/10 border border-purple-500/20 rounded-2xl p-4 text-sm text-purple-300">
+          <p className="font-bold mb-1">Plan 1 — No action needed here</p>
+          <p className="text-purple-400/70">The NFC sticker redirects customers directly to TNG. They type the amount themselves.</p>
+        </div>
+      )}
+
+      {/* ── Plan 2: Push Bill to Table ───────────────────────────────────────── */}
+      {plan === "plan2" && (
+        <div className="space-y-3">
+          <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Push Bill to Table</p>
+          {stickers.length === 0 && (
+            <div className="text-center py-6 text-gray-600 text-sm border-2 border-dashed border-white/5 rounded-2xl">
+              No stickers yet. Go to Settings → NFC Stickers to add tables.
+            </div>
+          )}
+          {stickers.map((s) => (
+            <div key={s.id} className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl p-4">
+              <Nfc size={18} className="text-blue-400 flex-shrink-0" />
+              <p className="flex-1 font-bold text-white">{s.tableName}</p>
+              {pushedStickerId === s.id && pushedAmount ? (
+                <>
+                  <span className="text-blue-300 font-black text-sm">RM {pushedAmount.toFixed(2)}</span>
+                  <button onClick={() => handleClearBill(s.id)}
+                    className="text-xs text-red-400 hover:text-red-300 bg-red-500/10 px-2 py-1 rounded-lg">
+                    Clear
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => handlePushBill(s.id, s.tableName)}
+                  disabled={loading || rawCents === 0}
+                  className="text-xs font-bold bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white px-3 py-1.5 rounded-lg transition-all"
+                >
+                  Push RM {amountRM.toFixed(2)}
+                </button>
+              )}
+            </div>
+          ))}
+          {pushedStickerId && pushedAmount && (
+            <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-4 flex items-center gap-3 animate-in fade-in">
+              <CheckCircle2 size={20} className="text-blue-400 flex-shrink-0" />
+              <div>
+                <p className="font-bold text-white text-sm">Bill pushed!</p>
+                <p className="text-blue-300 text-xs">Customer will see RM {pushedAmount.toFixed(2)} when they tap the sticker.</p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Plan 3: Bill Requests ────────────────────────────────────────────── */}
+      {plan === "plan3" && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <p className="text-xs text-gray-500 uppercase tracking-widest font-bold flex-1">Bill Requests</p>
+            {billRequests.length > 0 && (
+              <span className="bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                {billRequests.length}
+              </span>
+            )}
+          </div>
+          {billRequests.length === 0 ? (
+            <div className="text-center py-10 border-2 border-dashed border-white/5 rounded-2xl">
+              <Bell size={28} className="text-gray-600 mx-auto mb-3" />
+              <p className="text-gray-500 text-sm">No pending bill requests</p>
+              <p className="text-gray-600 text-xs mt-1">Customers tap the sticker and hit "Bill Please"</p>
+            </div>
+          ) : (
+            billRequests.map((req) => (
+              <div key={req.id} className="bg-orange-500/10 border border-orange-500/20 rounded-2xl p-4 flex items-center gap-3">
+                <div className="flex-1">
+                  <p className="font-bold text-white">{req.tableName}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    {req.wantsReceipt && (
+                      <span className="flex items-center gap-1 text-xs text-orange-300">
+                        <Receipt size={12} /> Wants receipt
+                      </span>
+                    )}
+                    <span className="text-xs text-gray-500">
+                      {req.createdAt?.toDate
+                        ? req.createdAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                        : "Just now"}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleDoneRequest(req.id)}
+                  className="text-xs font-bold bg-green-500/20 hover:bg-green-500/30 text-green-400 px-3 py-1.5 rounded-lg transition-all"
+                >
+                  Done
+                </button>
+              </div>
+            ))
+          )}
         </div>
       )}
     </div>
