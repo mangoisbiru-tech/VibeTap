@@ -117,33 +117,29 @@ export default function HistoryPage() {
         <div className="bg-purple-500/10 border border-purple-500/20 rounded-2xl p-4 text-center">
           <p className="text-2xl font-black text-purple-400">{successRate}%</p>
           <p className="text-xs text-purple-300/70 mt-1 font-medium">Success Rate</p>
-        </div>
+        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Transaction History</h1>
+        <p className="text-slate-500 text-sm mt-1 font-medium">
+          Showing successful and cleared taps from the last 48 hours.
+        </p>
       </div>
 
-      {/* Entries list */}
-      <div className="space-y-2">
+      <div className="glass-card rounded-3xl overflow-hidden">
         {loading ? (
-          <div className="flex items-center justify-center py-16">
-            <Loader2 size={28} className="animate-spin text-purple-400" />
+          <div className="py-20 flex flex-col items-center justify-center gap-4">
+            <Loader2 size={32} className="animate-spin text-blue-500" />
+            <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Loading history...</p>
           </div>
         ) : entries.length === 0 ? (
-          <div className="text-center py-16 border-2 border-dashed border-white/5 rounded-2xl">
-            <Clock size={32} className="text-gray-600 mx-auto mb-3" />
-            <p className="text-gray-500 text-sm">No history yet</p>
-            <p className="text-gray-600 text-xs mt-1">
-              Mark bills as Done or Clear on the Cashier page to record them here.
-            </p>
+          <div className="py-20 text-center">
+            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <History size={32} className="text-slate-200" />
+            </div>
+            <p className="text-slate-400 font-bold text-sm uppercase tracking-widest">No recent transactions</p>
+            <p className="text-slate-300 text-xs mt-1">New activity will appear here in real-time.</p>
           </div>
         ) : (
-          entries.map((entry) => (
-            <div
-              key={entry.id}
-              className={`flex items-center gap-4 px-4 py-3.5 rounded-xl border transition-all ${
-                entry.status === "paid"
-                  ? "bg-green-500/5 border-green-500/15"
-                  : "bg-white/[0.02] border-white/5"
-              }`}
-            >
+          <div className="divide-y divide-slate-100">
+            {entries.map((entry) => (
               <div
                 className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
                   entry.status === "paid"

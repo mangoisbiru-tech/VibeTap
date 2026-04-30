@@ -246,140 +246,145 @@ export default function CashierPage() {
         </p>
       </div>
 
-      {/* ── Numpad (Plan 2 and Plan 3 summing_up) ─────────────────────────────── */}
+      {/* ── Bill Input (Numpad) ────────────────────────────────────────────────── */}
       {(plan === "plan2" || (plan === "plan3" && plan3Mode === "summing_up")) && (
         <>
-          <div className="bg-white/[0.03] border border-white/5 rounded-3xl p-8 text-center">
-            <p className="text-gray-500 text-sm mb-2">Amount (RM)</p>
-            <div className="text-6xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
-              {amountRM.toFixed(2)}
+          <div className="glass-card rounded-3xl p-8 text-center space-y-6">
+            <div className="space-y-1">
+              <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-black">Enter Amount</p>
+              <div className="text-6xl font-black text-slate-900 tracking-tighter">
+                <span className="text-slate-300 text-3xl align-top mt-2 inline-block mr-1">RM</span>
+                {amountRM.toFixed(2)}
+              </div>
             </div>
-          </div>
 
-          <div className="grid grid-cols-3 gap-2">
-            {QUICK_AMOUNTS.map((rm) => (
-              <button
-                key={rm}
-                onClick={() => pressQuick(rm)}
-                className="py-2.5 rounded-xl bg-white/[0.04] border border-white/5 hover:bg-purple-500/20 hover:border-purple-500/30 text-sm font-medium text-gray-300 hover:text-white transition-all"
-              >
-                RM {rm}
-              </button>
-            ))}
-          </div>
-
-          <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4">
-            <div className="grid grid-cols-3 gap-2">
-              {["1","2","3","4","5","6","7","8","9"].map((d) => (
-                <button key={d} onClick={() => pressDigit(d)}
-                  className="h-14 rounded-xl bg-white/5 hover:bg-white/10 active:bg-white/15 text-xl font-bold transition-all active:scale-95">
-                  {d}
+            <div className="grid grid-cols-3 gap-3">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+                <button
+                  key={num}
+                  onClick={() => pressDigit(num.toString())}
+                  className="h-16 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-900 text-xl font-bold transition-all active:scale-95 shadow-sm"
+                >
+                  {num}
                 </button>
               ))}
-              <button onClick={pressClear}
-                className="h-14 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold text-sm transition-all active:scale-95">
+              <button
+                onClick={clearInput}
+                className="h-16 rounded-2xl bg-red-50 hover:bg-red-100 text-red-500 font-bold text-sm transition-all active:scale-95 shadow-sm"
+              >
                 CLR
               </button>
-              <button onClick={() => pressDigit("0")}
-                className="h-14 rounded-xl bg-white/5 hover:bg-white/10 text-xl font-bold transition-all active:scale-95">
+              <button
+                onClick={() => pressDigit("0")}
+                className="h-16 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-900 text-xl font-bold transition-all active:scale-95 shadow-sm"
+              >
                 0
               </button>
-              <button onClick={pressBackspace}
-                className="h-14 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all active:scale-95">
-                <Delete size={20} className="text-gray-400" />
+              <button
+                onClick={pressBackspace}
+                className="h-16 rounded-2xl bg-slate-50 hover:bg-slate-100 flex items-center justify-center transition-all active:scale-95 shadow-sm"
+              >
+                <Delete size={22} className="text-slate-400" />
               </button>
             </div>
           </div>
 
           {error && (
-            <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 rounded-xl">
-              <AlertCircle size={16} /> {error}
+            <div className="flex items-center gap-2 bg-red-50 border border-red-100 text-red-500 text-sm px-4 py-4 rounded-2xl animate-in fade-in slide-in-from-top-1">
+              <AlertCircle size={18} /> {error}
             </div>
           )}
         </>
       )}
 
-      {/* ── Plan 1: No action needed ────────────────────────────────────────────── */}
+      {/* ── Plan 1 ────────────────────────────────────────────────────────────── */}
       {plan === "plan1" && (
-        <div className="bg-purple-500/10 border border-purple-500/20 rounded-2xl p-4 text-sm text-purple-300">
+        <div className="bg-blue-50 border border-blue-100 rounded-3xl p-6 text-sm text-blue-900 shadow-sm">
           <p className="font-bold mb-1">Plan 1 — No action needed here</p>
-          <p className="text-purple-400/70">The NFC sticker redirects customers directly to TNG. They type the amount themselves.</p>
+          <p className="text-blue-700/70">The NFC sticker redirects customers directly to TNG. They type the amount themselves.</p>
         </div>
       )}
 
-      {/* ── Plan 2 & Plan 3 (summing_up): Active Tables ─────────────────────────── */}
+      {/* ── Active Tables ──────────────────────────────────────────────────────── */}
       {(plan === "plan2" || (plan === "plan3" && plan3Mode === "summing_up")) && (
-        <div className="space-y-3">
-          <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Active Tables</p>
+        <div className="space-y-4">
+          <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-black">Active Tables</p>
           {stickers.length === 0 && (
-            <div className="text-center py-6 text-gray-600 text-sm border-2 border-dashed border-white/5 rounded-2xl">
+            <div className="text-center py-10 text-slate-400 text-sm glass-card border-dashed rounded-3xl">
               No stickers yet. Go to Settings → NFC Stickers to add tables.
             </div>
           )}
-          {stickers.map((s) => (
-            <div key={s.id} className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl p-4">
-              <Nfc size={18} className="text-blue-400 flex-shrink-0" />
-              <p className="flex-1 font-bold text-white">{s.tableName}</p>
-              {s.pushedBill ? (
-                <>
-                  <span className="text-blue-300 font-black text-sm">RM {s.pushedBill.amount.toFixed(2)}</span>
+          <div className="grid grid-cols-1 gap-3">
+            {stickers.map((s) => (
+              <div key={s.id} className="flex items-center gap-4 glass-card rounded-2xl p-4 transition-all hover:shadow-md">
+                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                  <Nfc size={20} className="text-blue-500" />
+                </div>
+                <p className="flex-1 font-bold text-slate-900">{s.tableName}</p>
+                {s.pushedBill ? (
+                  <div className="flex items-center gap-2">
+                    <span className="text-blue-600 font-black text-sm mr-2">RM {s.pushedBill.amount.toFixed(2)}</span>
+                    <button
+                      onClick={() => handleDoneBill(s)}
+                      className="flex items-center gap-1.5 text-xs font-bold bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-xl transition-all shadow-sm shadow-green-500/20"
+                    >
+                      <CheckCircle2 size={14} /> Done
+                    </button>
+                    <button
+                      onClick={() => handleClearBill(s)}
+                      className="flex items-center gap-1.5 text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-2 rounded-xl transition-all"
+                    >
+                      <XCircle size={14} /> Clear
+                    </button>
+                  </div>
+                ) : (
                   <button
-                    onClick={() => handleDoneBill(s)}
-                    className="flex items-center gap-1 text-xs font-bold bg-green-500/20 hover:bg-green-500/30 text-green-400 px-2 py-1.5 rounded-lg transition-all"
+                    onClick={() => handlePushBill(s.id, s.tableName)}
+                    disabled={loading || rawCents === 0}
+                    className="text-xs font-bold bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white px-4 py-2 rounded-xl transition-all shadow-md shadow-blue-500/20"
                   >
-                    <CheckCircle2 size={13} /> Done
+                    Push RM {amountRM.toFixed(2)}
                   </button>
-                  <button
-                    onClick={() => handleClearBill(s)}
-                    className="flex items-center gap-1 text-xs font-bold bg-red-500/10 hover:bg-red-500/20 text-red-400 px-2 py-1.5 rounded-lg transition-all"
-                  >
-                    <XCircle size={13} /> Clear
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => handlePushBill(s.id, s.tableName)}
-                  disabled={loading || rawCents === 0}
-                  className="text-xs font-bold bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white px-3 py-1.5 rounded-lg transition-all"
-                >
-                  Push RM {amountRM.toFixed(2)}
-                </button>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
-      {/* ── Bill Requests (Plan 3 or stuck pending requests) ─────────────────────── */}
+      {/* ── Bill Requests ──────────────────────────────────────────────────────── */}
       {(plan === "plan3" || billRequests.length > 0) && (
-        <div className="space-y-3">
+        <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <p className="text-xs text-gray-500 uppercase tracking-widest font-bold flex-1">Bill Requests</p>
+            <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-black flex-1">Bill Requests</p>
             {billRequests.length > 0 && (
-              <span className="bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+              <span className="bg-orange-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm">
                 {billRequests.length}
               </span>
             )}
           </div>
           {billRequests.length === 0 ? (
-            <div className="text-center py-10 border-2 border-dashed border-white/5 rounded-2xl">
-              <Bell size={28} className="text-gray-600 mx-auto mb-3" />
-              <p className="text-gray-500 text-sm">No pending bill requests</p>
-              <p className="text-gray-600 text-xs mt-1">Customers tap the sticker and hit "Bill Please"</p>
+            <div className="text-center py-12 glass-card rounded-3xl border-dashed">
+              <Bell size={32} className="text-slate-200 mx-auto mb-3" />
+              <p className="text-slate-400 text-sm font-medium">No pending bill requests</p>
+              <p className="text-slate-300 text-xs mt-1">Customers tap the sticker and hit "Bill Please"</p>
             </div>
           ) : (
-            <>
+            <div className="grid grid-cols-1 gap-3">
               {billRequests.map((req) => (
-                <div key={req.id} className="bg-orange-500/10 border border-orange-500/20 rounded-2xl p-4 flex items-center gap-3">
+                <div key={req.id} className="bg-orange-50/50 border border-orange-100 rounded-3xl p-5 flex items-center gap-4 shadow-sm">
+                  <div className="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center flex-shrink-0">
+                    <Bell size={24} className="text-orange-500" />
+                  </div>
                   <div className="flex-1">
-                    <p className="font-bold text-white">{req.tableName}</p>
-                    <div className="flex items-center gap-2 mt-1">
+                    <p className="font-black text-slate-900 text-lg tracking-tight">{req.tableName}</p>
+                    <div className="flex items-center gap-3 mt-1">
                       {req.wantsReceipt && (
-                        <span className="flex items-center gap-1 text-xs text-orange-300">
-                          <Receipt size={12} /> Wants receipt
+                        <span className="flex items-center gap-1 text-[10px] font-black uppercase text-orange-600 bg-orange-100 px-1.5 py-0.5 rounded">
+                          <Receipt size={10} /> Receipt
                         </span>
                       )}
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs font-bold text-slate-400">
                         {req.createdAt?.toDate
                           ? req.createdAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
                           : "Just now"}
@@ -391,15 +396,13 @@ export default function CashierPage() {
                       <button
                         onClick={() => handlePushAndDone(req)}
                         disabled={loading || rawCents === 0}
-                        className="flex items-center gap-1 text-xs font-bold bg-green-500/20 hover:bg-green-500/30 disabled:opacity-40 text-green-400 px-2 py-1.5 rounded-lg transition-all"
+                        className="flex items-center gap-1.5 text-xs font-bold bg-green-500 hover:bg-green-600 disabled:opacity-40 text-white px-4 py-2.5 rounded-xl transition-all shadow-md shadow-green-500/20"
                       >
-                        <CheckCircle2 size={13} /> Push RM {amountRM.toFixed(2)}
+                        <CheckCircle2 size={15} /> Push RM {amountRM.toFixed(2)}
                       </button>
                     ) : (
                       <button
                         onClick={() => handleBossComingDone(req)}
-                        className="flex items-center gap-1 text-xs font-bold bg-green-500/20 hover:bg-green-500/30 text-green-400 px-2 py-1.5 rounded-lg transition-all"
-                      >
                         <CheckCircle2 size={13} /> Done
                       </button>
                     )}

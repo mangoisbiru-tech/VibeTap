@@ -81,54 +81,55 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center px-4">
-      <div className="fixed top-[-20%] left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-10 pointer-events-none"
-        style={{ background: "radial-gradient(circle, #00D4FF, transparent)" }} />
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 relative overflow-hidden">
+      {/* Aurora Glows */}
+      <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-100/40 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-cyan-100/40 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="w-full max-w-[420px]">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#6C47FF] to-[#00D4FF] flex items-center justify-center shadow-lg shadow-purple-500/30">
-              <Zap size={20} className="text-white" />
+      <div className="w-full max-w-[440px] relative z-10 py-10">
+        <div className="text-center mb-10">
+          <Link href="/" className="inline-flex items-center gap-2 mb-6 group">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2D5BFF] to-[#00D4FF] flex items-center justify-center shadow-xl shadow-blue-500/20 group-hover:scale-110 transition-transform">
+              <Zap size={22} className="text-white" />
             </div>
-            <span className="text-2xl font-black tracking-tight text-white">
-              Vibe<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#6C47FF] to-[#00D4FF]">Tap</span>
+            <span className="text-3xl font-black tracking-tight text-slate-900">
+              Vibe<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2D5BFF] to-[#00D4FF]">Tap</span>
             </span>
           </Link>
-          <h1 className="text-2xl font-bold text-white">Create your account</h1>
-          <p className="text-gray-400 text-sm mt-1">Start collecting digital payments in minutes</p>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Join VibeTap</h1>
+          <p className="text-slate-500 font-medium mt-2">Start accepting digital payments instantly</p>
         </div>
 
-        <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-8 backdrop-blur-xl">
-          <form onSubmit={handleSignup} className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Business / Your Name</label>
+        <div className="glass-card rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-blue-500/5">
+          <form onSubmit={handleSignup} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Business Name</label>
               <input
                 id="signup-name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                placeholder="Ahmad Nasi Lemak"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500/60 focus:ring-2 focus:ring-purple-500/20 transition-all text-sm"
+                placeholder="e.g. Ahmad's Cafe"
+                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300"
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
               <input
                 id="signup-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="boss@example.com"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500/60 focus:ring-2 focus:ring-purple-500/20 transition-all text-sm"
+                placeholder="boss@vibetap.my"
+                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300"
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
               <div className="relative">
                 <input
                   id="signup-password"
@@ -137,20 +138,20 @@ export default function SignupPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   placeholder="Min. 6 characters"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-12 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500/60 focus:ring-2 focus:ring-purple-500/20 transition-all text-sm"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 pr-14 text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-blue-500 transition-colors"
                 >
-                  {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPw ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
             </div>
 
             {error && (
-              <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 rounded-xl">
+              <div className="bg-red-50 border border-red-100 text-red-600 text-xs font-bold px-4 py-3 rounded-2xl">
                 {error}
               </div>
             )}
@@ -159,24 +160,24 @@ export default function SignupPage() {
               id="signup-submit"
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-[#6C47FF] to-[#00D4FF] text-white py-3.5 rounded-xl font-semibold transition-all shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:-translate-y-0.5"
+              className="w-full bg-gradient-to-r from-[#2D5BFF] to-[#00D4FF] text-white py-5 rounded-[1.5rem] font-black text-lg tracking-tight shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-1 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3"
             >
               {loading ? (
-                <><Loader2 size={18} className="animate-spin" /> Creating account...</>
+                <><Loader2 size={24} className="animate-spin" /> Setting Up...</>
               ) : (
                 "Create Free Account"
               )}
             </button>
 
-            <p className="text-xs text-gray-600 text-center">
-              By signing up, you agree to our Terms & Privacy Policy
+            <p className="text-[10px] text-slate-400 text-center font-bold uppercase tracking-wider">
+              By joining, you agree to our Terms & Privacy
             </p>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-5">
+          <p className="text-center text-sm font-medium text-slate-400 mt-8">
             Already have an account?{" "}
-            <Link href="/login" className="text-purple-400 hover:text-purple-300 transition-colors font-medium">
-              Sign in
+            <Link href="/login" className="text-blue-600 hover:text-blue-700 font-black transition-colors">
+              Sign In
             </Link>
           </p>
         </div>

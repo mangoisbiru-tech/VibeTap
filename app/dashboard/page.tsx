@@ -51,18 +51,18 @@ function StatCard({
   color: string;
 }) {
   return (
-    <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-6 hover:border-white/10 transition-colors">
+    <div className="glass-card rounded-3xl p-6 transition-all hover:translate-y-[-2px] hover:shadow-lg">
       <div className="flex items-start justify-between mb-4">
         <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center"
-          style={{ background: `${color}20`, color }}
+          className="w-11 h-11 rounded-2xl flex items-center justify-center shadow-sm"
+          style={{ background: `${color}15`, color }}
         >
           {icon}
         </div>
       </div>
-      <div className="text-3xl font-black mb-1">{value}</div>
-      <div className="text-sm text-gray-400">{label}</div>
-      {sub && <div className="text-xs text-gray-600 mt-1">{sub}</div>}
+      <div className="text-3xl font-black text-slate-900 tracking-tight mb-1">{value}</div>
+      <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">{label}</div>
+      {sub && <div className="text-[10px] text-slate-300 mt-1 font-medium">{sub}</div>}
     </div>
   );
 }
@@ -77,10 +77,12 @@ function TapChart({ dailyTaps }: { dailyTaps: Record<string, number> }) {
   const max = Math.max(...days.map((d) => dailyTaps[d] || 0), 1);
 
   return (
-    <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-6 hover:border-white/10 transition-colors">
+    <div className="glass-card rounded-3xl p-6">
       <div className="flex items-center gap-2 mb-6">
-        <TrendingUp size={18} className="text-purple-400" />
-        <h3 className="font-semibold text-sm">Tap Activity — Last 7 Days</h3>
+        <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+          <TrendingUp size={16} className="text-blue-500" />
+        </div>
+        <h3 className="font-bold text-sm text-slate-800">Tap Activity — Last 7 Days</h3>
       </div>
       <div className="flex items-end gap-2 h-28">
         {days.map((day) => {
@@ -94,17 +96,17 @@ function TapChart({ dailyTaps }: { dailyTaps: Record<string, number> }) {
             <div key={day} className="flex-1 flex flex-col items-center gap-1">
               <div className="w-full flex items-end justify-center" style={{ height: "96px" }}>
                 <div
-                  className="w-full rounded-t-lg transition-all duration-500"
+                  className="w-full rounded-t-xl transition-all duration-700 ease-out"
                   style={{
-                    height: `${Math.max(height, 3)}%`,
+                    height: `${Math.max(height, 5)}%`,
                     background: isToday
-                      ? "linear-gradient(to top, #6C47FF, #A78BFA)"
-                      : "linear-gradient(to top, #ffffff10, #ffffff20)",
+                      ? "linear-gradient(to top, #2D5BFF, #00D4FF)"
+                      : "rgba(37, 99, 235, 0.08)",
                   }}
                   title={`${count} taps`}
                 />
               </div>
-              <span className={`text-xs ${isToday ? "text-purple-400 font-medium" : "text-gray-600"}`}>
+              <span className={`text-[10px] font-bold uppercase tracking-wider ${isToday ? "text-blue-600" : "text-slate-300"}`}>
                 {dayLabel}
               </span>
             </div>
@@ -193,18 +195,18 @@ export default function DashboardPage() {
   if (!merchant) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 size={28} className="animate-spin text-purple-400" />
+        <Loader2 size={28} className="animate-spin text-blue-500" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {/* Page header */}
-      <div>
-        <h1 className="text-2xl font-black">Dashboard</h1>
-        <p className="text-gray-500 text-sm mt-1">
-          Welcome back, {merchant.name}! Here&apos;s your overview.
+      <div className="relative">
+        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Dashboard</h1>
+        <p className="text-slate-500 text-sm mt-1 font-medium">
+          Welcome back, <span className="text-blue-600 font-bold">{merchant.name}</span>! Here&apos;s your overview.
         </p>
       </div>
 
@@ -212,49 +214,49 @@ export default function DashboardPage() {
       <TapChart dailyTaps={merchant.dailyTaps || {}} />
 
       {/* Tap stats */}
-      <div>
-        <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-3">NFC Taps</p>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="space-y-4">
+        <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-black">NFC Taps</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatCard
-            icon={<MousePointerClick size={18} />}
+            icon={<MousePointerClick size={20} />}
             label="Today's Taps"
             value={todayTaps}
             color="#00D4FF"
           />
           <StatCard
-            icon={<Calendar size={18} />}
+            icon={<Calendar size={20} />}
             label="This Week"
             value={weekTaps}
-            color="#A78BFA"
+            color="#2D5BFF"
           />
           <StatCard
-            icon={<TrendingUp size={18} />}
+            icon={<TrendingUp size={20} />}
             label="All Time"
             value={(merchant.tapCount || 0).toLocaleString()}
-            color="#ec4899"
+            color="#6C47FF"
             sub={`Since ${merchant.createdAt?.toDate ? merchant.createdAt.toDate().toLocaleDateString("en-MY") : "—"}`}
           />
         </div>
       </div>
 
       {/* Revenue stats */}
-      <div>
-        <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-3">Revenue</p>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="space-y-4">
+        <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-black">Revenue</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatCard
-            icon={<DollarSign size={18} />}
+            icon={<DollarSign size={20} />}
             label="This Week"
             value={`RM ${weekRevenue.toFixed(2)}`}
             color="#10b981"
           />
           <StatCard
-            icon={<BarChart3 size={18} />}
+            icon={<BarChart3 size={20} />}
             label="This Month"
             value={`RM ${monthRevenue.toFixed(2)}`}
-            color="#6C47FF"
+            color="#2D5BFF"
           />
           <StatCard
-            icon={<TrendingUp size={18} />}
+            icon={<TrendingUp size={20} />}
             label="Conversion Rate"
             value={`${conversionRate}%`}
             sub={`${monthPaid} paid / ${monthTaps} taps`}

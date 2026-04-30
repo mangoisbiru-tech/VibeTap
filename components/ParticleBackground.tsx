@@ -41,24 +41,24 @@ export default function ParticleBackground() {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {/* Orb 1: Emerald/Mint */}
+      {/* Orb 1: Cyan/Aurora */}
       <div 
         ref={orb1Ref}
-        className="absolute w-[600px] h-[600px] sm:w-[800px] sm:h-[800px] rounded-full bg-emerald-400/20 blur-[100px] sm:blur-[140px] mix-blend-multiply will-change-transform"
+        className="absolute w-[600px] h-[600px] sm:w-[800px] sm:h-[800px] rounded-full bg-cyan-300/20 blur-[100px] sm:blur-[140px] will-change-transform"
         style={{ top: '-10%', left: '10%' }}
       />
       
-      {/* Orb 2: Deep Blue */}
+      {/* Orb 2: Electric Blue */}
       <div 
         ref={orb2Ref}
-        className="absolute w-[500px] h-[500px] sm:w-[700px] sm:h-[700px] rounded-full bg-blue-400/15 blur-[100px] sm:blur-[120px] mix-blend-multiply will-change-transform"
+        className="absolute w-[500px] h-[500px] sm:w-[700px] sm:h-[700px] rounded-full bg-blue-400/20 blur-[100px] sm:blur-[120px] will-change-transform"
         style={{ top: '30%', right: '-10%' }}
       />
-
-      {/* Orb 3: Yellow/Gold */}
+      
+      {/* Orb 3: Subtle Indigo (very low opacity) */}
       <div 
         ref={orb3Ref}
-        className="absolute w-[600px] h-[600px] sm:w-[900px] sm:h-[900px] rounded-full bg-yellow-300/20 blur-[100px] sm:blur-[150px] mix-blend-multiply will-change-transform"
+        className="absolute w-[600px] h-[600px] sm:w-[900px] sm:h-[900px] rounded-full bg-indigo-400/10 blur-[100px] sm:blur-[150px] will-change-transform"
         style={{ bottom: '-20%', left: '20%' }}
       />
 

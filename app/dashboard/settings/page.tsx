@@ -191,57 +191,54 @@ export default function SettingsPage() {
     p === "plan1" ? "purple" : p === "plan2" ? "blue" : "orange";
 
   return (
-    <div className="space-y-8 max-w-2xl pb-16">
-      <div>
-        <h1 className="text-2xl font-black flex items-center gap-2">
-          <Settings size={22} className="text-purple-400" /> Settings
+    <div className="space-y-10 max-w-2xl pb-20">
+      <div className="relative">
+        <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+          Settings
         </h1>
-        <p className="text-gray-500 text-sm mt-1">
+        <p className="text-slate-500 text-sm mt-1 font-medium">
           Configure your store, choose your plan, and manage your NFC stickers.
         </p>
       </div>
 
-      {/* ── YOUR NFC URL ─ shown prominently at the top ──────────────── */}
-      <div className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 border border-purple-500/30 rounded-2xl p-5 space-y-3">
-        <h2 className="text-base font-bold text-white flex items-center gap-2">
-          <Nfc size={18} className="text-purple-400" /> Your NFC Sticker URL
+      {/* ── YOUR NFC URL ── */}
+      <div className="glass-card rounded-3xl p-6 space-y-4 border-blue-100 bg-gradient-to-br from-blue-50/50 to-white/50">
+        <h2 className="text-sm font-black text-blue-600 uppercase tracking-[0.15em] flex items-center gap-2">
+          <Nfc size={16} /> Your NFC Sticker URL
         </h2>
-        <p className="text-sm text-gray-400 leading-relaxed">
-          This is the URL to write into your NFC sticker. It is unique to your account.{" "}
-          <span className="text-yellow-400 font-semibold">
-            Do NOT make up anything — copy it exactly from here.
-          </span>
+        <p className="text-sm text-slate-500 leading-relaxed font-medium">
+          Copy these URLs exactly into your NFC stickers using the <span className="text-blue-600 font-bold">NFC Writer</span>.
         </p>
 
         {uid ? (
-          <div className="space-y-2">
+          <div className="space-y-3">
             {/* Plan 1 URL */}
-            <div className="bg-black/40 rounded-xl p-3 flex items-center gap-3">
+            <div className="bg-white/60 border border-slate-100 rounded-2xl p-4 flex items-center gap-4 shadow-sm">
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] text-purple-400 font-bold uppercase tracking-widest mb-0.5">Plan 1 — write this TNG link directly</p>
-                <p className="font-mono text-xs text-gray-300 truncate">
+                <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">Plan 1 — write this TNG link directly</p>
+                <p className="font-mono text-xs text-slate-600 truncate">
                   {tngPaymentUrl || "⚠ Paste your TNG link in Business Info below"}
                 </p>
               </div>
             </div>
 
             {/* Plans 2 & 3 — sticker-specific URLs */}
-            <div className="bg-black/40 rounded-xl p-3">
-              <p className="text-[10px] text-blue-400 font-bold uppercase tracking-widest mb-2">Plans 2 & 3 — unique URL per table (from NFC Stickers below)</p>
+            <div className="bg-white/60 border border-slate-100 rounded-2xl p-4 shadow-sm">
+              <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-3">Plans 2 & 3 — unique URL per table</p>
               {stickers.length === 0 ? (
-                <p className="text-xs text-gray-600 italic">Add stickers below — each gets its own unique URL</p>
+                <p className="text-xs text-slate-300 italic py-2">Add stickers below — each gets its own unique URL</p>
               ) : (
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {stickers.map((s) => {
                     const url = `${SITE_URL}/s/${s.id}`;
                     return (
-                      <div key={s.id} className="flex items-center gap-2">
-                        <p className="flex-1 font-mono text-xs text-gray-300 truncate">{url}</p>
+                      <div key={s.id} className="flex items-center gap-3 group">
+                        <p className="flex-1 font-mono text-[11px] text-slate-500 truncate">{url}</p>
                         <button
                           onClick={() => { navigator.clipboard.writeText(url); setCopiedId(s.id); setTimeout(() => setCopiedId(null), 2000); }}
-                          className="flex-shrink-0 flex items-center gap-1 text-[10px] font-bold bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 px-2 py-1 rounded-lg transition-all"
+                          className="flex-shrink-0 flex items-center gap-1.5 text-[10px] font-black uppercase bg-blue-50 hover:bg-blue-100 text-blue-600 px-3 py-1.5 rounded-xl transition-all"
                         >
-                          {copiedId === s.id ? <><Check size={10} /> Copied!</> : <><Copy size={10} /> {s.tableName}</>}
+                          {copiedId === s.id ? <><Check size={12} /> Copied</> : <><Copy size={12} /> {s.tableName}</>}
                         </button>
                       </div>
                     );
@@ -251,72 +248,60 @@ export default function SettingsPage() {
             </div>
           </div>
         ) : (
-          <div className="bg-black/40 rounded-xl p-3 text-center">
-            <div className="w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="py-10 flex justify-center">
+            <Loader2 size={24} className="animate-spin text-blue-500" />
           </div>
         )}
       </div>
 
       {/* ── Plan Selector ────────────────────────────────────────────── */}
-      <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 space-y-4">
-        <h2 className="text-lg font-bold">Choose Your Plan</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="glass-card rounded-3xl p-6 space-y-6">
+        <h2 className="text-sm font-black text-slate-400 uppercase tracking-[0.15em]">Choose Your Plan</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {PLANS.map((p) => (
             <button
               key={p.id}
               onClick={() => setPlan(p.id)}
-              className={`p-4 rounded-2xl border text-left transition-all ${
+              className={`p-5 rounded-3xl border-2 text-left transition-all ${
                 plan === p.id
-                  ? p.color === "purple"
-                    ? "bg-purple-500/15 border-purple-500/50"
-                    : p.color === "blue"
-                    ? "bg-blue-500/15 border-blue-500/50"
-                    : "bg-orange-500/15 border-orange-500/50"
-                  : "bg-white/5 border-white/10 hover:bg-white/[0.08]"
+                  ? "bg-blue-50 border-blue-500 shadow-md shadow-blue-500/10"
+                  : "bg-slate-50/50 border-transparent hover:bg-slate-50"
               }`}
             >
-              <p
-                className={`font-black text-sm ${
-                  plan === p.id
-                    ? p.color === "purple"
-                      ? "text-purple-300"
-                      : p.color === "blue"
-                      ? "text-blue-300"
-                      : "text-orange-300"
-                    : "text-white"
-                }`}
-              >
+              <p className={`font-black text-sm tracking-tight ${plan === p.id ? "text-blue-600" : "text-slate-900"}`}>
                 {p.label}
               </p>
-              <p className="text-[11px] text-gray-500 mt-1 leading-snug">{p.desc}</p>
+              <p className={`text-[10px] mt-1.5 leading-snug font-bold ${plan === p.id ? "text-blue-400" : "text-slate-400"}`}>
+                {p.desc}
+              </p>
             </button>
           ))}
         </div>
 
         {/* Plan 3 Behavior Mode Toggle */}
         {plan === "plan3" && (
-          <div className="mt-4 bg-orange-500/10 border border-orange-500/20 rounded-xl p-4 animate-in fade-in duration-300">
-            <h3 className="text-sm font-bold text-orange-300 mb-3">Plan 3 Customer Experience</h3>
-            <div className="space-y-2">
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${plan3Mode === "summing_up" ? "border-orange-500" : "border-gray-500 group-hover:border-gray-400"}`}>
-                  {plan3Mode === "summing_up" && <div className="w-2.5 h-2.5 rounded-full bg-orange-500" />}
+          <div className="mt-4 bg-orange-50 border border-orange-100 rounded-3xl p-5 animate-in zoom-in-95 duration-300">
+            <h3 className="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-4">Plan 3 Customer Experience</h3>
+            <div className="space-y-4">
+              <label className="flex items-center gap-4 cursor-pointer group">
+                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${plan3Mode === "summing_up" ? "border-orange-500 bg-orange-500" : "border-slate-200"}`}>
+                  {plan3Mode === "summing_up" && <Check size={14} className="text-white" />}
                 </div>
                 <input type="radio" className="hidden" checked={plan3Mode === "summing_up"} onChange={() => setPlan3Mode("summing_up")} />
                 <div>
-                  <p className="text-sm font-semibold text-white">Boss is summing up... (Recommended)</p>
-                  <p className="text-xs text-gray-400">Customer waits. Once you push the bill, they automatically see the amount and can pay.</p>
+                  <p className="text-sm font-black text-slate-900">Boss is summing up... (Recommended)</p>
+                  <p className="text-[11px] text-slate-500 font-medium">Customer waits while you push the exact bill.</p>
                 </div>
               </label>
 
-              <label className="flex items-center gap-3 cursor-pointer group pt-2">
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${plan3Mode === "boss_coming" ? "border-orange-500" : "border-gray-500 group-hover:border-gray-400"}`}>
-                  {plan3Mode === "boss_coming" && <div className="w-2.5 h-2.5 rounded-full bg-orange-500" />}
+              <label className="flex items-center gap-4 cursor-pointer group">
+                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${plan3Mode === "boss_coming" ? "border-orange-500 bg-orange-500" : "border-slate-200"}`}>
+                  {plan3Mode === "boss_coming" && <Check size={14} className="text-white" />}
                 </div>
                 <input type="radio" className="hidden" checked={plan3Mode === "boss_coming"} onChange={() => setPlan3Mode("boss_coming")} />
                 <div>
-                  <p className="text-sm font-semibold text-white">Boss is coming</p>
-                  <p className="text-xs text-gray-400">Customer is just told "Boss is coming". They pay physically when you arrive.</p>
+                  <p className="text-sm font-black text-slate-900">Boss is coming</p>
+                  <p className="text-[11px] text-slate-500 font-medium">Customer is just told "Boss is coming".</p>
                 </div>
               </label>
             </div>
@@ -325,225 +310,141 @@ export default function SettingsPage() {
       </div>
 
       {/* ── Business Info ─────────────────────────────────────────────── */}
-      <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 space-y-4">
-        <h2 className="text-lg font-bold">Business Info</h2>
-        <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-            Business Name
-          </label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
-            placeholder="e.g. Mamak Ali Kopitiam"
-          />
-        </div>
-        <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-            TNG Payment URL{" "}
-            <span className="text-purple-400">(Plan 1 — paste your TNG link here)</span>
-          </label>
-          <input
-            type="text"
-            value={tngPaymentUrl}
-            onChange={(e) => setTngPaymentUrl(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-mono text-sm focus:outline-none focus:border-purple-500 transition-colors"
-            placeholder="https://payment.tngdigital.com.my/sc/..."
-          />
-        </div>
-        <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-            Static QR Data{" "}
-            <span className="text-blue-400">(Plans 2 & 3 — paste your TNG Merchant QR Code data)</span>
-          </label>
-          <input
-            type="text"
-            value={staticQrData}
-            onChange={(e) => setStaticQrData(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-mono text-sm focus:outline-none focus:border-blue-500 transition-colors"
-            placeholder="000201010211..."
-          />
-          <p className="text-[10px] text-gray-600 mt-1">
-            Scan your physical TNG/DuitNow QR with a normal QR scanner app (or upload a screenshot) → copy the long code → paste here.
-          </p>
+      <div className="glass-card rounded-3xl p-6 space-y-6">
+        <h2 className="text-sm font-black text-slate-400 uppercase tracking-[0.15em]">Business Info</h2>
+        <div className="grid grid-cols-1 gap-6">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+              Business Name
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300"
+              placeholder="e.g. Mamak Ali Kopitiam"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex justify-between">
+              TNG Payment URL
+              <span className="text-blue-500 font-black">(Plan 1 only)</span>
+            </label>
+            <input
+              type="text"
+              value={tngPaymentUrl}
+              onChange={(e) => setTngPaymentUrl(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-slate-600 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300"
+              placeholder="https://payment.tngdigital.com.my/sc/..."
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex justify-between">
+              Merchant QR Data
+              <span className="text-blue-500 font-black">(Plans 2 & 3 only)</span>
+            </label>
+            <input
+              type="text"
+              value={staticQrData}
+              onChange={(e) => setStaticQrData(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-slate-600 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300"
+              placeholder="000201010211..."
+            />
+            <p className="text-[10px] text-slate-400 font-medium px-1">
+              Scan your TNG QR code with any scanner to get this data.
+            </p>
+          </div>
         </div>
 
         {/* Active toggle */}
-        <div className="flex items-center justify-between py-3 border-t border-white/5">
+        <div className="flex items-center justify-between py-4 border-t border-slate-100">
           <div>
-            <p className="font-semibold text-sm">Store Active</p>
-            <p className="text-xs text-gray-500">When off, all stickers redirect to not-found.</p>
+            <p className="font-black text-sm text-slate-900">Store Active</p>
+            <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Control public availability</p>
           </div>
           <button
             onClick={() => setIsActive(!isActive)}
-            className={`w-12 h-6 rounded-full transition-all relative ${
-              isActive ? "bg-green-500" : "bg-white/10"
+            className={`w-14 h-8 rounded-full transition-all relative p-1 ${
+              isActive ? "bg-green-500 shadow-md shadow-green-500/20" : "bg-slate-200"
             }`}
           >
-            <span
-              className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-all ${
-                isActive ? "left-7" : "left-1"
-              }`}
-            />
+            <div className={`w-6 h-6 bg-white rounded-full shadow-sm transition-all transform ${isActive ? "translate-x-6" : "translate-x-0"}`} />
           </button>
         </div>
       </div>
 
-      {/* ── Menu Items (Plan 2 only) ──────────────────────────────────── */}
-      {plan === "plan2" && (
-        <div className="bg-white/[0.03] border border-blue-500/20 rounded-2xl p-6 space-y-4 animate-in fade-in duration-300">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold flex items-center gap-2">
-              <UtensilsCrossed size={18} className="text-blue-400" /> Menu Items
-            </h2>
-            {menuItems.length < 8 && (
-              <button
-                onClick={addItem}
-                className="flex items-center gap-1 text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg transition"
-              >
-                <Plus size={14} /> Add
-              </button>
-            )}
-          </div>
-          <p className="text-xs text-gray-500">Optional — for your reference. Customers don't see this in Plan 2.</p>
-          {menuItems.map((item, i) => (
-            <div key={i} className="flex items-center gap-3 bg-white/5 rounded-xl p-3">
-              <input
-                type="text"
-                value={item.name}
-                onChange={(e) => updateItem(i, "name", e.target.value)}
-                placeholder="Item name"
-                className="flex-1 bg-transparent text-white text-sm focus:outline-none"
-              />
-              <span className="text-gray-500 text-xs font-bold">RM</span>
-              <input
-                type="number"
-                value={item.price}
-                onChange={(e) => updateItem(i, "price", parseFloat(e.target.value) || 0)}
-                className="w-20 bg-transparent text-white text-sm text-right focus:outline-none"
-              />
-              <button onClick={() => removeItem(i)} className="text-gray-600 hover:text-red-400 transition-colors">
-                <Trash2 size={16} />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-
       {/* ── Table Management ───────────────────────────────────────── */}
-      <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 space-y-4">
-        <h2 className="text-lg font-bold flex items-center gap-2">
-          <UtensilsCrossed size={18} className="text-purple-400" /> Table Management
-        </h2>
-        <p className="text-sm text-gray-400 leading-relaxed">
-          Add your tables here (e.g., Table 1, VIP Room). Once created, you can write them to your physical stickers using the <span className="text-white font-semibold">NFC Writer</span> tab on the left.
-        </p>
-
-        {/* URL format explainer */}
-        <div
-          className={`rounded-xl p-4 border text-sm ${
-            plan === "plan1"
-              ? "bg-purple-500/10 border-purple-500/20 text-purple-300"
-              : plan === "plan2"
-              ? "bg-blue-500/10 border-blue-500/20 text-blue-300"
-              : "bg-orange-500/10 border-orange-500/20 text-orange-300"
-          }`}
-        >
-          {plan === "plan1" ? (
-            <>
-              <p className="font-bold mb-1">Plan 1: Write your TNG URL directly into the sticker.</p>
-              <p className="font-mono text-xs opacity-80">{tngPaymentUrl || "https://payment.tngdigital.com.my/sc/..."}</p>
-            </>
-          ) : (
-            <>
-              <p className="font-bold mb-1">Plans 2 & 3: Write each sticker's unique VibeTap URL into the sticker.</p>
-              <p className="font-mono text-xs opacity-80">{SITE_URL}/s/{"<sticker-id>"}</p>
-            </>
-          )}
-        </div>
-
+      <div className="glass-card rounded-3xl p-6 space-y-6">
+        <h2 className="text-sm font-black text-slate-400 uppercase tracking-[0.15em]">Table Management</h2>
+        
         {/* Sticker list */}
         <div className="space-y-3">
           {stickers.length === 0 && (
-            <p className="text-gray-600 text-sm py-4 text-center border-2 border-dashed border-white/5 rounded-xl">
-              No tables yet. Add one below.
-            </p>
+            <div className="text-center py-10 border-2 border-dashed border-slate-100 rounded-3xl">
+              <UtensilsCrossed size={32} className="text-slate-100 mx-auto mb-3" />
+              <p className="text-slate-400 text-xs font-black uppercase tracking-widest">No tables added yet</p>
+            </div>
           )}
           {stickers.map((s) => (
-            <div
-              key={s.id}
-              className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl p-4"
-            >
+            <div key={s.id} className="flex items-center gap-4 bg-slate-50/50 border border-slate-100 rounded-2xl p-4 group transition-all hover:bg-white hover:shadow-sm">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 flex-shrink-0">
+                <UtensilsCrossed size={20} />
+              </div>
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-white">{s.tableName}</p>
-                <p className="font-mono text-xs text-gray-500 truncate mt-0.5">
-                  {SITE_URL}/s/{s.id}
-                </p>
+                <p className="font-black text-slate-900">{s.tableName}</p>
+                <p className="font-mono text-[10px] text-slate-400 truncate mt-0.5 uppercase tracking-tight">ID: {s.id}</p>
               </div>
               <button
-                onClick={() => copyUrl(s.id)}
-                className="flex-shrink-0 p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
-                title="Copy URL"
-              >
-                {copiedId === s.id ? (
-                  <Check size={16} className="text-green-400" />
-                ) : (
-                  <Copy size={16} />
-                )}
-              </button>
-              <button
                 onClick={() => deleteSticker(s.id)}
-                className="flex-shrink-0 p-2 rounded-lg bg-white/5 hover:bg-red-500/20 text-gray-500 hover:text-red-400 transition-all"
+                className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all"
               >
-                <Trash2 size={16} />
+                <Trash2 size={18} />
               </button>
             </div>
           ))}
         </div>
 
         {/* Add new sticker */}
-        <div className="flex gap-2">
+        <div className="flex gap-3 pt-4 border-t border-slate-100">
           <input
             type="text"
             value={newTableName}
             onChange={(e) => setNewTableName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && addSticker()}
-            placeholder="Table name (e.g. Table 3, Counter)"
-            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-purple-500 transition-colors"
+            placeholder="Table Name (e.g. Table 1)"
+            className="flex-1 bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
           />
           <button
             onClick={addSticker}
             disabled={addingSticker || !newTableName.trim()}
-            className="bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white px-4 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2"
+            className="bg-slate-900 hover:bg-black disabled:opacity-40 text-white px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-black/10 active:scale-95"
           >
-            {addingSticker ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <Plus size={16} />
-            )}
-            Add
+            {addingSticker ? <Loader2 size={18} className="animate-spin" /> : "Add Table"}
           </button>
         </div>
       </div>
 
       {/* ── Save Button ───────────────────────────────────────────────── */}
-      <button
-        id="save-settings"
-        onClick={handleSave}
-        disabled={saving}
-        className="w-full bg-gradient-to-r from-[#6C47FF] to-[#00D4FF] text-white py-4 rounded-2xl font-bold text-lg shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
-      >
-        {saving ? (
-          <Loader2 size={20} className="animate-spin" />
-        ) : saved ? (
-          <>
-            <CheckCircle2 size={20} className="text-green-300" /> Saved!
-          </>
-        ) : (
-          "Save Settings"
-        )}
-      </button>
+      <div className="sticky bottom-6 z-10 px-4 sm:px-0">
+        <button
+          id="save-settings"
+          onClick={handleSave}
+          disabled={saving}
+          className="w-full bg-gradient-to-r from-[#2D5BFF] to-[#00D4FF] text-white py-5 rounded-3xl font-black text-lg tracking-tight shadow-xl shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-1 active:translate-y-0 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3"
+        >
+          {saving ? (
+            <Loader2 size={24} className="animate-spin" />
+          ) : saved ? (
+            <>
+              <Check size={24} className="text-green-300" /> Saved Successfully
+            </>
+          ) : (
+            "Update Store Settings"
+          )}
+        </button>
+      </div>
     </div>
+  );
+}
   );
 }

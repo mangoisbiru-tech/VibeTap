@@ -146,65 +146,101 @@ export default function NfcToolPage() {
 
 
   return (
-    <div className="max-w-4xl space-y-6 pb-16">
-      <div>
-        <h1 className="text-2xl font-black text-white flex items-center gap-2"><Nfc size={24} className="text-purple-400" /> NFC Tool Suite</h1>
-        <p className="text-gray-500 text-sm mt-1">Program physical NFC stickers with your VibeTap URLs using your Android phone.</p>
+    <div className="max-w-4xl space-y-8 pb-20">
+      <div className="relative">
+        <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+          NFC Tool Suite
+        </h1>
+        <p className="text-slate-500 text-sm mt-1 font-medium">
+          Program physical NFC stickers with your VibeTap URLs using your Android phone.
+        </p>
       </div>
 
       {!isNfcSupported && (
-        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl px-4 py-3 flex items-center gap-3 text-yellow-300 text-sm">
-          <Smartphone size={18} className="shrink-0" />
-          <p><strong>Android + Chrome required.</strong> Web NFC only works in Google Chrome on Android. Open this page there to use these tools.</p>
+        <div className="bg-orange-50 border border-orange-100 rounded-2xl px-5 py-4 flex items-center gap-4 text-orange-700 text-sm font-medium shadow-sm">
+          <Smartphone size={20} className="shrink-0 text-orange-500" />
+          <p>
+            <strong className="font-black uppercase text-[10px] tracking-widest block mb-0.5">Android + Chrome Required</strong>
+            Web NFC only works in Google Chrome on Android. Open this page there to use these tools.
+          </p>
         </div>
       )}
 
-      <div className="flex border-b border-white/10">
+      {/* ── TABS ─────────────────────────────────────────────────── */}
+      <div className="flex border-b border-slate-100 overflow-x-auto no-scrollbar">
         {TABS.map(tab => (
-          <button key={tab.id} onClick={() => { setActiveTab(tab.id); setStatus("idle"); setTagInfo(null); }}
-            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-all -mb-px ${activeTab === tab.id ? "border-purple-500 text-purple-400" : "border-transparent text-gray-500 hover:text-white"}`}>
+          <button 
+            key={tab.id} 
+            onClick={() => { setActiveTab(tab.id); setStatus("idle"); setTagInfo(null); }}
+            className={`flex items-center gap-2 px-6 py-4 text-sm font-black uppercase tracking-widest transition-all -mb-px whitespace-nowrap ${
+              activeTab === tab.id 
+                ? "border-b-2 border-blue-500 text-blue-600" 
+                : "border-b-2 border-transparent text-slate-400 hover:text-slate-600"
+            }`}
+          >
             {tab.icon} {tab.label}
           </button>
         ))}
       </div>
 
       {status !== "idle" && (
-        <div className={`p-4 rounded-xl border flex items-start gap-3 whitespace-pre-line ${status === "error" ? "bg-red-500/10 border-red-500/20 text-red-400" : status === "success" ? "bg-green-500/10 border-green-500/20 text-green-400" : "bg-blue-500/10 border-blue-500/20 text-blue-300"}`}>
-          {status === "error" ? <AlertCircle size={20} className="shrink-0 mt-0.5" /> : status === "success" ? <CheckCircle2 size={20} className="shrink-0 mt-0.5" /> : <Nfc size={20} className="shrink-0 mt-0.5 animate-pulse" />}
-          <div>
-            <p className="font-bold text-sm">{status === "scanning" ? "Waiting for NFC tag..." : status === "success" ? "Done!" : "Failed"}</p>
-            <p className="text-sm opacity-90 mt-0.5">{message}</p>
+        <div className={`p-5 rounded-3xl border flex items-start gap-4 animate-in slide-in-from-top-4 duration-300 ${
+          status === "error" 
+            ? "bg-red-50 border-red-100 text-red-600" 
+            : status === "success" 
+            ? "bg-green-50 border-green-100 text-green-600" 
+            : "bg-blue-50 border-blue-100 text-blue-600"
+        }`}>
+          <div className="mt-0.5">
+            {status === "error" ? <AlertCircle size={22} /> : status === "success" ? <CheckCircle2 size={22} /> : <Nfc size={22} className="animate-pulse" />}
+          </div>
+          <div className="flex-1">
+            <p className="font-black uppercase text-[10px] tracking-widest mb-1">
+              {status === "scanning" ? "NFC Scanner Active" : status === "success" ? "Operation Success" : "Error Occurred"}
+            </p>
+            <p className="text-sm font-bold leading-relaxed whitespace-pre-line">{message}</p>
           </div>
         </div>
       )}
 
       {/* READ TAB */}
       {activeTab === "read" && (
-        <div className="space-y-5">
-          <div className="bg-[#1A1A24] border border-white/10 rounded-2xl p-8 text-center">
-            <div className="w-20 h-20 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mx-auto mb-5"><ScanSearch size={36} className="text-blue-400" /></div>
-            <h2 className="text-xl font-bold text-white mb-2">Read Tag Info</h2>
-            <p className="text-gray-400 text-sm mb-6 max-w-sm mx-auto">Tap any NFC sticker to reveal its Serial Number, stored content, and record count.</p>
-            <button onClick={handleRead} disabled={status === "scanning"} className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 mx-auto transition-all shadow-lg shadow-blue-900/30">
-              <ScanSearch size={18} /> {status === "scanning" ? "Waiting for tag..." : "Scan Tag Now"}
+        <div className="space-y-6">
+          <div className="glass-card rounded-[2.5rem] p-10 text-center flex flex-col items-center">
+            <div className="w-24 h-24 rounded-full bg-blue-500/10 border border-blue-100 flex items-center justify-center mb-6 shadow-inner">
+              <ScanSearch size={40} className="text-blue-500" />
+            </div>
+            <h2 className="text-2xl font-black text-slate-900 mb-3">Read Tag Info</h2>
+            <p className="text-slate-500 text-sm mb-8 max-w-sm font-medium leading-relaxed">
+              Tap any NFC sticker to reveal its Serial Number, stored content, and record count.
+            </p>
+            <button 
+              onClick={handleRead} 
+              disabled={status === "scanning"} 
+              className="bg-slate-900 hover:bg-black disabled:opacity-50 text-white px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all shadow-xl shadow-black/20 active:scale-95 flex items-center gap-2"
+            >
+              <ScanSearch size={18} /> {status === "scanning" ? "Ready..." : "Scan Tag Now"}
             </button>
           </div>
+
           {tagInfo && (
-            <div className="bg-[#1A1A24] border border-green-500/20 rounded-2xl p-6 space-y-4">
-              <h3 className="font-bold text-green-400 flex items-center gap-2 text-sm uppercase tracking-wider"><CheckCircle2 size={16} /> Tag Details</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="glass-card rounded-3xl p-6 space-y-5 border-green-100 bg-gradient-to-br from-green-50/30 to-white">
+              <h3 className="font-black text-green-600 flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] mb-4">
+                <CheckCircle2 size={16} /> Tag Information Received
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
                   { label: "Serial Number", value: tagInfo.serialNumber || "Unknown" },
                   { label: "Record Count", value: tagInfo.recordCount.toString() },
                 ].map((item, i) => (
-                  <div key={i} className="bg-black/30 border border-white/10 rounded-xl px-4 py-3">
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">{item.label}</p>
-                    <p className="font-mono text-sm text-green-300 truncate">{item.value}</p>
+                  <div key={i} className="bg-white/60 border border-slate-100 rounded-2xl px-5 py-4 shadow-sm">
+                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1.5">{item.label}</p>
+                    <p className="font-mono text-sm text-slate-700 font-bold truncate">{item.value}</p>
                   </div>
                 ))}
-                <div className="bg-black/30 border border-white/10 rounded-xl px-4 py-3 sm:col-span-2">
-                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Stored URL Data</p>
-                  <p className="font-mono text-sm text-green-300 break-all">{tagInfo.url}</p>
+                <div className="bg-white/60 border border-slate-100 rounded-2xl px-5 py-4 shadow-sm sm:col-span-2">
+                  <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1.5">Stored URL Data</p>
+                  <p className="font-mono text-sm text-blue-600 font-bold break-all leading-relaxed">{tagInfo.url}</p>
                 </div>
               </div>
             </div>
@@ -214,80 +250,61 @@ export default function NfcToolPage() {
 
       {/* WRITE TAB */}
       {activeTab === "write" && (
-        <div className="space-y-4">
-          <div className="bg-purple-500/10 border border-purple-500/30 rounded-2xl p-5 space-y-4">
-            <h3 className="font-bold text-white text-sm">How to write a URL to your physical NFC sticker</h3>
-            <div className="space-y-3">
+        <div className="space-y-8">
+          <div className="glass-card rounded-3xl p-8 space-y-6 bg-gradient-to-br from-blue-50/50 to-white/50 border-blue-100">
+            <h3 className="font-black text-blue-600 text-[10px] uppercase tracking-[0.2em]">Writing Guide</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {[
                 { step: "1", text: "Find the correct URL below (auto-filled from your Settings)." },
-                { step: "2", text: "This page must be open on your Android phone in Chrome (Web NFC only works on Android Chrome)." },
-                { step: "3", text: 'Click the blue "Write to Tag" button on the table you want to program.' },
-                { step: "4", text: "Hold the back of your Android phone flat against the physical NFC sticker." },
-                { step: "5", text: "Wait for the success message — done!" },
+                { step: "2", text: "Open this in Chrome on Android (Web NFC only works on Android)." },
+                { step: "3", text: 'Click "Write to Tag" on the table you want to program.' },
+                { step: "4", text: "Hold the back of your phone against the physical NFC sticker." },
               ].map(({ step, text }) => (
-                <div key={step} className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center text-white font-black text-xs flex-shrink-0 mt-0.5">{step}</div>
-                  <p className="text-sm text-gray-300 leading-snug">{text}</p>
+                <div key={step} className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-xl bg-blue-500 flex items-center justify-center text-white font-black text-xs flex-shrink-0 shadow-md shadow-blue-500/20">{step}</div>
+                  <p className="text-xs text-slate-600 font-bold leading-relaxed">{text}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          {plan === "plan1" && (
-            <div className="bg-[#1A1A24] border border-purple-500/20 rounded-2xl p-5 space-y-4">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center"><Nfc size={14} className="text-purple-400" /></div>
-                <div>
-                  <h3 className="font-bold text-white">Plan 1 — All Stickers</h3>
-                  <p className="text-xs text-gray-500">Write the same TNG URL into every sticker</p>
-                </div>
-              </div>
-              <div className="bg-black/30 border border-white/10 rounded-xl px-4 py-3">
-                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-1">URL to write</p>
-                <p className="font-mono text-sm text-purple-300 break-all">
-                  {paymentUrl || "⚠ No TNG URL set — go to Settings → Business Info → paste your TNG link"}
-                </p>
-              </div>
-              <button 
-                onClick={() => handleWrite(paymentUrl)} 
-                disabled={status === "scanning" || !paymentUrl}
-                className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white px-8 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-purple-900/20"
-              >
-                <Nfc size={16} /> 
-                {!paymentUrl ? "Missing TNG URL (Fix in Settings)" : status === "scanning" ? "Waiting for tag..." : "Write to Tag"}
-              </button>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="font-black text-slate-900 tracking-tight">Your Store Tables</h3>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{stickers.length} Registered Tables</p>
             </div>
-          )}
 
-          {/* Show the table list for ALL plans so they don't think it's broken when they add tables */}
-          <div className="pt-4 border-t border-white/10">
-            <h3 className="font-bold text-white mb-4">Your Tables</h3>
             {stickers.length === 0 && (
-              <div className="text-center py-12 border-2 border-dashed border-white/10 rounded-2xl">
-                <p className="text-gray-500 text-sm">No tables configured yet.</p>
-                <p className="text-gray-600 text-xs mt-1">Go to Settings → Table Management → Add your tables first.</p>
+              <div className="text-center py-16 border-2 border-dashed border-slate-100 rounded-[2.5rem]">
+                <p className="text-slate-400 text-sm font-bold">No tables configured yet.</p>
+                <p className="text-slate-300 text-xs mt-1 font-medium italic">Go to Settings → Table Management → Add your tables first.</p>
               </div>
             )}
-            <div className="space-y-4">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {stickers.map(table => {
                 const stickerUrl = plan === "plan1" ? paymentUrl : `${SITE_URL}/s/${table.id}`;
                 return (
-                  <div key={table.id} className="bg-[#1A1A24] border border-white/10 rounded-2xl p-5 space-y-4">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center"><Nfc size={14} className="text-purple-400" /></div>
-                      <h3 className="font-bold text-white">{table.tableName}</h3>
-                    </div>
-                    <div className="bg-black/30 border border-white/10 rounded-xl px-4 py-3">
-                      <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-1">URL to write</p>
-                      <p className="font-mono text-sm text-blue-300 break-all">{stickerUrl || "⚠ Missing TNG URL (Fix in Settings)"}</p>
+                  <div key={table.id} className="glass-card rounded-3xl p-6 flex flex-col justify-between group transition-all hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1">
+                    <div className="mb-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+                          <Nfc size={20} />
+                        </div>
+                        <h3 className="font-black text-slate-900 text-lg">{table.tableName}</h3>
+                      </div>
+                      <div className="bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 group-hover:bg-white transition-colors">
+                        <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest mb-1">Target URL</p>
+                        <p className="font-mono text-[10px] text-blue-500 font-bold truncate">{stickerUrl || "⚠ Missing URL (Check Settings)"}</p>
+                      </div>
                     </div>
                     <button 
                       onClick={() => handleWrite(stickerUrl)} 
                       disabled={status === "scanning" || !stickerUrl}
-                      className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white px-8 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-purple-900/20"
+                      className="w-full bg-slate-900 hover:bg-black disabled:opacity-40 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2"
                     >
                       <Nfc size={16} /> 
-                      {!stickerUrl ? "Missing TNG URL" : status === "scanning" ? "Waiting for tag..." : `Write to ${table.tableName}`}
+                      {!stickerUrl ? "Missing URL" : status === "scanning" ? "Ready..." : `Write to ${table.tableName}`}
                     </button>
                   </div>
                 );
@@ -299,32 +316,29 @@ export default function NfcToolPage() {
 
       {/* OTHER TOOLS TAB */}
       {activeTab === "other" && (
-        <div className="space-y-5">
-          <div className="bg-[#1A1A24] border border-orange-500/20 rounded-2xl p-6">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0"><Ban size={22} className="text-orange-400" /></div>
-              <div className="flex-1">
-                <h2 className="text-lg font-bold text-white mb-1">Erase Tag</h2>
-                <p className="text-sm text-gray-400 mb-4 leading-relaxed">Wipes all data from the sticker, returning it to a blank factory state. Use this when you wrote the wrong URL. You can write to it again after erasing.</p>
-                <button onClick={handleErase} disabled={status === "scanning"} className="bg-orange-600 hover:bg-orange-500 disabled:opacity-50 text-white px-6 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 transition-all">
-                  <Ban size={16} /> {status === "scanning" ? "Erasing..." : "Erase Tag"}
-                </button>
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="glass-card rounded-[2.5rem] p-8 flex flex-col border-orange-100 bg-gradient-to-br from-orange-50/30 to-white">
+            <div className="w-14 h-14 rounded-2xl bg-orange-500/10 flex items-center justify-center mb-6"><Ban size={28} className="text-orange-500" /></div>
+            <h2 className="text-xl font-black text-slate-900 mb-2 tracking-tight">Erase Tag</h2>
+            <p className="text-sm text-slate-500 mb-8 leading-relaxed font-medium">Wipes all data from the sticker, returning it to a blank factory state. Use this when you wrote the wrong URL.</p>
+            <div className="mt-auto">
+              <button onClick={handleErase} disabled={status === "scanning"} className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-orange-500/20 active:scale-95 flex items-center justify-center gap-2">
+                <Ban size={16} /> {status === "scanning" ? "Scanning..." : "Erase Tag Now"}
+              </button>
             </div>
           </div>
-          <div className="bg-[#1A1A24] border border-red-500/30 rounded-2xl p-6">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center shrink-0"><Lock size={22} className="text-red-400" /></div>
-              <div className="flex-1">
-                <h2 className="text-lg font-bold text-white mb-1">Lock Tag <span className="text-red-400 text-sm font-medium">(Permanent)</span></h2>
-                <p className="text-sm text-gray-400 mb-3 leading-relaxed">Permanently locks the NFC chip so it can never be overwritten — even by you. Use this to prevent customers from tampering with your payment stickers.</p>
-                <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-3 py-2 mb-4">
-                  <p className="text-xs text-red-300 font-semibold">⚠ Cannot be undone. Once locked, the sticker cannot be erased or rewritten — ever.</p>
-                </div>
-                <button onClick={handleLock} disabled={status === "scanning"} className="bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white px-6 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 transition-all">
-                  <Lock size={16} /> {status === "scanning" ? "Locking..." : "Lock Tag Forever"}
-                </button>
-              </div>
+
+          <div className="glass-card rounded-[2.5rem] p-8 flex flex-col border-red-100 bg-gradient-to-br from-red-50/30 to-white">
+            <div className="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center mb-6"><Lock size={28} className="text-red-500" /></div>
+            <h2 className="text-xl font-black text-slate-900 mb-2 tracking-tight">Lock Forever</h2>
+            <p className="text-sm text-slate-500 mb-6 leading-relaxed font-medium">Permanently locks the NFC chip so it can never be overwritten — even by you. Prevents tampering.</p>
+            <div className="bg-red-50 border border-red-100 rounded-2xl px-4 py-3 mb-8">
+              <p className="text-[10px] text-red-600 font-black uppercase tracking-widest leading-normal">⚠ Danger Zone: Once locked, the sticker can NEVER be rewritten or erased.</p>
+            </div>
+            <div className="mt-auto">
+              <button onClick={handleLock} disabled={status === "scanning"} className="w-full bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-red-500/20 active:scale-95 flex items-center justify-center gap-2">
+                <Lock size={16} /> {status === "scanning" ? "Scanning..." : "Lock Tag Forever"}
+              </button>
             </div>
           </div>
         </div>

@@ -45,10 +45,10 @@ export default function LandingPage() {
       <nav className="relative z-50 flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center shadow-md">
-            <Zap size={20} className="text-emerald-400" />
+            <Zap size={20} className="text-blue-400" />
           </div>
           <span className="text-2xl font-bold tracking-tight text-slate-900">
-            Vibe<span className="text-emerald-600">Tap</span>
+            Vibe<span className="text-blue-600">Tap</span>
           </span>
         </div>
         <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-slate-600">
@@ -62,7 +62,7 @@ export default function LandingPage() {
           </Link>
           <Link
             href="/demo"
-            className="text-sm bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 hover:-translate-y-0.5"
+            className="text-sm bg-blue-500 hover:bg-blue-600 text-white px-6 py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 hover:-translate-y-0.5"
           >
             Try Free Demo
           </Link>
@@ -71,13 +71,13 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="relative z-10 flex flex-col items-center text-center pt-24 pb-32 px-6 max-w-5xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 text-sm font-semibold mb-8">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-sm font-semibold mb-8">
+          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
           Now live for Malaysian Merchants 🇲🇾
         </div>
 
         <h1 className="text-5xl md:text-7xl font-black leading-tight tracking-tight mb-6 text-slate-900">
-          Tap. Pay. <span className="text-emerald-600">Done.</span>
+          Tap. Pay. <span className="text-blue-600">Done.</span>
         </h1>
 
         <p className="text-xl text-slate-600 max-w-2xl mb-12 leading-relaxed font-medium">
@@ -126,7 +126,7 @@ export default function LandingPage() {
             <div key={stat.label} className="py-4 md:py-0">
               <div className="text-4xl md:text-5xl font-black text-slate-900 mb-2 tracking-tight">
                 <AnimatedCounter end={stat.value} />
-                <span className="text-emerald-500">{stat.suffix}</span>
+                <span className="text-blue-500">{stat.suffix}</span>
               </div>
               <div className="text-slate-500 font-semibold">{stat.label}</div>
             </div>
@@ -173,7 +173,7 @@ export default function LandingPage() {
               <div className="absolute top-6 right-8 text-5xl font-black text-slate-100">
                 {item.step}
               </div>
-              <div className="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-6">
                 {item.icon}
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
@@ -187,8 +187,8 @@ export default function LandingPage() {
       <section className="relative z-10 py-24 px-6 bg-slate-900 text-white">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
           <div className="flex-1">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold mb-6">
-              <Zap size={14} className="fill-emerald-400" /> Killer Feature
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/20 text-blue-400 text-sm font-bold mb-6">
+              <Zap size={14} className="fill-blue-400" /> Killer Feature
             </div>
             <h2 className="text-3xl md:text-5xl font-black mb-6 leading-tight">
               EFTPOS Mode<br />
@@ -197,7 +197,7 @@ export default function LandingPage() {
             <p className="text-slate-300 text-lg mb-8 leading-relaxed font-medium">
               Pasar malam boss enters <strong className="text-white bg-slate-800 px-2 py-0.5 rounded">RM8.50</strong> on their phone.
               Customer taps the sticker. TNG opens with the amount pre-filled.
-              The customer just needs to hit <strong className="text-emerald-400">PAY</strong>.
+              The customer just needs to hit <strong className="text-blue-400">PAY</strong>.
             </p>
             <div className="flex flex-col gap-4">
               {[
@@ -206,8 +206,8 @@ export default function LandingPage() {
                 "Works with any custom amount",
               ].map((feat) => (
                 <div key={feat} className="flex items-center gap-3 text-slate-300 font-medium">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
-                    <CheckCircle2 size={14} className="text-emerald-400" />
+                  <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+                    <CheckCircle2 size={14} className="text-blue-400" />
                   </div>
                   {feat}
                 </div>
@@ -215,19 +215,19 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="flex-1 w-full bg-slate-800 rounded-3xl p-8 border border-slate-700 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[80px] rounded-full" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full" />
             <div className="relative z-10">
               <div className="flex justify-between items-center mb-8">
                 <span className="text-slate-400 font-bold">Active Table</span>
-                <span className="bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold uppercase">Awaiting Tap</span>
+                <span className="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-xs font-bold uppercase">Awaiting Tap</span>
               </div>
               <div className="text-center mb-8">
                 <p className="text-slate-400 mb-2">Total Amount</p>
                 <div className="text-6xl font-black text-white flex justify-center items-start gap-2">
-                  <span className="text-2xl text-emerald-400 mt-2">RM</span> 8.50
+                  <span className="text-2xl text-blue-400 mt-2">RM</span> 8.50
                 </div>
               </div>
-              <button className="w-full bg-emerald-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2">
+              <button className="w-full bg-blue-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2">
                 <Smartphone size={20} /> Customer is tapping...
               </button>
             </div>
@@ -296,7 +296,7 @@ export default function LandingPage() {
       {/* CTA */}
       <section className="relative z-10 py-32 px-6">
         <div className="max-w-4xl mx-auto bg-slate-900 rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-500/20 via-transparent to-transparent" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-500/20 via-transparent to-transparent" />
           
           <div className="relative z-10">
             <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
@@ -308,7 +308,7 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/demo"
-                className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white px-10 py-5 rounded-2xl font-bold text-lg shadow-xl shadow-emerald-500/20 transition-all flex items-center justify-center gap-2"
+                className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white px-10 py-5 rounded-2xl font-bold text-lg shadow-xl shadow-blue-500/20 transition-all flex items-center justify-center gap-2"
               >
                 Launch Free Demo
                 <ArrowRight size={20} />
@@ -329,7 +329,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-slate-500 font-medium">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center">
-              <Zap size={14} className="text-emerald-400" />
+              <Zap size={14} className="text-blue-400" />
             </div>
             <span className="text-slate-900 font-bold tracking-tight">VibeTap</span>
             <span className="ml-2">© 2025 · Made in Malaysia 🇲🇾</span>
