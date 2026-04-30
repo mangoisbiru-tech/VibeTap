@@ -350,8 +350,8 @@ export default function CashierPage() {
         </div>
       )}
 
-      {/* ── Plan 3: Bill Requests ────────────────────────────────────────────────── */}
-      {plan === "plan3" && (
+      {/* ── Bill Requests (Plan 3 or stuck pending requests) ─────────────────────── */}
+      {(plan === "plan3" || billRequests.length > 0) && (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <p className="text-xs text-gray-500 uppercase tracking-widest font-bold flex-1">Bill Requests</p>
@@ -366,65 +366,53 @@ export default function CashierPage() {
               <Bell size={28} className="text-gray-600 mx-auto mb-3" />
               <p className="text-gray-500 text-sm">No pending bill requests</p>
               <p className="text-gray-600 text-xs mt-1">Customers tap the sticker and hit "Bill Please"</p>
-              <button 
-                onClick={async () => {
-                  if (!uid) return;
-                  const q = query(collection(db, "billRequests"), where("merchantId", "==", uid), where("status", "==", "pending"));
-                  const snap = await getDoc(doc(db, "merchants", uid)); // just dummy to check auth
-                  // We need to fetch and delete
-                  const { getDocs } = await import("firebase/firestore");
-                  const s = await getDocs(q);
-                  s.docs.forEach(async (d) => await deleteDoc(d.ref));
-                }}
-                className="mt-4 text-[10px] text-gray-700 hover:text-gray-500 underline"
-              >
-                Notification stuck? Click to force clear.
-              </button>
             </div>
           ) : (
-            billRequests.map((req) => (
-              <div key={req.id} className="bg-orange-500/10 border border-orange-500/20 rounded-2xl p-4 flex items-center gap-3">
-                <div className="flex-1">
-                  <p className="font-bold text-white">{req.tableName}</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    {req.wantsReceipt && (
-                      <span className="flex items-center gap-1 text-xs text-orange-300">
-                        <Receipt size={12} /> Wants receipt
+            <>
+              {billRequests.map((req) => (
+                <div key={req.id} className="bg-orange-500/10 border border-orange-500/20 rounded-2xl p-4 flex items-center gap-3">
+                  <div className="flex-1">
+                    <p className="font-bold text-white">{req.tableName}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      {req.wantsReceipt && (
+                        <span className="flex items-center gap-1 text-xs text-orange-300">
+                          <Receipt size={12} /> Wants receipt
+                        </span>
+                      )}
+                      <span className="text-xs text-gray-500">
+                        {req.createdAt?.toDate
+                          ? req.createdAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                          : "Just now"}
                       </span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    {plan === "plan3" && plan3Mode === "summing_up" ? (
+                      <button
+                        onClick={() => handlePushAndDone(req)}
+                        disabled={loading || rawCents === 0}
+                        className="flex items-center gap-1 text-xs font-bold bg-green-500/20 hover:bg-green-500/30 disabled:opacity-40 text-green-400 px-2 py-1.5 rounded-lg transition-all"
+                      >
+                        <CheckCircle2 size={13} /> Push RM {amountRM.toFixed(2)}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleBossComingDone(req)}
+                        className="flex items-center gap-1 text-xs font-bold bg-green-500/20 hover:bg-green-500/30 text-green-400 px-2 py-1.5 rounded-lg transition-all"
+                      >
+                        <CheckCircle2 size={13} /> Done
+                      </button>
                     )}
-                    <span className="text-xs text-gray-500">
-                      {req.createdAt?.toDate
-                        ? req.createdAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-                        : "Just now"}
-                    </span>
+                    <button
+                      onClick={() => handleClearRequest(req)}
+                      className="flex items-center gap-1 text-xs font-bold bg-red-500/10 hover:bg-red-500/20 text-red-400 px-2 py-1.5 rounded-lg transition-all"
+                    >
+                      <XCircle size={13} /> Clear
+                    </button>
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  {plan3Mode === "summing_up" ? (
-                    <button
-                      onClick={() => handlePushAndDone(req)}
-                      disabled={loading || rawCents === 0}
-                      className="flex items-center gap-1 text-xs font-bold bg-green-500/20 hover:bg-green-500/30 disabled:opacity-40 text-green-400 px-2 py-1.5 rounded-lg transition-all"
-                    >
-                      <CheckCircle2 size={13} /> Push RM {amountRM.toFixed(2)}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleBossComingDone(req)}
-                      className="flex items-center gap-1 text-xs font-bold bg-green-500/20 hover:bg-green-500/30 text-green-400 px-2 py-1.5 rounded-lg transition-all"
-                    >
-                      <CheckCircle2 size={13} /> Done
-                    </button>
-                  )}
-                  <button
-                    onClick={() => handleClearRequest(req)}
-                    className="flex items-center gap-1 text-xs font-bold bg-red-500/10 hover:bg-red-500/20 text-red-400 px-2 py-1.5 rounded-lg transition-all"
-                  >
-                    <XCircle size={13} /> Clear
-                  </button>
-                </div>
-              </div>
-            ))
+              ))}
+            </>
           )}
         </div>
       )}

@@ -131,23 +131,30 @@ export default function DashboardPage() {
         }
       });
 
-      // Revenue history (this month)
-      const monthStart = new Date();
-      monthStart.setDate(1);
-      monthStart.setHours(0, 0, 0, 0);
+      // Revenue history (query by merchantId only, filter month in JS)
       const histQ = query(
         collection(db, "billHistory"),
-        where("merchantId", "==", user.uid),
-        where("createdAt", ">=", Timestamp.fromDate(monthStart))
+        where("merchantId", "==", user.uid)
       );
       const unsubHist = onSnapshot(histQ, (snap) => {
+        const monthStart = new Date();
+        monthStart.setDate(1);
+        monthStart.setHours(0, 0, 0, 0);
+
         setHistoryEntries(
-          snap.docs.map((d) => ({
-            amount: d.data().amount ?? 0,
-            status: d.data().status,
-            createdAt: d.data().createdAt ?? null,
-          }))
+          snap.docs
+            .map((d) => ({
+              amount: d.data().amount ?? 0,
+              status: d.data().status,
+              createdAt: d.data().createdAt ?? null,
+            }))
+            .filter((d) => {
+              if (!d.createdAt?.toDate) return true;
+              return d.createdAt.toDate() >= monthStart;
+            })
         );
+      }, (err) => {
+        console.error("Dashboard history query error:", err);
       });
 
       return () => {

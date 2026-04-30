@@ -29,33 +29,39 @@ export default function HistoryPage() {
     const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) return;
 
-      // Only fetch entries from last 48 hours
-      const cutoff = new Date();
-      cutoff.setHours(cutoff.getHours() - 48);
-
+      // Query only by merchantId (no composite index needed)
       const q = query(
         collection(db, "billHistory"),
-        where("merchantId", "==", user.uid),
-        where("createdAt", ">=", Timestamp.fromDate(cutoff))
+        where("merchantId", "==", user.uid)
       );
 
       const unsubSnap = onSnapshot(q, (snap) => {
-        const docs = snap.docs.map((d) => ({
-          id: d.id,
-          tableName: d.data().tableName,
-          amount: d.data().amount,
-          status: d.data().status,
-          createdAt: d.data().createdAt ?? null,
-        })) as HistoryEntry[];
+        const cutoff = new Date();
+        cutoff.setHours(cutoff.getHours() - 48);
 
-        // Sort in memory to avoid needing a composite index
+        const docs = snap.docs
+          .map((d) => ({
+            id: d.id,
+            tableName: d.data().tableName,
+            amount: d.data().amount,
+            status: d.data().status,
+            createdAt: d.data().createdAt ?? null,
+          }))
+          .filter((d) => {
+            if (!d.createdAt?.toDate) return true; // include docs with no timestamp
+            return d.createdAt.toDate() >= cutoff;
+          }) as HistoryEntry[];
+
         docs.sort((a, b) => {
-          const timeA = a.createdAt?.toMillis() || 0;
-          const timeB = b.createdAt?.toMillis() || 0;
+          const timeA = a.createdAt?.toMillis?.() || 0;
+          const timeB = b.createdAt?.toMillis?.() || 0;
           return timeB - timeA;
         });
 
         setEntries(docs);
+        setLoading(false);
+      }, (err) => {
+        console.error("History query error:", err);
         setLoading(false);
       });
 
