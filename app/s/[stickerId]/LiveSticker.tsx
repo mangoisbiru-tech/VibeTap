@@ -17,6 +17,7 @@ export default function LiveSticker({
 }) {
   const [sticker, setSticker] = useState(initialSticker);
   const [merchant, setMerchant] = useState(initialMerchant);
+  const [previousAmount, setPreviousAmount] = useState<number>(0);
 
   useEffect(() => {
     const unsubSticker = onSnapshot(doc(db, "stickers", stickerId), (snap) => {
@@ -32,6 +33,41 @@ export default function LiveSticker({
   }, [stickerId, initialSticker.merchantId]);
 
   const activePlan = merchant.plan || sticker.plan || "plan1";
+  const plan3Mode = merchant.plan3Mode || "summing_up";
+
+  useEffect(() => {
+    const amount = sticker.pushedBill?.amount || 0;
+    if (activePlan === "plan3" && plan3Mode === "summing_up") {
+      if (amount > 0 && previousAmount === 0) {
+        // Play notification sound when bill arrives
+        try {
+          const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+          if (AudioContext) {
+            const ctx = new AudioContext();
+            const playTone = (freq: number, time: number, duration: number) => {
+              const osc = ctx.createOscillator();
+              const gain = ctx.createGain();
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.type = "sine";
+              osc.frequency.setValueAtTime(freq, time);
+              gain.gain.setValueAtTime(0, time);
+              gain.gain.linearRampToValueAtTime(0.5, time + 0.05);
+              gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+              osc.start(time);
+              osc.stop(time + duration);
+            };
+            const now = ctx.currentTime;
+            playTone(1046.50, now, 0.5); // C6
+            playTone(1318.51, now + 0.15, 0.6); // E6
+          }
+        } catch (e) {
+          console.error("Audio playback failed", e);
+        }
+      }
+    }
+    setPreviousAmount(amount);
+  }, [sticker.pushedBill?.amount, activePlan, plan3Mode, previousAmount]);
 
   // If the merchant switched to Plan 1 while the page was open, render a manual button
   if (activePlan === "plan1") {
@@ -74,12 +110,28 @@ export default function LiveSticker({
   }
 
   // PLAN 3
+  const amount = sticker.pushedBill?.amount as number | undefined;
+
+  // If we are in "summing_up" mode and the boss has pushed an amount, transition to ShowBill
+  if (plan3Mode === "summing_up" && amount && amount > 0) {
+    return (
+      <ShowBill
+        merchantName={merchant.name}
+        tableName={sticker.tableName}
+        amount={amount}
+        staticQrData={merchant.staticQrData || ""}
+        tngPaymentUrl={merchant.tngPaymentUrl || merchant.paymentUrl || ""}
+      />
+    );
+  }
+
   return (
     <BillPlease
       stickerId={stickerId}
       merchantId={sticker.merchantId}
       merchantName={merchant.name}
       tableName={sticker.tableName}
+      plan3Mode={plan3Mode}
     />
   );
 }

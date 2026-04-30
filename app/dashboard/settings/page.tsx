@@ -67,6 +67,7 @@ export default function SettingsPage() {
   const [staticQrData, setStaticQrData] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [plan, setPlan] = useState<"plan1" | "plan2" | "plan3">("plan1");
+  const [plan3Mode, setPlan3Mode] = useState("summing_up"); // 'summing_up' or 'boss_coming'
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [stickers, setStickers] = useState<Sticker[]>([]);
   const [saving, setSaving] = useState(false);
@@ -91,6 +92,7 @@ export default function SettingsPage() {
           setStaticQrData(d.staticQrData || "");
           setIsActive(d.isActive ?? true);
           setPlan(d.plan || "plan1");
+          setPlan3Mode(d.plan3Mode || "summing_up");
           setMenuItems(d.menuItems || []);
         }
       });
@@ -130,6 +132,7 @@ export default function SettingsPage() {
         staticQrData,
         isActive,
         plan,
+        plan3Mode,
         menuItems,
       }, { merge: true });
       setSaved(true);
@@ -289,6 +292,36 @@ export default function SettingsPage() {
             </button>
           ))}
         </div>
+
+        {/* Plan 3 Behavior Mode Toggle */}
+        {plan === "plan3" && (
+          <div className="mt-4 bg-orange-500/10 border border-orange-500/20 rounded-xl p-4 animate-in fade-in duration-300">
+            <h3 className="text-sm font-bold text-orange-300 mb-3">Plan 3 Customer Experience</h3>
+            <div className="space-y-2">
+              <label className="flex items-center gap-3 cursor-pointer group">
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${plan3Mode === "summing_up" ? "border-orange-500" : "border-gray-500 group-hover:border-gray-400"}`}>
+                  {plan3Mode === "summing_up" && <div className="w-2.5 h-2.5 rounded-full bg-orange-500" />}
+                </div>
+                <input type="radio" className="hidden" checked={plan3Mode === "summing_up"} onChange={() => setPlan3Mode("summing_up")} />
+                <div>
+                  <p className="text-sm font-semibold text-white">Boss is summing up... (Recommended)</p>
+                  <p className="text-xs text-gray-400">Customer waits. Once you push the bill, they automatically see the amount and can pay.</p>
+                </div>
+              </label>
+
+              <label className="flex items-center gap-3 cursor-pointer group pt-2">
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${plan3Mode === "boss_coming" ? "border-orange-500" : "border-gray-500 group-hover:border-gray-400"}`}>
+                  {plan3Mode === "boss_coming" && <div className="w-2.5 h-2.5 rounded-full bg-orange-500" />}
+                </div>
+                <input type="radio" className="hidden" checked={plan3Mode === "boss_coming"} onChange={() => setPlan3Mode("boss_coming")} />
+                <div>
+                  <p className="text-sm font-semibold text-white">Boss is coming</p>
+                  <p className="text-xs text-gray-400">Customer is just told "Boss is coming". They pay physically when you arrive.</p>
+                </div>
+              </label>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── Business Info ─────────────────────────────────────────────── */}

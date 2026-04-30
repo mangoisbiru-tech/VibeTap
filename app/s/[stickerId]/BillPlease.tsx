@@ -10,11 +10,13 @@ export default function BillPlease({
   merchantId,
   merchantName,
   tableName,
+  plan3Mode,
 }: {
   stickerId: string;
   merchantId: string;
   merchantName: string;
   tableName: string;
+  plan3Mode: string;
 }) {
   const [wantsReceipt, setWantsReceipt] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -55,13 +57,13 @@ export default function BillPlease({
               <CheckCircle2 size={48} className="text-green-400" />
             </div>
             <h2 className="text-2xl font-black text-white">Bill Requested!</h2>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Your boss has been notified.
-              <br />
-              {wantsReceipt
-                ? "Please go to the counter to collect your receipt."
-                : "They will come to your table shortly."}
-            </p>
+              <p className="text-gray-400 text-sm leading-relaxed mt-4">
+                {plan3Mode === "summing_up"
+                  ? "Boss is summing up... Please wait for the total."
+                  : "Your boss has been notified. They will come to your table shortly."}
+                <br /><br />
+                {wantsReceipt && "Please pick up your receipt at the front counter."}
+              </p>
           </div>
         ) : (
           <>
@@ -92,9 +94,9 @@ export default function BillPlease({
                 {wantsReceipt && <Check size={14} className="text-white" />}
               </div>
               <div>
-                <p className="font-bold text-white text-sm">I want a receipt</p>
+                <p className="font-bold text-white text-sm">Click this if you need a receipt</p>
                 <p className="text-gray-500 text-xs mt-0.5">
-                  Pick it up at the counter
+                  Please pick it up at the front counter
                 </p>
               </div>
             </button>
