@@ -44,33 +44,47 @@ export default function BillPlease({
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-white flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 text-slate-900 flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center">
-          <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-1">{merchantName}</p>
-          <h1 className="text-2xl font-black text-white">{tableName}</h1>
+          <p className="text-xs text-slate-500 uppercase tracking-widest font-bold mb-1">{merchantName}</p>
+          <h1 className="text-2xl font-black text-slate-900">{tableName}</h1>
         </div>
 
         {done ? (
           <div className="text-center space-y-4 animate-in fade-in zoom-in duration-500">
-            <div className="w-24 h-24 bg-green-500/10 border border-green-500/30 rounded-full flex items-center justify-center mx-auto">
-              <CheckCircle2 size={48} className="text-green-400" />
-            </div>
-            <h2 className="text-2xl font-black text-white">Bill Requested!</h2>
-              <p className="text-gray-400 text-sm leading-relaxed mt-4">
-                {plan3Mode === "summing_up"
-                  ? "Boss is summing up... Please wait for the total."
-                  : "Your boss has been notified. They will come to your table shortly."}
-                <br /><br />
-                {wantsReceipt && "Please pick up your receipt at the front counter."}
-              </p>
+            {plan3Mode === "summing_up" ? (
+              <>
+                <div className="flex justify-center items-center h-24 mb-2 space-x-3">
+                  <div className="w-4 h-4 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                  <div className="w-4 h-4 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
+                  <div className="w-4 h-4 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                </div>
+                <h2 className="text-2xl font-black text-slate-900">Summing up...</h2>
+              </>
+            ) : (
+              <>
+                <div className="w-24 h-24 bg-green-100 border border-green-200 rounded-full flex items-center justify-center mx-auto mb-2 shadow-sm">
+                  <CheckCircle2 size={48} className="text-green-500" />
+                </div>
+                <h2 className="text-2xl font-black text-slate-900">Requested!</h2>
+              </>
+            )}
+            
+            <p className="text-slate-600 text-sm leading-relaxed mt-4">
+              {plan3Mode === "summing_up"
+                ? "Your boss is calculating the total. Please wait a moment."
+                : "Your boss has been notified. They will come to your table shortly."}
+              <br /><br />
+              {wantsReceipt && "Please pick up your receipt at the front counter."}
+            </p>
           </div>
         ) : (
           <>
-            <div className="bg-white/[0.04] border border-white/10 rounded-3xl p-6 text-center">
-              <p className="text-gray-400 text-sm mb-1">Ready to pay?</p>
-              <p className="text-xl font-black text-white">Request your bill</p>
-              <p className="text-gray-500 text-xs mt-2">
+            <div className="bg-white/60 backdrop-blur-md border border-orange-200/50 rounded-3xl p-6 text-center shadow-sm">
+              <p className="text-slate-500 text-sm mb-1">Ready to pay?</p>
+              <p className="text-xl font-black text-slate-900">Request your bill</p>
+              <p className="text-slate-500 text-xs mt-2">
                 Your boss will be notified immediately
               </p>
             </div>
@@ -78,31 +92,31 @@ export default function BillPlease({
             {/* Receipt toggle */}
             <button
               onClick={() => setWantsReceipt(!wantsReceipt)}
-              className={`w-full flex items-center gap-4 p-5 rounded-2xl border transition-all text-left ${
+              className={`w-full flex items-center gap-4 p-5 rounded-2xl border transition-all text-left shadow-sm ${
                 wantsReceipt
-                  ? "bg-orange-500/10 border-orange-500/30"
-                  : "bg-white/[0.03] border-white/10 hover:bg-white/[0.06]"
+                  ? "bg-orange-100 border-orange-300"
+                  : "bg-white/60 border-orange-200/50 hover:bg-white/80"
               }`}
             >
               <div
                 className={`w-6 h-6 rounded-md flex items-center justify-center border-2 transition-all flex-shrink-0 ${
                   wantsReceipt
                     ? "bg-orange-500 border-orange-500"
-                    : "border-white/20"
+                    : "border-slate-300 bg-white"
                 }`}
               >
                 {wantsReceipt && <Check size={14} className="text-white" />}
               </div>
               <div>
-                <p className="font-bold text-white text-sm">Click this if you need a receipt</p>
-                <p className="text-gray-500 text-xs mt-0.5">
+                <p className="font-bold text-slate-900 text-sm">Click this if you need a receipt</p>
+                <p className="text-slate-500 text-xs mt-0.5">
                   Please pick it up at the front counter
                 </p>
               </div>
             </button>
 
             {error && (
-              <p className="text-red-400 text-sm text-center bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
+              <p className="text-red-600 text-sm text-center bg-red-100 border border-red-200 rounded-xl px-4 py-3">
                 {error}
               </p>
             )}

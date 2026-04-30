@@ -87,14 +87,14 @@ export default function LiveSticker({
     const amount = sticker.pushedBill?.amount as number | undefined;
     if (!amount || amount <= 0) {
       return (
-        <div className="min-h-screen bg-[#0A0A0F] text-white flex flex-col items-center justify-center p-6 text-center">
-          <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 text-slate-900 flex flex-col items-center justify-center p-6 text-center">
+          <div className="w-20 h-20 bg-white/60 border border-orange-200/50 shadow-sm rounded-full flex items-center justify-center mx-auto mb-6">
             <span className="text-3xl animate-pulse">⏳</span>
           </div>
-          <h1 className="text-2xl font-black mb-2">{sticker.tableName}</h1>
-          <p className="text-gray-400">{merchant.name}</p>
-          <p className="text-gray-500 text-sm mt-4">Your bill is being prepared...</p>
-          <p className="text-gray-600 text-xs mt-2">Please ask your server to send the bill.</p>
+          <h1 className="text-2xl font-black text-slate-900 mb-2">{sticker.tableName}</h1>
+          <p className="text-slate-500 uppercase tracking-widest text-xs font-bold">{merchant.name}</p>
+          <p className="text-slate-600 text-sm mt-4">Your bill is being prepared...</p>
+          <p className="text-slate-500 text-xs mt-2">Please ask your server to send the bill.</p>
         </div>
       );
     }

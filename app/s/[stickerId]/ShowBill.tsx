@@ -34,21 +34,21 @@ export default function ShowBill({
   }, [tngPaymentUrl, staticQrData, amount]);
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-white flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 text-slate-900 flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-sm space-y-6">
         {/* Header */}
         <div className="text-center">
-          <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-1">{merchantName}</p>
-          <h1 className="text-2xl font-black text-white">{tableName}</h1>
+          <p className="text-xs text-slate-500 uppercase tracking-widest font-bold mb-1">{merchantName}</p>
+          <h1 className="text-2xl font-black text-slate-900">{tableName}</h1>
         </div>
 
         {/* Bill Card */}
-        <div className="bg-white/[0.04] border border-white/10 rounded-3xl p-8 text-center shadow-2xl">
-          <p className="text-xs text-blue-400 uppercase tracking-widest font-bold mb-3">Amount Due</p>
-          <p className="text-6xl font-black text-white tracking-tight">
-            RM <span className="text-blue-400">{amount.toFixed(2)}</span>
+        <div className="bg-white/80 backdrop-blur-md border border-orange-200/50 rounded-3xl p-8 text-center shadow-lg">
+          <p className="text-xs text-orange-500 uppercase tracking-widest font-bold mb-3">Amount Due</p>
+          <p className="text-6xl font-black text-slate-900 tracking-tight">
+            RM <span className="text-orange-500">{amount.toFixed(2)}</span>
           </p>
-          <p className="text-gray-500 text-xs mt-4">Tap the button below to pay with TNG eWallet</p>
+          <p className="text-slate-500 text-xs mt-4">Tap the button below to pay with TNG eWallet</p>
         </div>
 
         {/* Pay Button */}
@@ -59,7 +59,7 @@ export default function ShowBill({
           PAY RM {amount.toFixed(2)} WITH TNG
         </a>
 
-        <p className="text-center text-xs text-gray-600">
+        <p className="text-center text-xs text-slate-500">
           Amount is pre-filled. Just confirm in TNG eWallet.
         </p>
       </div>
