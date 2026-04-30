@@ -1,52 +1,78 @@
-import { notFound, redirect } from "next/navigation";
-import { headers } from "next/headers";
+"use client";
+
+import { useEffect, useState } from "react";
+import { notFound } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/client";
 import LiveSticker from "./LiveSticker";
+import { Loader2 } from "lucide-react";
 
-export default async function StickerPage(props: {
-  params: Promise<{ stickerId: string }>;
-}) {
-  const { stickerId } = await props.params;
+export default function StickerPage({ params }: { params: any }) {
+  const [stickerId, setStickerId] = useState<string | null>(null);
+  const [sticker, setSticker] = useState<any>(null);
+  const [merchant, setMerchant] = useState<any>(null);
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // 1. Fetch the sticker document using Client SDK
-  const stickerSnap = await getDoc(doc(db, "stickers", stickerId));
-  if (!stickerSnap.exists()) notFound();
-
-  const sticker = stickerSnap.data()!;
-  const { merchantId } = sticker;
-
-  // 2. Fetch the merchant document
-  const merchantSnap = await getDoc(doc(db, "merchants", merchantId));
-  if (!merchantSnap.exists()) notFound();
-
-  const merchant = merchantSnap.data()!;
-  if (!merchant.isActive) notFound();
-
-  const activePlan = merchant.plan || sticker.plan || "plan1";
-  const tngPaymentUrl = (merchant.tngPaymentUrl || merchant.paymentUrl || "") as string;
-
-  // ── PLAN 1: Direct redirect to TNG
-  // We do this server-side so Android can intercept the HTTP 307 redirect and open the native app
-  if (activePlan === "plan1") {
-    if (!tngPaymentUrl) notFound();
-
-    // Check if user is on Android to force the TNG App via Intent
-    const headersList = await headers();
-    const userAgent = headersList.get("user-agent") || "";
-    if (/android/i.test(userAgent) && tngPaymentUrl.startsWith("https://")) {
-      const withoutScheme = tngPaymentUrl.substring(8);
-      const intentUrl = `intent://${withoutScheme}#Intent;scheme=https;package=my.com.tngdigital.ewallet;end;`;
-      redirect(intentUrl);
-    } else {
-      redirect(tngPaymentUrl);
+  useEffect(() => {
+    async function resolveParams() {
+      const p = await params;
+      setStickerId(p.stickerId);
     }
+    resolveParams();
+  }, [params]);
+
+  useEffect(() => {
+    if (!stickerId) return;
+
+    async function fetchData() {
+      try {
+        const sSnap = await getDoc(doc(db, "stickers", stickerId!));
+        if (!sSnap.exists()) {
+          setError(true);
+          return;
+        }
+
+        const sData = sSnap.data();
+        setSticker(sData);
+
+        const mSnap = await getDoc(doc(db, "merchants", sData.merchantId));
+        if (!mSnap.exists()) {
+          setError(true);
+          return;
+        }
+
+        const mData = mSnap.data();
+        if (!mData.isActive) {
+          setError(true);
+          return;
+        }
+
+        setMerchant(mData);
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [stickerId]);
+
+  if (error) return notFound();
+  
+  if (loading || !sticker || !merchant) {
+    return (
+      <div className="min-h-screen bg-[#f1f5f9] flex items-center justify-center">
+        <Loader2 className="animate-spin text-blue-600" size={32} />
+      </div>
+    );
   }
 
-  // ── PLAN 2 & 3: Interactive real-time component
   return (
     <LiveSticker
-      stickerId={stickerId}
+      stickerId={stickerId!}
       initialSticker={sticker}
       initialMerchant={merchant}
     />
