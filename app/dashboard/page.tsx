@@ -201,32 +201,6 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Revenue stats */}
-      <div>
-        <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-3">Revenue</p>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <StatCard
-            icon={<DollarSign size={18} />}
-            label="This Week"
-            value={`RM ${weekRevenue.toFixed(2)}`}
-            color="#10b981"
-          />
-          <StatCard
-            icon={<BarChart3 size={18} />}
-            label="This Month"
-            value={`RM ${monthRevenue.toFixed(2)}`}
-            color="#6C47FF"
-          />
-          <StatCard
-            icon={<TrendingUp size={18} />}
-            label="Conversion Rate"
-            value={`${conversionRate}%`}
-            sub={`${monthPaid} paid / ${monthTaps} taps`}
-            color="#f59e0b"
-          />
-        </div>
-      </div>
-
       {/* Tap stats */}
       <div>
         <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-3">NFC Taps</p>
@@ -255,6 +229,32 @@ export default function DashboardPage() {
 
       {/* Chart */}
       <TapChart dailyTaps={merchant.dailyTaps || {}} />
+
+      {/* Revenue stats */}
+      <div>
+        <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-3">Revenue</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <StatCard
+            icon={<DollarSign size={18} />}
+            label="This Week"
+            value={`RM ${weekRevenue.toFixed(2)}`}
+            color="#10b981"
+          />
+          <StatCard
+            icon={<BarChart3 size={18} />}
+            label="This Month"
+            value={`RM ${monthRevenue.toFixed(2)}`}
+            color="#6C47FF"
+          />
+          <StatCard
+            icon={<TrendingUp size={18} />}
+            label="Conversion Rate"
+            value={`${conversionRate}%`}
+            sub={`${monthPaid} paid / ${monthTaps} taps`}
+            color="#f59e0b"
+          />
+        </div>
+      </div>
     </div>
   );
 }

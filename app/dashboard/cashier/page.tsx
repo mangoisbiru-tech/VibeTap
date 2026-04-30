@@ -153,22 +153,36 @@ export default function CashierPage() {
   // ── Mark active table as PAID (records revenue) ──────────────────────────────
   const handleDoneBill = async (sticker: Sticker) => {
     if (!uid || !sticker.pushedBill) return;
+    const amount = sticker.pushedBill.amount;
     try {
-      await writeHistory(uid, sticker.tableName, sticker.pushedBill.amount, "paid");
+      // Primary action: clear table first so UI is responsive
       await updateDoc(doc(db, "stickers", sticker.id), { pushedBill: null });
-    } catch (e) {
-      setError("Failed to mark as done.");
+      // Secondary: attempt to record history
+      try {
+        await writeHistory(uid, sticker.tableName, amount, "paid");
+      } catch (historyErr) {
+        console.error("History recording failed:", historyErr);
+      }
+    } catch (e: any) {
+      setError(`Failed to mark as done: ${e.message || "Unknown error"}`);
+      console.error(e);
     }
   };
 
   // ── Clear active table WITHOUT recording revenue ─────────────────────────────
   const handleClearBill = async (sticker: Sticker) => {
     if (!uid || !sticker.pushedBill) return;
+    const amount = sticker.pushedBill.amount;
     try {
-      await writeHistory(uid, sticker.tableName, sticker.pushedBill.amount, "cleared");
       await updateDoc(doc(db, "stickers", sticker.id), { pushedBill: null });
-    } catch (e) {
-      setError("Failed to clear bill.");
+      try {
+        await writeHistory(uid, sticker.tableName, amount, "cleared");
+      } catch (historyErr) {
+        console.error("History recording failed:", historyErr);
+      }
+    } catch (e: any) {
+      setError(`Failed to clear bill: ${e.message || "Unknown error"}`);
+      console.error(e);
     }
   };
 
@@ -176,16 +190,21 @@ export default function CashierPage() {
   const handlePushAndDone = async (req: BillRequest) => {
     if (!uid || rawCents === 0) { setError("Enter an amount first."); return; }
     setLoading(true);
+    const amount = rawCents / 100;
     try {
-      const amount = rawCents / 100;
       await updateDoc(doc(db, "stickers", req.stickerId), {
         pushedBill: { amount, pushedAt: serverTimestamp() }
       });
-      await writeHistory(uid, req.tableName, amount, "paid");
       await deleteDoc(doc(db, "billRequests", req.id));
+      try {
+        await writeHistory(uid, req.tableName, amount, "paid");
+      } catch (historyErr) {
+        console.error("History recording failed:", historyErr);
+      }
       pressClear();
-    } catch (e) {
-      setError("Failed to process request.");
+    } catch (e: any) {
+      setError(`Failed to process request: ${e.message || "Unknown error"}`);
+      console.error(e);
     } finally {
       setLoading(false);
     }
@@ -196,8 +215,9 @@ export default function CashierPage() {
     if (!uid) return;
     try {
       await deleteDoc(doc(db, "billRequests", req.id));
-    } catch (e) {
-      setError("Failed to process request.");
+    } catch (e: any) {
+      setError(`Failed to resolve request: ${e.message || "Unknown error"}`);
+      console.error(e);
     }
   };
 
@@ -206,8 +226,9 @@ export default function CashierPage() {
     if (!uid) return;
     try {
       await deleteDoc(doc(db, "billRequests", req.id));
-    } catch (e) {
-      setError("Failed to clear request.");
+    } catch (e: any) {
+      setError(`Failed to clear request: ${e.message || "Unknown error"}`);
+      console.error(e);
     }
   };
 
