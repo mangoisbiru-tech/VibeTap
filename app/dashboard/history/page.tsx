@@ -96,31 +96,28 @@ export default function HistoryPage() {
   return (
     <div className="space-y-6 max-w-2xl mx-auto pb-16">
       <div>
-        <h1 className="text-2xl font-black">History</h1>
-        <p className="text-gray-500 text-sm mt-1">
-          Last 48 hours • Auto-refreshing
+        <h1 className="text-3xl font-black text-slate-900 tracking-tight">History</h1>
+        <p className="text-slate-500 text-sm mt-1 font-medium">
+          Showing transactions from the last 48 hours.
         </p>
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-4 text-center">
-          <p className="text-2xl font-black text-green-400">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="glass-card rounded-3xl p-6 text-center">
+          <p className="text-3xl font-black text-green-600 tracking-tighter">
             RM {totalRevenue.toFixed(2)}
           </p>
-          <p className="text-xs text-green-300/70 mt-1 font-medium">Collected</p>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Collected</p>
         </div>
-        <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-4 text-center">
-          <p className="text-2xl font-black text-white">{entries.length}</p>
-          <p className="text-xs text-gray-500 mt-1 font-medium">Total Taps</p>
+        <div className="glass-card rounded-3xl p-6 text-center">
+          <p className="text-3xl font-black text-slate-900 tracking-tighter">{entries.length}</p>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Total Taps</p>
         </div>
-        <div className="bg-purple-500/10 border border-purple-500/20 rounded-2xl p-4 text-center">
-          <p className="text-2xl font-black text-purple-400">{successRate}%</p>
-          <p className="text-xs text-purple-300/70 mt-1 font-medium">Success Rate</p>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Transaction History</h1>
-        <p className="text-slate-500 text-sm mt-1 font-medium">
-          Showing successful and cleared taps from the last 48 hours.
-        </p>
+        <div className="glass-card rounded-3xl p-6 text-center">
+          <p className="text-3xl font-black text-blue-600 tracking-tighter">{successRate}%</p>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Success Rate</p>
+        </div>
       </div>
 
       <div className="glass-card rounded-3xl overflow-hidden">
@@ -132,7 +129,7 @@ export default function HistoryPage() {
         ) : entries.length === 0 ? (
           <div className="py-20 text-center">
             <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <History size={32} className="text-slate-200" />
+              <Clock size={32} className="text-slate-200" />
             </div>
             <p className="text-slate-400 font-bold text-sm uppercase tracking-widest">No recent transactions</p>
             <p className="text-slate-300 text-xs mt-1">New activity will appear here in real-time.</p>
@@ -141,47 +138,57 @@ export default function HistoryPage() {
           <div className="divide-y divide-slate-100">
             {entries.map((entry) => (
               <div
-                className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                  entry.status === "paid"
-                    ? "bg-green-500/20"
-                    : "bg-red-500/10"
-                }`}
+                key={entry.id}
+                className="flex items-center gap-4 p-5 hover:bg-slate-50/80 transition-colors"
               >
-                {entry.status === "paid" ? (
-                  <CheckCircle2 size={16} className="text-green-400" />
-                ) : (
-                  <XCircle size={16} className="text-red-400" />
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-bold text-sm text-white truncate">
-                  {entry.tableName}
-                </p>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  {entry.status === "paid" ? "Paid via tap" : "Cancelled / Cash"}
-                </p>
-              </div>
-              <div className="text-right shrink-0">
-                <p
-                  className={`font-black text-sm ${
-                    entry.status === "paid" ? "text-green-400" : "text-gray-500"
+                <div
+                  className={`w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 ${
+                    entry.status === "paid"
+                      ? "bg-green-100 text-green-600"
+                      : "bg-slate-100 text-slate-400"
                   }`}
                 >
-                  {entry.status === "paid"
-                    ? `+ RM ${entry.amount.toFixed(2)}`
-                    : `RM ${entry.amount.toFixed(2)}`}
-                </p>
-                <p className="text-xs text-gray-600 mt-0.5">
-                  {formatTime(entry.createdAt)}
-                </p>
+                  {entry.status === "paid" ? (
+                    <CheckCircle2 size={20} />
+                  ) : (
+                    <XCircle size={20} />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-black text-slate-900 truncate uppercase tracking-tight">
+                    {entry.tableName}
+                  </p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+                    {entry.status === "paid" ? "Paid via tap" : "Cleared Manual"}
+                  </p>
+                </div>
+                <div className="text-right shrink-0">
+                  <p
+                    className={`font-black text-lg tracking-tighter ${
+                      entry.status === "paid" ? "text-green-600" : "text-slate-400"
+                    }`}
+                  >
+                    {entry.status === "paid"
+                      ? `RM ${entry.amount.toFixed(2)}`
+                      : "RM 0.00"}
+                  </p>
+                  <p className="text-[10px] text-slate-300 font-medium">
+                    {entry.createdAt?.toDate
+                      ? entry.createdAt.toDate().toLocaleTimeString("en-MY", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "Just now"}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </div>
 
       {entries.length > 0 && (
-        <p className="text-center text-xs text-gray-700">
+        <p className="text-center text-xs text-slate-400">
           Entries older than 48 hours are automatically removed.
         </p>
       )}

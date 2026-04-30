@@ -269,7 +269,7 @@ export default function CashierPage() {
                 </button>
               ))}
               <button
-                onClick={clearInput}
+                onClick={pressClear}
                 className="h-16 rounded-2xl bg-red-50 hover:bg-red-100 text-red-500 font-bold text-sm transition-all active:scale-95 shadow-sm"
               >
                 CLR
@@ -403,6 +403,8 @@ export default function CashierPage() {
                     ) : (
                       <button
                         onClick={() => handleBossComingDone(req)}
+                        className="flex items-center gap-1.5 text-xs font-bold bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-xl transition-all shadow-md shadow-blue-500/20"
+                      >
                         <CheckCircle2 size={13} /> Done
                       </button>
                     )}
@@ -415,7 +417,7 @@ export default function CashierPage() {
                   </div>
                 </div>
               ))}
-            </>
+            </div>
           )}
         </div>
       )}
