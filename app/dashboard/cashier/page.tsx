@@ -25,7 +25,11 @@ import {
   Nfc,
 } from "lucide-react";
 
-type Sticker = { id: string; tableName: string };
+type Sticker = { 
+  id: string; 
+  tableName: string;
+  pushedBill?: { amount: number; pushedAt: any };
+};
 type BillRequest = {
   id: string;
   stickerId: string;
@@ -65,7 +69,11 @@ export default function CashierPage() {
         where("merchantId", "==", user.uid)
       );
       const unsubStickers = onSnapshot(stickersQ, (snap) => {
-        setStickers(snap.docs.map((d) => ({ id: d.id, tableName: d.data().tableName })));
+        setStickers(snap.docs.map((d) => ({ 
+          id: d.id, 
+          tableName: d.data().tableName,
+          pushedBill: d.data().pushedBill
+        })));
       });
 
       // Listen to bill requests (plan 3)
@@ -128,8 +136,6 @@ export default function CashierPage() {
       await updateDoc(doc(db, "stickers", stickerId), {
         pushedBill: { amount, pushedAt: serverTimestamp() },
       });
-      setPushedStickerId(stickerId);
-      setPushedAmount(amount);
       pressClear();
     } catch {
       setError("Failed to push bill.");
@@ -140,7 +146,6 @@ export default function CashierPage() {
 
   const handleClearBill = async (stickerId: string) => {
     await updateDoc(doc(db, "stickers", stickerId), { pushedBill: null });
-    if (pushedStickerId === stickerId) { setPushedStickerId(null); setPushedAmount(null); }
   };
 
   const handleDoneRequest = async (reqId: string, stickerId?: string) => {
@@ -150,8 +155,6 @@ export default function CashierPage() {
         await updateDoc(doc(db, "stickers", stickerId), {
           pushedBill: { amount: amountRM, pushedAt: serverTimestamp() }
         });
-        setPushedStickerId(stickerId);
-        setPushedAmount(amountRM);
         pressClear();
       }
       // Clear the request
@@ -240,10 +243,10 @@ export default function CashierPage() {
         </div>
       )}
 
-      {/* ── Plan 2: Push Bill to Table ───────────────────────────────────────── */}
-      {plan === "plan2" && (
+      {/* ── Plan 2 & Plan 3 (summing_up): Active Tables ───────────────────────────────────────── */}
+      {(plan === "plan2" || (plan === "plan3" && plan3Mode === "summing_up")) && (
         <div className="space-y-3">
-          <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Push Bill to Table</p>
+          <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Active Tables</p>
           {stickers.length === 0 && (
             <div className="text-center py-6 text-gray-600 text-sm border-2 border-dashed border-white/5 rounded-2xl">
               No stickers yet. Go to Settings → NFC Stickers to add tables.
@@ -253,9 +256,9 @@ export default function CashierPage() {
             <div key={s.id} className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl p-4">
               <Nfc size={18} className="text-blue-400 flex-shrink-0" />
               <p className="flex-1 font-bold text-white">{s.tableName}</p>
-              {pushedStickerId === s.id && pushedAmount ? (
+              {s.pushedBill ? (
                 <>
-                  <span className="text-blue-300 font-black text-sm">RM {pushedAmount.toFixed(2)}</span>
+                  <span className="text-blue-300 font-black text-sm">RM {s.pushedBill.amount.toFixed(2)}</span>
                   <button onClick={() => handleClearBill(s.id)}
                     className="text-xs text-red-400 hover:text-red-300 bg-red-500/10 px-2 py-1 rounded-lg">
                     Clear
@@ -272,15 +275,6 @@ export default function CashierPage() {
               )}
             </div>
           ))}
-          {pushedStickerId && pushedAmount && (
-            <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-4 flex items-center gap-3 animate-in fade-in">
-              <CheckCircle2 size={20} className="text-blue-400 flex-shrink-0" />
-              <div>
-                <p className="font-bold text-white text-sm">Bill pushed!</p>
-                <p className="text-blue-300 text-xs">Customer will see RM {pushedAmount.toFixed(2)} when they tap the sticker.</p>
-              </div>
-            </div>
-          )}
         </div>
       )}
 

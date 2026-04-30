@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged, signOut, User } from "firebase/auth";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, query, collection, where } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/client";
 import {
   Zap,
@@ -24,6 +24,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [merchantName, setMerchantName] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [pendingRequests, setPendingRequests] = useState(0);
 
   useEffect(() => {
     const unsubAuth = onAuthStateChanged(auth, (u) => {
@@ -40,7 +41,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           setMerchantName(snap.data().name || "Merchant");
         }
       });
-      return () => unsub();
+
+      // Listen to pending bill requests globally
+      const reqQ = query(
+        collection(db, "billRequests"),
+        where("merchantId", "==", u.uid),
+        where("status", "==", "pending")
+      );
+      const unsubReqs = onSnapshot(reqQ, (snap) => {
+        setPendingRequests(snap.docs.length);
+      });
+
+      return () => {
+        unsub();
+        unsubReqs();
+      };
     });
     return () => unsubAuth();
   }, [router]);
@@ -60,7 +75,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const navItems = [
     { href: "/dashboard", icon: <Activity size={18} />, label: "Overview" },
-    { href: "/dashboard/cashier", icon: <Calculator size={18} />, label: "Cashier Mode" },
+    { href: "/dashboard/cashier", icon: <Calculator size={18} />, label: "Cashier Mode", badge: pendingRequests > 0 ? pendingRequests : null },
     { href: "/dashboard/nfc", icon: <Nfc size={18} />, label: "NFC Writer" },
     { href: "/dashboard/settings", icon: <Settings size={18} />, label: "Settings" },
   ];
@@ -100,8 +115,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               href={item.href}
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all text-sm font-medium group"
             >
-              <span className="group-hover:text-purple-400 transition-colors">{item.icon}</span>
-              {item.label}
+              <span className="group-hover:text-purple-400 transition-colors flex-shrink-0">{item.icon}</span>
+              <span className="flex-1">{item.label}</span>
+              {item.badge && (
+                <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full animate-pulse">
+                  {item.badge}
+                </span>
+              )}
             </Link>
           ))}
         </nav>
@@ -142,8 +162,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-all text-base font-medium"
               >
-                {item.icon}
-                {item.label}
+                <span className="flex-shrink-0">{item.icon}</span>
+                <span className="flex-1">{item.label}</span>
+                {item.badge && (
+                  <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full animate-pulse">
+                    {item.badge}
+                  </span>
+                )}
               </Link>
             ))}
             <button
