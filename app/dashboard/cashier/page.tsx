@@ -28,6 +28,7 @@ import {
 type Sticker = { id: string; tableName: string };
 type BillRequest = {
   id: string;
+  stickerId: string;
   tableName: string;
   wantsReceipt: boolean;
   createdAt: any;
@@ -36,6 +37,7 @@ type BillRequest = {
 export default function CashierPage() {
   const [uid, setUid] = useState<string | null>(null);
   const [plan, setPlan] = useState<"plan1" | "plan2" | "plan3">("plan1");
+  const [plan3Mode, setPlan3Mode] = useState("summing_up");
   const [rawCents, setRawCents] = useState(0);
   const [input, setInput] = useState("0.00");
   const [stickers, setStickers] = useState<Sticker[]>([]);
@@ -54,6 +56,7 @@ export default function CashierPage() {
       const merchantSnap = await getDoc(doc(db, "merchants", user.uid));
       if (merchantSnap.exists()) {
         setPlan(merchantSnap.data().plan || "plan1");
+        setPlan3Mode(merchantSnap.data().plan3Mode || "summing_up");
       }
 
       // Listen to stickers
@@ -75,6 +78,7 @@ export default function CashierPage() {
         setBillRequests(
           snap.docs.map((d) => ({
             id: d.id,
+            stickerId: d.data().stickerId,
             tableName: d.data().tableName,
             wantsReceipt: d.data().wantsReceipt,
             createdAt: d.data().createdAt,
@@ -139,9 +143,23 @@ export default function CashierPage() {
     if (pushedStickerId === stickerId) { setPushedStickerId(null); setPushedAmount(null); }
   };
 
-  // ── Plan 3: Mark request as done ───────────────────────────────────────────
-  const handleDoneRequest = async (reqId: string) => {
-    await deleteDoc(doc(db, "billRequests", reqId));
+  const handleDoneRequest = async (reqId: string, stickerId?: string) => {
+    try {
+      // If we are pushing an amount at the same time (summing_up mode)
+      if (stickerId && amountRM > 0) {
+        await updateDoc(doc(db, "stickers", stickerId), {
+          pushedBill: { amount: amountRM, pushedAt: serverTimestamp() }
+        });
+        setPushedStickerId(stickerId);
+        setPushedAmount(amountRM);
+        pressClear();
+      }
+      // Clear the request
+      await deleteDoc(doc(db, "billRequests", reqId));
+    } catch (e) {
+      setError("Failed to process request.");
+      console.error(e);
+    }
   };
 
   const amountRM = rawCents / 100;
@@ -158,8 +176,8 @@ export default function CashierPage() {
         </p>
       </div>
 
-      {/* ── Numpad (Plan 1 & 2) ──────────────────────────────────────────────── */}
-      {(plan === "plan1" || plan === "plan2") && (
+      {/* ── Numpad (Plan 1, Plan 2, and Plan 3 summing_up) ──────────────────────────────────────────────── */}
+      {(plan === "plan1" || plan === "plan2" || (plan === "plan3" && plan3Mode === "summing_up")) && (
         <>
           {/* Amount display */}
           <div className="bg-white/[0.03] border border-white/5 rounded-3xl p-8 text-center">
@@ -301,12 +319,22 @@ export default function CashierPage() {
                     </span>
                   </div>
                 </div>
-                <button
-                  onClick={() => handleDoneRequest(req.id)}
-                  className="text-xs font-bold bg-green-500/20 hover:bg-green-500/30 text-green-400 px-3 py-1.5 rounded-lg transition-all"
-                >
-                  Done
-                </button>
+                {plan3Mode === "summing_up" ? (
+                  <button
+                    onClick={() => handleDoneRequest(req.id, req.stickerId)}
+                    disabled={loading || rawCents === 0}
+                    className="text-xs font-bold bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white px-3 py-1.5 rounded-lg transition-all"
+                  >
+                    Push RM {amountRM.toFixed(2)}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleDoneRequest(req.id)}
+                    className="text-xs font-bold bg-green-500/20 hover:bg-green-500/30 text-green-400 px-3 py-1.5 rounded-lg transition-all"
+                  >
+                    Done
+                  </button>
+                )}
               </div>
             ))
           )}
