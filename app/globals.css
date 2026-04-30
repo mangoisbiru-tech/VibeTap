@@ -49,25 +49,25 @@
 }
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #f1f5f9;
+  --foreground: #020617;
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #020617;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
+  --popover-foreground: #020617;
   --primary: #2563eb;
   --primary-foreground: #ffffff;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #f1f5f9;
-  --accent-foreground: #0f172a;
+  --secondary: #e2e8f0;
+  --secondary-foreground: #020617;
+  --muted: #e2e8f0;
+  --muted-foreground: #475569;
+  --accent: #e2e8f0;
+  --accent-foreground: #020617;
   --destructive: #ef4444;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
+  --border: #cbd5e1;
+  --input: #cbd5e1;
   --ring: #2563eb;
-  --radius: 1rem;
+  --radius: 1.25rem;
   
   /* Gemini Gradients */
   --aura-blue: #00d4ff;
@@ -85,27 +85,19 @@
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24px);
+  border: 2px solid #ffffff;
   box-shadow: 
-    0 4px 6px -1px rgba(0, 0, 0, 0.02),
-    0 10px 15px -3px rgba(0, 0, 0, 0.03),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+    0 10px 25px -5px rgba(0, 0, 0, 0.05),
+    0 8px 10px -6px rgba(0, 0, 0, 0.05);
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(24px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.03);
-}
-
-.dark .glass-card {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
 }
 
 .text-gradient-aurora {
@@ -118,6 +110,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
   html {
     @apply font-sans;

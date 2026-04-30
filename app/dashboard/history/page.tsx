@@ -96,27 +96,27 @@ export default function HistoryPage() {
   return (
     <div className="space-y-6 max-w-2xl mx-auto pb-16">
       <div>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">History</h1>
-        <p className="text-slate-500 text-sm mt-1 font-medium">
-          Showing transactions from the last 48 hours.
+        <h1 className="text-4xl font-black text-slate-950 tracking-tight">History</h1>
+        <p className="text-slate-950 text-sm mt-1 font-bold">
+          Last 48 hours activity
         </p>
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="glass-card rounded-3xl p-6 text-center">
-          <p className="text-3xl font-black text-green-600 tracking-tighter">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+        <div className="glass-card rounded-[2.5rem] p-8 text-center border-2 border-slate-100">
+          <p className="text-4xl font-black text-green-600 tracking-tighter">
             RM {totalRevenue.toFixed(2)}
           </p>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Collected</p>
+          <p className="text-[10px] font-black text-slate-950 uppercase tracking-[0.2em] mt-2">Collected</p>
         </div>
-        <div className="glass-card rounded-3xl p-6 text-center">
-          <p className="text-3xl font-black text-slate-900 tracking-tighter">{entries.length}</p>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Total Taps</p>
+        <div className="glass-card rounded-[2.5rem] p-8 text-center border-2 border-slate-100">
+          <p className="text-4xl font-black text-slate-950 tracking-tighter">{entries.length}</p>
+          <p className="text-[10px] font-black text-slate-950 uppercase tracking-[0.2em] mt-2">Total Taps</p>
         </div>
-        <div className="glass-card rounded-3xl p-6 text-center">
-          <p className="text-3xl font-black text-blue-600 tracking-tighter">{successRate}%</p>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Success Rate</p>
+        <div className="glass-card rounded-[2.5rem] p-8 text-center border-2 border-slate-100">
+          <p className="text-4xl font-black text-blue-600 tracking-tighter">{successRate}%</p>
+          <p className="text-[10px] font-black text-slate-950 uppercase tracking-[0.2em] mt-2">Success Rate</p>
         </div>
       </div>
 
@@ -155,10 +155,10 @@ export default function HistoryPage() {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-black text-slate-900 truncate uppercase tracking-tight">
+                  <p className="font-black text-slate-950 truncate uppercase tracking-tight text-lg">
                     {entry.tableName}
                   </p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">
                     {entry.status === "paid" ? "Paid via tap" : "Cleared Manual"}
                   </p>
                 </div>

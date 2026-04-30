@@ -119,8 +119,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#2D5BFF] to-[#00D4FF] flex items-center justify-center shadow-lg shadow-blue-500/20">
             <Zap size={15} className="text-white" />
           </div>
-          <span className="font-black text-xl tracking-tight text-slate-900">
-            Vibe<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2D5BFF] to-[#00D4FF]">Tap</span>
+          <span className="font-black text-2xl tracking-tighter text-slate-950">
+            Vibe<span className="text-blue-600">Tap</span>
           </span>
         </div>
 
@@ -131,8 +131,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               {merchantName.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-slate-900 truncate">{merchantName}</p>
-              <p className="text-[10px] font-medium text-slate-400 truncate uppercase tracking-wider">{user?.email}</p>
+              <p className="text-sm font-black text-slate-950 truncate">{merchantName}</p>
+              <p className="text-[10px] font-black text-slate-950 truncate uppercase tracking-widest">{user?.email}</p>
             </div>
           </div>
         </div>
@@ -143,9 +143,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Link
               key={item.href}
               href={item.href}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-white/60 hover:shadow-sm transition-all text-sm font-semibold group"
+              className="flex items-center gap-3 px-4 py-4 rounded-xl text-slate-950 hover:bg-white hover:shadow-md transition-all text-sm font-black uppercase tracking-widest group"
             >
-              <span className="group-hover:text-blue-500 transition-colors flex-shrink-0">{item.icon}</span>
+              <span className="group-hover:text-blue-600 transition-colors flex-shrink-0">{item.icon}</span>
               <span className="flex-1">{item.label}</span>
               {item.badge && (
                 <span className="bg-orange-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm shadow-orange-500/20">
@@ -160,7 +160,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="px-3 py-6 border-t border-slate-200/50">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50/50 transition-all text-sm font-semibold w-full"
+            className="flex items-center gap-3 px-4 py-4 rounded-xl text-red-600 hover:bg-red-50 transition-all text-xs font-black uppercase tracking-[0.2em] w-full"
           >
             <LogOut size={18} />
             Sign Out

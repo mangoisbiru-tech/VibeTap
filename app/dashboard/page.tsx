@@ -51,18 +51,18 @@ function StatCard({
   color: string;
 }) {
   return (
-    <div className="glass-card rounded-3xl p-6 transition-all hover:translate-y-[-2px] hover:shadow-lg">
-      <div className="flex items-start justify-between mb-4">
+    <div className="glass-card rounded-[2.5rem] p-8 transition-all hover:translate-y-[-2px] hover:shadow-xl border-2 border-slate-100 hover:border-blue-500">
+      <div className="flex items-start justify-between mb-6">
         <div
-          className="w-11 h-11 rounded-2xl flex items-center justify-center shadow-sm"
-          style={{ background: `${color}15`, color }}
+          className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg"
+          style={{ background: color, color: '#fff' }}
         >
           {icon}
         </div>
       </div>
-      <div className="text-3xl font-black text-slate-900 tracking-tight mb-1">{value}</div>
-      <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">{label}</div>
-      {sub && <div className="text-[10px] text-slate-300 mt-1 font-medium">{sub}</div>}
+      <div className="text-4xl font-black text-slate-950 tracking-tighter mb-1">{value}</div>
+      <div className="text-[10px] font-black text-slate-950 uppercase tracking-[0.2em]">{label}</div>
+      {sub && <div className="text-[10px] text-slate-500 mt-2 font-bold uppercase tracking-widest">{sub}</div>}
     </div>
   );
 }
@@ -204,9 +204,9 @@ export default function DashboardPage() {
     <div className="space-y-10">
       {/* Page header */}
       <div className="relative">
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Dashboard</h1>
-        <p className="text-slate-500 text-sm mt-1 font-medium">
-          Welcome back, <span className="text-blue-600 font-bold">{merchant.name}</span>! Here&apos;s your overview.
+        <h1 className="text-4xl font-black text-slate-950 tracking-tight">Overview</h1>
+        <p className="text-slate-950 text-sm mt-1 font-bold">
+          Welcome back, <span className="text-blue-600">{merchant.name}</span>
         </p>
       </div>
 
@@ -241,8 +241,8 @@ export default function DashboardPage() {
 
       {/* Revenue stats */}
       <div className="space-y-4">
-        <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-black">Revenue</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <p className="text-[10px] text-slate-950 uppercase tracking-[0.3em] font-black">Revenue Report</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           <StatCard
             icon={<DollarSign size={20} />}
             label="This Week"
