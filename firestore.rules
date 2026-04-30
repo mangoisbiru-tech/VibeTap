@@ -40,5 +40,14 @@ service cloud.firestore {
       allow read, update: if request.auth != null;
       allow delete: if request.auth != null;
     }
+
+    // Bill history: merchant can create and read their own history
+    match /billHistory/{entryId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null
+        && resource.data.merchantId == request.auth.uid;
+      allow update, delete: if request.auth != null
+        && resource.data.merchantId == request.auth.uid;
+    }
   }
 }
