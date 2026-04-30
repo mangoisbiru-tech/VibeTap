@@ -1,78 +1,75 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { notFound } from "next/navigation";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase/client";
+import { notFound, redirect } from "next/navigation";
+import { headers } from "next/headers";
 import LiveSticker from "./LiveSticker";
-import { Loader2 } from "lucide-react";
 
-export default function StickerPage({ params }: { params: any }) {
-  const [stickerId, setStickerId] = useState<string | null>(null);
-  const [sticker, setSticker] = useState<any>(null);
-  const [merchant, setMerchant] = useState<any>(null);
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(true);
+const PROJECT_ID = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!;
+const FIRESTORE_BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
 
-  useEffect(() => {
-    async function resolveParams() {
-      const p = await params;
-      setStickerId(p.stickerId);
+async function getDocument(collection: string, docId: string) {
+  const url = `${FIRESTORE_BASE}/${collection}/${docId}`;
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) return null;
+  const json = await res.json();
+  // Convert Firestore REST format to plain JS object
+  return parseFields(json.fields);
+}
+
+function parseFields(fields: Record<string, any>): Record<string, any> {
+  if (!fields) return {};
+  const out: Record<string, any> = {};
+  for (const [key, val] of Object.entries(fields)) {
+    if (val.stringValue !== undefined) out[key] = val.stringValue;
+    else if (val.integerValue !== undefined) out[key] = Number(val.integerValue);
+    else if (val.doubleValue !== undefined) out[key] = val.doubleValue;
+    else if (val.booleanValue !== undefined) out[key] = val.booleanValue;
+    else if (val.nullValue !== undefined) out[key] = null;
+    else if (val.timestampValue !== undefined) out[key] = val.timestampValue;
+    else if (val.mapValue !== undefined) out[key] = parseFields(val.mapValue.fields || {});
+    else if (val.arrayValue !== undefined)
+      out[key] = (val.arrayValue.values || []).map((v: any) => parseFields({ _: v })["_"]);
+  }
+  return out;
+}
+
+export default async function StickerPage(props: {
+  params: Promise<{ stickerId: string }>;
+}) {
+  const { stickerId } = await props.params;
+
+  // 1. Fetch sticker via Firestore REST (no auth required — stickers allow read: true)
+  const sticker = await getDocument("stickers", stickerId);
+  if (!sticker) notFound();
+
+  const merchantId = sticker.merchantId as string;
+  if (!merchantId) notFound();
+
+  // 2. Fetch merchant via Firestore REST (merchants allow read: true after our rules update)
+  const merchant = await getDocument("merchants", merchantId);
+  if (!merchant) notFound();
+
+  if (!merchant.isActive) notFound();
+
+  const activePlan = (merchant.plan || sticker.plan || "plan1") as string;
+  const tngPaymentUrl = (merchant.tngPaymentUrl || merchant.paymentUrl || "") as string;
+
+  // ── PLAN 1: Direct redirect — server-side so Android can intercept with TNG intent
+  if (activePlan === "plan1") {
+    if (!tngPaymentUrl) notFound();
+
+    const headersList = await headers();
+    const userAgent = headersList.get("user-agent") || "";
+    if (/android/i.test(userAgent) && tngPaymentUrl.startsWith("https://")) {
+      const withoutScheme = tngPaymentUrl.substring(8);
+      redirect(`intent://${withoutScheme}#Intent;scheme=https;package=my.com.tngdigital.ewallet;end;`);
+    } else {
+      redirect(tngPaymentUrl);
     }
-    resolveParams();
-  }, [params]);
-
-  useEffect(() => {
-    if (!stickerId) return;
-
-    async function fetchData() {
-      try {
-        const sSnap = await getDoc(doc(db, "stickers", stickerId!));
-        if (!sSnap.exists()) {
-          setError(true);
-          return;
-        }
-
-        const sData = sSnap.data();
-        setSticker(sData);
-
-        const mSnap = await getDoc(doc(db, "merchants", sData.merchantId));
-        if (!mSnap.exists()) {
-          setError(true);
-          return;
-        }
-
-        const mData = mSnap.data();
-        if (!mData.isActive) {
-          setError(true);
-          return;
-        }
-
-        setMerchant(mData);
-      } catch (err) {
-        console.error("Fetch error:", err);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-  }, [stickerId]);
-
-  if (error) return notFound();
-  
-  if (loading || !sticker || !merchant) {
-    return (
-      <div className="min-h-screen bg-[#f1f5f9] flex items-center justify-center">
-        <Loader2 className="animate-spin text-blue-600" size={32} />
-      </div>
-    );
   }
 
+  // ── PLAN 2 & 3: Interactive real-time page
   return (
     <LiveSticker
-      stickerId={stickerId!}
+      stickerId={stickerId}
       initialSticker={sticker}
       initialMerchant={merchant}
     />
