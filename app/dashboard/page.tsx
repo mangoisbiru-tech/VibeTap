@@ -201,6 +201,9 @@ export default function DashboardPage() {
         </p>
       </div>
 
+      {/* Chart */}
+      <TapChart dailyTaps={merchant.dailyTaps || {}} />
+
       {/* Tap stats */}
       <div>
         <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-3">NFC Taps</p>
@@ -226,9 +229,6 @@ export default function DashboardPage() {
           />
         </div>
       </div>
-
-      {/* Chart */}
-      <TapChart dailyTaps={merchant.dailyTaps || {}} />
 
       {/* Revenue stats */}
       <div>

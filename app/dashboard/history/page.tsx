@@ -36,20 +36,26 @@ export default function HistoryPage() {
       const q = query(
         collection(db, "billHistory"),
         where("merchantId", "==", user.uid),
-        where("createdAt", ">=", Timestamp.fromDate(cutoff)),
-        orderBy("createdAt", "desc")
+        where("createdAt", ">=", Timestamp.fromDate(cutoff))
       );
 
       const unsubSnap = onSnapshot(q, (snap) => {
-        setEntries(
-          snap.docs.map((d) => ({
-            id: d.id,
-            tableName: d.data().tableName,
-            amount: d.data().amount,
-            status: d.data().status,
-            createdAt: d.data().createdAt ?? null,
-          }))
-        );
+        const docs = snap.docs.map((d) => ({
+          id: d.id,
+          tableName: d.data().tableName,
+          amount: d.data().amount,
+          status: d.data().status,
+          createdAt: d.data().createdAt ?? null,
+        })) as HistoryEntry[];
+
+        // Sort in memory to avoid needing a composite index
+        docs.sort((a, b) => {
+          const timeA = a.createdAt?.toMillis() || 0;
+          const timeB = b.createdAt?.toMillis() || 0;
+          return timeB - timeA;
+        });
+
+        setEntries(docs);
         setLoading(false);
       });
 

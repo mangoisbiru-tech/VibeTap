@@ -366,6 +366,20 @@ export default function CashierPage() {
               <Bell size={28} className="text-gray-600 mx-auto mb-3" />
               <p className="text-gray-500 text-sm">No pending bill requests</p>
               <p className="text-gray-600 text-xs mt-1">Customers tap the sticker and hit "Bill Please"</p>
+              <button 
+                onClick={async () => {
+                  if (!uid) return;
+                  const q = query(collection(db, "billRequests"), where("merchantId", "==", uid), where("status", "==", "pending"));
+                  const snap = await getDoc(doc(db, "merchants", uid)); // just dummy to check auth
+                  // We need to fetch and delete
+                  const { getDocs } = await import("firebase/firestore");
+                  const s = await getDocs(q);
+                  s.docs.forEach(async (d) => await deleteDoc(d.ref));
+                }}
+                className="mt-4 text-[10px] text-gray-700 hover:text-gray-500 underline"
+              >
+                Notification stuck? Click to force clear.
+              </button>
             </div>
           ) : (
             billRequests.map((req) => (
