@@ -49,7 +49,35 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         where("status", "==", "pending")
       );
       const unsubReqs = onSnapshot(reqQ, (snap) => {
-        setPendingRequests(snap.docs.length);
+        const newCount = snap.docs.length;
+        setPendingRequests((prevCount) => {
+          if (newCount > prevCount) {
+            // Play a 'Ding Ding' sound when a new request comes in
+            try {
+              const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+              if (AudioContext) {
+                const ctx = new AudioContext();
+                const playTone = (freq: number, startTime: number) => {
+                  const osc = ctx.createOscillator();
+                  const gain = ctx.createGain();
+                  osc.type = "sine";
+                  osc.frequency.setValueAtTime(freq, startTime);
+                  gain.gain.setValueAtTime(0.3, startTime);
+                  gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.5);
+                  osc.connect(gain);
+                  gain.connect(ctx.destination);
+                  osc.start(startTime);
+                  osc.stop(startTime + 0.5);
+                };
+                playTone(880, ctx.currentTime); // A5
+                playTone(1046.50, ctx.currentTime + 0.2); // C6
+              }
+            } catch (e) {
+              console.warn("Audio playback blocked or failed", e);
+            }
+          }
+          return newCount;
+        });
       });
 
       return () => {
