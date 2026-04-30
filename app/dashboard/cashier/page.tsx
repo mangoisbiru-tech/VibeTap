@@ -18,8 +18,7 @@ import {
   Bell,
   Check,
   Loader2,
-  Receipt,
-  XCircle,
+  Table,
   CheckCircle2,
 } from "lucide-react";
 
@@ -38,12 +37,19 @@ interface BillRequest {
   status: string;
 }
 
+interface Sticker {
+  id: string;
+  tableName: string;
+  pushedBill?: { amount: number; pushedAt: any };
+}
+
 export default function CashierPage() {
   const [amount, setAmount] = useState("0");
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [merchant, setMerchant] = useState<MerchantData | null>(null);
   const [billRequests, setBillRequests] = useState<BillRequest[]>([]);
+  const [stickers, setStickers] = useState<Sticker[]>([]);
   const [plan, setPlan] = useState<string>("plan1");
   const [plan3Mode, setPlan3Mode] = useState<"summing_up" | "fixed">("summing_up");
 
@@ -62,7 +68,7 @@ export default function CashierPage() {
         }
       });
 
-      // Pending bill requests
+      // Pending bill requests (Plan 3)
       const qReq = query(
         collection(db, "billRequests"),
         where("merchantId", "==", user.uid),
@@ -72,9 +78,19 @@ export default function CashierPage() {
         setBillRequests(snap.docs.map((d) => ({ id: d.id, ...d.data() } as BillRequest)));
       });
 
+      // Merchant stickers (Plan 2)
+      const qStickers = query(
+        collection(db, "stickers"),
+        where("merchantId", "==", user.uid)
+      );
+      const unsubStickers = onSnapshot(qStickers, (snap) => {
+        setStickers(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Sticker)));
+      });
+
       return () => {
         unsubSnap();
         unsubReqs();
+        unsubStickers();
       };
     });
     return () => unsub();
@@ -87,7 +103,7 @@ export default function CashierPage() {
     if (amount === "0") {
       setAmount(digit);
     } else {
-      if (amount.length >= 7) return; // Prevent overflow
+      if (amount.length >= 7) return; 
       setAmount(amount + digit);
     }
   }
@@ -121,6 +137,27 @@ export default function CashierPage() {
         fixedAmount: null,
       });
       setAmount("0");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Plan 2: Assign manual amount to a table sticker
+  async function handleAssignToSticker(stickerId: string) {
+    if (rawCents === 0) return;
+    setLoading(true);
+    try {
+      await updateDoc(doc(db, "stickers", stickerId), {
+        pushedBill: {
+          amount: amountRM,
+          pushedAt: serverTimestamp(),
+        },
+      });
+      setAmount("0");
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
     } catch (err) {
       console.error(err);
     } finally {
@@ -236,72 +273,100 @@ export default function CashierPage() {
           </div>
         </div>
 
-        {/* ── Bill Requests ──────────────────────────────────────────────────── */}
+        {/* ── Action Section (Plan 2: Stickers vs Plan 3: Requests) ─────────── */}
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Active Requests</p>
-            {billRequests.length > 0 && (
-              <span className="bg-orange-500 text-white text-xs font-black px-3 py-1 rounded-full shadow-lg shadow-orange-500/20 animate-bounce">
-                {billRequests.length} New
-              </span>
-            )}
-          </div>
-
-          {billRequests.length === 0 ? (
-            <div className="h-full min-h-[400px] flex flex-col items-center justify-center bg-slate-50 rounded-[2.5rem] border-4 border-dashed border-slate-200">
-              <Bell size={48} className="text-slate-300 mb-4" />
-              <p className="text-slate-950 font-black text-sm uppercase tracking-widest">No Incoming Taps</p>
-              <p className="text-slate-500 text-xs mt-2 font-medium">Customer requests will appear here</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {billRequests.map((req) => (
-                <div key={req.id} className="bg-white border-4 border-slate-950 rounded-[2rem] p-6 flex items-center gap-5 shadow-xl">
-                  <div className="w-14 h-14 rounded-2xl bg-orange-500 text-white flex items-center justify-center shadow-lg">
-                    <Bell size={28} />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-black text-slate-950 text-xl tracking-tight">{req.tableName}</p>
-                    <div className="flex items-center gap-3 mt-1">
-                      {req.wantsReceipt && (
-                        <span className="flex items-center gap-1 text-[10px] font-black uppercase text-white bg-orange-500 px-2 py-0.5 rounded-full">
-                          Receipt
-                        </span>
-                      )}
-                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                        {req.createdAt?.toDate
-                          ? req.createdAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-                          : "Just now"}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    {plan === "plan3" && plan3Mode === "summing_up" ? (
-                      <button
-                        onClick={() => handlePushAndDone(req)}
-                        disabled={loading || rawCents === 0}
-                        className="bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-blue-500/20"
-                      >
-                        Push RM {amountRM.toFixed(2)}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleBossComingDone(req)}
-                        className="bg-slate-950 hover:bg-black text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all"
-                      >
-                        Done
-                      </button>
+          {plan === "plan2" ? (
+            <>
+              <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Assign to Table</p>
+              <div className="grid grid-cols-2 gap-4">
+                {stickers.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => handleAssignToSticker(s.id)}
+                    disabled={loading || rawCents === 0}
+                    className={`p-6 rounded-[2rem] border-4 border-slate-950 flex flex-col items-center justify-center gap-2 transition-all active:scale-95 shadow-lg group ${
+                      s.pushedBill ? "bg-blue-50 border-blue-600" : "bg-white"
+                    }`}
+                  >
+                    <Table size={24} className={s.pushedBill ? "text-blue-600" : "text-slate-950"} />
+                    <p className="font-black text-slate-950 text-lg">{s.tableName}</p>
+                    {s.pushedBill && (
+                      <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">
+                        RM {s.pushedBill.amount.toFixed(2)}
+                      </p>
                     )}
-                    <button
-                      onClick={() => handleClearRequest(req)}
-                      className="text-red-500 hover:bg-red-50 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
-                    >
-                      Cancel
-                    </button>
-                  </div>
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Active Requests</p>
+                {billRequests.length > 0 && (
+                  <span className="bg-orange-500 text-white text-xs font-black px-3 py-1 rounded-full shadow-lg shadow-orange-500/20 animate-bounce">
+                    {billRequests.length} New
+                  </span>
+                )}
+              </div>
+
+              {billRequests.length === 0 ? (
+                <div className="h-full min-h-[400px] flex flex-col items-center justify-center bg-slate-50 rounded-[2.5rem] border-4 border-dashed border-slate-200">
+                  <Bell size={48} className="text-slate-300 mb-4" />
+                  <p className="text-slate-950 font-black text-sm uppercase tracking-widest">No Incoming Taps</p>
+                  <p className="text-slate-500 text-xs mt-2 font-medium">Customer requests will appear here</p>
                 </div>
-              ))}
-            </div>
+              ) : (
+                <div className="space-y-4">
+                  {billRequests.map((req) => (
+                    <div key={req.id} className="bg-white border-4 border-slate-950 rounded-[2rem] p-6 flex items-center gap-5 shadow-xl">
+                      <div className="w-14 h-14 rounded-2xl bg-orange-500 text-white flex items-center justify-center shadow-lg">
+                        <Bell size={28} />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-black text-slate-950 text-xl tracking-tight">{req.tableName}</p>
+                        <div className="flex items-center gap-3 mt-1">
+                          {req.wantsReceipt && (
+                            <span className="flex items-center gap-1 text-[10px] font-black uppercase text-white bg-orange-500 px-2 py-0.5 rounded-full">
+                              Receipt
+                            </span>
+                          )}
+                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                            {req.createdAt?.toDate
+                              ? req.createdAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                              : "Just now"}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        {plan === "plan3" && plan3Mode === "summing_up" ? (
+                          <button
+                            onClick={() => handlePushAndDone(req)}
+                            disabled={loading || rawCents === 0}
+                            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-blue-500/20"
+                          >
+                            Push RM {amountRM.toFixed(2)}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleBossComingDone(req)}
+                            className="bg-slate-950 hover:bg-black text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all"
+                          >
+                            Done
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleClearRequest(req)}
+                          className="text-red-500 hover:bg-red-50 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
