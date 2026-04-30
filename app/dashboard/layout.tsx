@@ -15,6 +15,7 @@ import {
   Menu,
   X,
   Nfc,
+  History,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -104,6 +105,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const navItems = [
     { href: "/dashboard", icon: <Activity size={18} />, label: "Overview" },
     { href: "/dashboard/cashier", icon: <Calculator size={18} />, label: "Cashier Mode", badge: pendingRequests > 0 ? pendingRequests : null },
+    { href: "/dashboard/history", icon: <History size={18} />, label: "History" },
     { href: "/dashboard/nfc", icon: <Nfc size={18} />, label: "NFC Writer" },
     { href: "/dashboard/settings", icon: <Settings size={18} />, label: "Settings" },
   ];

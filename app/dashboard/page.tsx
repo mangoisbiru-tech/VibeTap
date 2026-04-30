@@ -1,19 +1,23 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  onSnapshot,
+  collection,
+  query,
+  where,
+  Timestamp,
+} from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/client";
 import {
   TrendingUp,
-  Copy,
-  ExternalLink,
-  CheckCircle2,
   Loader2,
   MousePointerClick,
-  QrCode,
-  LinkIcon,
   Calendar,
+  DollarSign,
+  BarChart3,
 } from "lucide-react";
 
 interface MerchantData {
@@ -26,6 +30,12 @@ interface MerchantData {
   fixedAmount: number | null;
   createdAt: { toDate?: () => Date } | null;
 }
+
+type HistoryEntry = {
+  amount: number;
+  status: "paid" | "cleared";
+  createdAt: Timestamp | null;
+};
 
 function StatCard({
   icon,
@@ -58,7 +68,6 @@ function StatCard({
 }
 
 function TapChart({ dailyTaps }: { dailyTaps: Record<string, number> }) {
-  // Get last 7 days
   const days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - (6 - i));
@@ -71,7 +80,7 @@ function TapChart({ dailyTaps }: { dailyTaps: Record<string, number> }) {
     <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-6 hover:border-white/10 transition-colors">
       <div className="flex items-center gap-2 mb-6">
         <TrendingUp size={18} className="text-purple-400" />
-        <h3 className="font-semibold text-sm">Last 7 Days</h3>
+        <h3 className="font-semibold text-sm">Tap Activity — Last 7 Days</h3>
       </div>
       <div className="flex items-end gap-2 h-28">
         {days.map((day) => {
@@ -108,22 +117,71 @@ function TapChart({ dailyTaps }: { dailyTaps: Record<string, number> }) {
 
 export default function DashboardPage() {
   const [merchant, setMerchant] = useState<MerchantData | null>(null);
+  const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) return;
+
+      // Merchant data
       const merchantRef = doc(db, "merchants", user.uid);
       const unsubSnap = onSnapshot(merchantRef, (snap) => {
         if (snap.exists()) {
           setMerchant(snap.data() as MerchantData);
         }
       });
-      return () => unsubSnap();
+
+      // Revenue history (this month)
+      const monthStart = new Date();
+      monthStart.setDate(1);
+      monthStart.setHours(0, 0, 0, 0);
+      const histQ = query(
+        collection(db, "billHistory"),
+        where("merchantId", "==", user.uid),
+        where("createdAt", ">=", Timestamp.fromDate(monthStart))
+      );
+      const unsubHist = onSnapshot(histQ, (snap) => {
+        setHistoryEntries(
+          snap.docs.map((d) => ({
+            amount: d.data().amount ?? 0,
+            status: d.data().status,
+            createdAt: d.data().createdAt ?? null,
+          }))
+        );
+      });
+
+      return () => {
+        unsubSnap();
+        unsubHist();
+      };
     });
     return () => unsub();
   }, []);
 
   const todayKey = new Date().toISOString().slice(0, 10);
+  const todayTaps = merchant?.dailyTaps?.[todayKey] || 0;
+  const weekTaps = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    return d.toISOString().slice(0, 10);
+  }).reduce((acc, d) => acc + (merchant?.dailyTaps?.[d] || 0), 0);
+
+  // Revenue stats
+  const weekStart = new Date();
+  weekStart.setDate(weekStart.getDate() - 6);
+  weekStart.setHours(0, 0, 0, 0);
+
+  const weekRevenue = historyEntries
+    .filter((e) => e.status === "paid" && e.createdAt?.toDate && e.createdAt.toDate() >= weekStart)
+    .reduce((sum, e) => sum + e.amount, 0);
+
+  const monthRevenue = historyEntries
+    .filter((e) => e.status === "paid")
+    .reduce((sum, e) => sum + e.amount, 0);
+
+  const monthTaps = historyEntries.length;
+  const monthPaid = historyEntries.filter((e) => e.status === "paid").length;
+  const conversionRate = monthTaps > 0 ? Math.round((monthPaid / monthTaps) * 100) : 0;
 
   if (!merchant) {
     return (
@@ -139,36 +197,64 @@ export default function DashboardPage() {
       <div>
         <h1 className="text-2xl font-black">Dashboard</h1>
         <p className="text-gray-500 text-sm mt-1">
-          Welcome back, {merchant.name}! Here&apos;s your tap overview.
+          Welcome back, {merchant.name}! Here&apos;s your overview.
         </p>
       </div>
 
-      {/* Stats row */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <StatCard
-          icon={<MousePointerClick size={18} />}
-          label="Today's Taps"
-          value={todayTaps}
-          color="#6C47FF"
-        />
-        <StatCard
-          icon={<Calendar size={18} />}
-          label="This Week"
-          value={weekTaps}
-          color="#00D4FF"
-        />
-        <StatCard
-          icon={<TrendingUp size={18} />}
-          label="All Time Taps"
-          value={(merchant.tapCount || 0).toLocaleString()}
-          color="#A78BFA"
-          sub={`Since ${merchant.createdAt?.toDate ? merchant.createdAt.toDate().toLocaleDateString("en-MY") : "—"}`}
-        />
+      {/* Revenue stats */}
+      <div>
+        <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-3">Revenue</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <StatCard
+            icon={<DollarSign size={18} />}
+            label="This Week"
+            value={`RM ${weekRevenue.toFixed(2)}`}
+            color="#10b981"
+          />
+          <StatCard
+            icon={<BarChart3 size={18} />}
+            label="This Month"
+            value={`RM ${monthRevenue.toFixed(2)}`}
+            color="#6C47FF"
+          />
+          <StatCard
+            icon={<TrendingUp size={18} />}
+            label="Conversion Rate"
+            value={`${conversionRate}%`}
+            sub={`${monthPaid} paid / ${monthTaps} taps`}
+            color="#f59e0b"
+          />
+        </div>
+      </div>
+
+      {/* Tap stats */}
+      <div>
+        <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-3">NFC Taps</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <StatCard
+            icon={<MousePointerClick size={18} />}
+            label="Today's Taps"
+            value={todayTaps}
+            color="#00D4FF"
+          />
+          <StatCard
+            icon={<Calendar size={18} />}
+            label="This Week"
+            value={weekTaps}
+            color="#A78BFA"
+          />
+          <StatCard
+            icon={<TrendingUp size={18} />}
+            label="All Time"
+            value={(merchant.tapCount || 0).toLocaleString()}
+            color="#ec4899"
+            sub={`Since ${merchant.createdAt?.toDate ? merchant.createdAt.toDate().toLocaleDateString("en-MY") : "—"}`}
+          />
+        </div>
       </div>
 
       {/* Chart */}
       <TapChart dailyTaps={merchant.dailyTaps || {}} />
-
     </div>
   );
 }

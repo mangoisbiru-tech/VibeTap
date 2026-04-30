@@ -11,18 +11,18 @@ import {
   onSnapshot,
   updateDoc,
   deleteDoc,
+  addDoc,
   serverTimestamp,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/client";
 import {
-  Zap,
   Delete,
-  CheckCircle2,
-  Timer,
   AlertCircle,
   Bell,
   Receipt,
   Nfc,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
 
 type Sticker = { 
@@ -45,8 +45,6 @@ export default function CashierPage() {
   const [rawCents, setRawCents] = useState(0);
   const [input, setInput] = useState("0.00");
   const [stickers, setStickers] = useState<Sticker[]>([]);
-  const [pushedStickerId, setPushedStickerId] = useState<string | null>(null);
-  const [pushedAmount, setPushedAmount] = useState<number | null>(null);
   const [billRequests, setBillRequests] = useState<BillRequest[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -56,14 +54,12 @@ export default function CashierPage() {
       if (!user) return;
       setUid(user.uid);
 
-      // Get merchant plan
       const merchantSnap = await getDoc(doc(db, "merchants", user.uid));
       if (merchantSnap.exists()) {
         setPlan(merchantSnap.data().plan || "plan1");
         setPlan3Mode(merchantSnap.data().plan3Mode || "summing_up");
       }
 
-      // Listen to stickers
       const stickersQ = query(
         collection(db, "stickers"),
         where("merchantId", "==", user.uid)
@@ -76,7 +72,6 @@ export default function CashierPage() {
         })));
       });
 
-      // Listen to bill requests (plan 3)
       const reqQ = query(
         collection(db, "billRequests"),
         where("merchantId", "==", user.uid),
@@ -102,7 +97,7 @@ export default function CashierPage() {
     return () => unsub();
   }, []);
 
-  // ── Numpad helpers ──────────────────────────────────────────────────────────
+  // ── Numpad helpers ───────────────────────────────────────────────────────────
   const formatDisplay = (cents: number) => {
     const r = Math.floor(cents / 100);
     const s = cents % 100;
@@ -126,7 +121,18 @@ export default function CashierPage() {
     setInput(formatDisplay(c));
   };
 
-  // ── Plan 2: Push bill to a sticker ─────────────────────────────────────────
+  // ── Write a history record ────────────────────────────────────────────────────
+  const writeHistory = async (merchantId: string, tableName: string, amount: number, status: "paid" | "cleared") => {
+    await addDoc(collection(db, "billHistory"), {
+      merchantId,
+      tableName,
+      amount,
+      status,
+      createdAt: serverTimestamp(),
+    });
+  };
+
+  // ── Plan 2: Push bill to a sticker ──────────────────────────────────────────
   const handlePushBill = useCallback(async (stickerId: string, tableName: string) => {
     if (rawCents === 0) { setError("Enter an amount first."); return; }
     setError("");
@@ -144,24 +150,64 @@ export default function CashierPage() {
     }
   }, [rawCents]);
 
-  const handleClearBill = async (stickerId: string) => {
-    await updateDoc(doc(db, "stickers", stickerId), { pushedBill: null });
+  // ── Mark active table as PAID (records revenue) ──────────────────────────────
+  const handleDoneBill = async (sticker: Sticker) => {
+    if (!uid || !sticker.pushedBill) return;
+    try {
+      await writeHistory(uid, sticker.tableName, sticker.pushedBill.amount, "paid");
+      await updateDoc(doc(db, "stickers", sticker.id), { pushedBill: null });
+    } catch (e) {
+      setError("Failed to mark as done.");
+    }
   };
 
-  const handleDoneRequest = async (reqId: string, stickerId?: string) => {
+  // ── Clear active table WITHOUT recording revenue ─────────────────────────────
+  const handleClearBill = async (sticker: Sticker) => {
+    if (!uid || !sticker.pushedBill) return;
     try {
-      // If we are pushing an amount at the same time (summing_up mode)
-      if (stickerId && amountRM > 0) {
-        await updateDoc(doc(db, "stickers", stickerId), {
-          pushedBill: { amount: amountRM, pushedAt: serverTimestamp() }
-        });
-        pressClear();
-      }
-      // Clear the request
-      await deleteDoc(doc(db, "billRequests", reqId));
+      await writeHistory(uid, sticker.tableName, sticker.pushedBill.amount, "cleared");
+      await updateDoc(doc(db, "stickers", sticker.id), { pushedBill: null });
+    } catch (e) {
+      setError("Failed to clear bill.");
+    }
+  };
+
+  // ── Plan 3: Push bill + resolve request ─────────────────────────────────────
+  const handlePushAndDone = async (req: BillRequest) => {
+    if (!uid || rawCents === 0) { setError("Enter an amount first."); return; }
+    setLoading(true);
+    try {
+      const amount = rawCents / 100;
+      await updateDoc(doc(db, "stickers", req.stickerId), {
+        pushedBill: { amount, pushedAt: serverTimestamp() }
+      });
+      await writeHistory(uid, req.tableName, amount, "paid");
+      await deleteDoc(doc(db, "billRequests", req.id));
+      pressClear();
     } catch (e) {
       setError("Failed to process request.");
-      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Plan 3 (boss coming): just mark done (no amount) ────────────────────────
+  const handleBossComingDone = async (req: BillRequest) => {
+    if (!uid) return;
+    try {
+      await deleteDoc(doc(db, "billRequests", req.id));
+    } catch (e) {
+      setError("Failed to process request.");
+    }
+  };
+
+  // ── Plan 3: clear/cancel a request ──────────────────────────────────────────
+  const handleClearRequest = async (req: BillRequest) => {
+    if (!uid) return;
+    try {
+      await deleteDoc(doc(db, "billRequests", req.id));
+    } catch (e) {
+      setError("Failed to clear request.");
     }
   };
 
@@ -179,10 +225,9 @@ export default function CashierPage() {
         </p>
       </div>
 
-      {/* ── Numpad (Plan 1, Plan 2, and Plan 3 summing_up) ──────────────────────────────────────────────── */}
-      {(plan === "plan1" || plan === "plan2" || (plan === "plan3" && plan3Mode === "summing_up")) && (
+      {/* ── Numpad (Plan 2 and Plan 3 summing_up) ─────────────────────────────── */}
+      {(plan === "plan2" || (plan === "plan3" && plan3Mode === "summing_up")) && (
         <>
-          {/* Amount display */}
           <div className="bg-white/[0.03] border border-white/5 rounded-3xl p-8 text-center">
             <p className="text-gray-500 text-sm mb-2">Amount (RM)</p>
             <div className="text-6xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
@@ -190,7 +235,6 @@ export default function CashierPage() {
             </div>
           </div>
 
-          {/* Quick amounts */}
           <div className="grid grid-cols-3 gap-2">
             {QUICK_AMOUNTS.map((rm) => (
               <button
@@ -203,7 +247,6 @@ export default function CashierPage() {
             ))}
           </div>
 
-          {/* Numpad */}
           <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4">
             <div className="grid grid-cols-3 gap-2">
               {["1","2","3","4","5","6","7","8","9"].map((d) => (
@@ -235,7 +278,7 @@ export default function CashierPage() {
         </>
       )}
 
-      {/* ── Plan 1: No table selection needed ───────────────────────────────── */}
+      {/* ── Plan 1: No action needed ────────────────────────────────────────────── */}
       {plan === "plan1" && (
         <div className="bg-purple-500/10 border border-purple-500/20 rounded-2xl p-4 text-sm text-purple-300">
           <p className="font-bold mb-1">Plan 1 — No action needed here</p>
@@ -243,7 +286,7 @@ export default function CashierPage() {
         </div>
       )}
 
-      {/* ── Plan 2 & Plan 3 (summing_up): Active Tables ───────────────────────────────────────── */}
+      {/* ── Plan 2 & Plan 3 (summing_up): Active Tables ─────────────────────────── */}
       {(plan === "plan2" || (plan === "plan3" && plan3Mode === "summing_up")) && (
         <div className="space-y-3">
           <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Active Tables</p>
@@ -259,9 +302,17 @@ export default function CashierPage() {
               {s.pushedBill ? (
                 <>
                   <span className="text-blue-300 font-black text-sm">RM {s.pushedBill.amount.toFixed(2)}</span>
-                  <button onClick={() => handleClearBill(s.id)}
-                    className="text-xs text-red-400 hover:text-red-300 bg-red-500/10 px-2 py-1 rounded-lg">
-                    Clear
+                  <button
+                    onClick={() => handleDoneBill(s)}
+                    className="flex items-center gap-1 text-xs font-bold bg-green-500/20 hover:bg-green-500/30 text-green-400 px-2 py-1.5 rounded-lg transition-all"
+                  >
+                    <CheckCircle2 size={13} /> Done
+                  </button>
+                  <button
+                    onClick={() => handleClearBill(s)}
+                    className="flex items-center gap-1 text-xs font-bold bg-red-500/10 hover:bg-red-500/20 text-red-400 px-2 py-1.5 rounded-lg transition-all"
+                  >
+                    <XCircle size={13} /> Clear
                   </button>
                 </>
               ) : (
@@ -278,7 +329,7 @@ export default function CashierPage() {
         </div>
       )}
 
-      {/* ── Plan 3: Bill Requests ────────────────────────────────────────────── */}
+      {/* ── Plan 3: Bill Requests ────────────────────────────────────────────────── */}
       {plan === "plan3" && (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
@@ -313,22 +364,30 @@ export default function CashierPage() {
                     </span>
                   </div>
                 </div>
-                {plan3Mode === "summing_up" ? (
+                <div className="flex gap-2">
+                  {plan3Mode === "summing_up" ? (
+                    <button
+                      onClick={() => handlePushAndDone(req)}
+                      disabled={loading || rawCents === 0}
+                      className="flex items-center gap-1 text-xs font-bold bg-green-500/20 hover:bg-green-500/30 disabled:opacity-40 text-green-400 px-2 py-1.5 rounded-lg transition-all"
+                    >
+                      <CheckCircle2 size={13} /> Push RM {amountRM.toFixed(2)}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleBossComingDone(req)}
+                      className="flex items-center gap-1 text-xs font-bold bg-green-500/20 hover:bg-green-500/30 text-green-400 px-2 py-1.5 rounded-lg transition-all"
+                    >
+                      <CheckCircle2 size={13} /> Done
+                    </button>
+                  )}
                   <button
-                    onClick={() => handleDoneRequest(req.id, req.stickerId)}
-                    disabled={loading || rawCents === 0}
-                    className="text-xs font-bold bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white px-3 py-1.5 rounded-lg transition-all"
+                    onClick={() => handleClearRequest(req)}
+                    className="flex items-center gap-1 text-xs font-bold bg-red-500/10 hover:bg-red-500/20 text-red-400 px-2 py-1.5 rounded-lg transition-all"
                   >
-                    Push RM {amountRM.toFixed(2)}
+                    <XCircle size={13} /> Clear
                   </button>
-                ) : (
-                  <button
-                    onClick={() => handleDoneRequest(req.id)}
-                    className="text-xs font-bold bg-green-500/20 hover:bg-green-500/30 text-green-400 px-3 py-1.5 rounded-lg transition-all"
-                  >
-                    Done
-                  </button>
-                )}
+                </div>
               </div>
             ))
           )}
