@@ -144,7 +144,7 @@ export default function CashierPage() {
     }
   }
 
-  // Plan 2: Assign manual amount to a table sticker
+  // Plan 2 & 3: Assign manual amount to a table sticker
   async function handleAssignToSticker(stickerId: string) {
     if (rawCents === 0) return;
     setLoading(true);
@@ -158,6 +158,19 @@ export default function CashierPage() {
       setAmount("0");
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleClearStickerBill(stickerId: string) {
+    setLoading(true);
+    try {
+      await updateDoc(doc(db, "stickers", stickerId), {
+        pushedBill: null,
+      });
     } catch (err) {
       console.error(err);
     } finally {
@@ -274,35 +287,13 @@ export default function CashierPage() {
         </div>
 
         {/* ── Action Section (Plan 2: Stickers vs Plan 3: Requests) ─────────── */}
-        <div className="space-y-6">
-          {plan === "plan2" ? (
-            <>
-              <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Assign to Table</p>
-              <div className="grid grid-cols-2 gap-4">
-                {stickers.map((s) => (
-                  <button
-                    key={s.id}
-                    onClick={() => handleAssignToSticker(s.id)}
-                    disabled={loading || rawCents === 0}
-                    className={`p-6 rounded-[2rem] border-4 border-slate-950 flex flex-col items-center justify-center gap-2 transition-all active:scale-95 shadow-lg group ${
-                      s.pushedBill ? "bg-blue-50 border-blue-600" : "bg-white"
-                    }`}
-                  >
-                    <Table size={24} className={s.pushedBill ? "text-blue-600" : "text-slate-950"} />
-                    <p className="font-black text-slate-950 text-lg">{s.tableName}</p>
-                    {s.pushedBill && (
-                      <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">
-                        RM {s.pushedBill.amount.toFixed(2)}
-                      </p>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </>
-          ) : (
-            <>
+        {/* ── Action Section (Stickers & Requests) ─────────────────────────── */}
+        <div className="space-y-8">
+          {/* Incoming Requests Section (Plan 3) */}
+          {(plan === "plan3" || plan === "plan2") && (
+            <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Active Requests</p>
+                <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Incoming Requests</p>
                 {billRequests.length > 0 && (
                   <span className="bg-orange-500 text-white text-xs font-black px-3 py-1 rounded-full shadow-lg shadow-orange-500/20 animate-bounce">
                     {billRequests.length} New
@@ -311,62 +302,98 @@ export default function CashierPage() {
               </div>
 
               {billRequests.length === 0 ? (
-                <div className="h-full min-h-[400px] flex flex-col items-center justify-center bg-slate-50 rounded-[2.5rem] border-4 border-dashed border-slate-200">
-                  <Bell size={48} className="text-slate-300 mb-4" />
-                  <p className="text-slate-950 font-black text-sm uppercase tracking-widest">No Incoming Taps</p>
-                  <p className="text-slate-500 text-xs mt-2 font-medium">Customer requests will appear here</p>
+                <div className="p-10 flex flex-col items-center justify-center bg-slate-50 rounded-[2rem] border-4 border-dashed border-slate-200">
+                  <Bell size={32} className="text-slate-300 mb-2" />
+                  <p className="text-slate-400 font-black text-[10px] uppercase tracking-widest">No New Taps</p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {billRequests.map((req) => (
-                    <div key={req.id} className="bg-white border-4 border-slate-950 rounded-[2rem] p-6 flex items-center gap-5 shadow-xl">
-                      <div className="w-14 h-14 rounded-2xl bg-orange-500 text-white flex items-center justify-center shadow-lg">
-                        <Bell size={28} />
+                    <div key={req.id} className="bg-white border-4 border-slate-950 rounded-[2rem] p-5 flex items-center gap-4 shadow-xl">
+                      <div className="w-12 h-12 rounded-2xl bg-orange-500 text-white flex items-center justify-center shadow-lg shrink-0">
+                        <Bell size={24} />
                       </div>
-                      <div className="flex-1">
-                        <p className="font-black text-slate-950 text-xl tracking-tight">{req.tableName}</p>
-                        <div className="flex items-center gap-3 mt-1">
-                          {req.wantsReceipt && (
-                            <span className="flex items-center gap-1 text-[10px] font-black uppercase text-white bg-orange-500 px-2 py-0.5 rounded-full">
-                              Receipt
-                            </span>
-                          )}
-                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                            {req.createdAt?.toDate
-                              ? req.createdAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-                              : "Just now"}
-                          </span>
-                        </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-black text-slate-950 text-lg truncate">{req.tableName}</p>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                          {req.createdAt?.toDate
+                            ? req.createdAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                            : "Just now"}
+                        </p>
                       </div>
                       <div className="flex flex-col gap-2">
                         {plan === "plan3" && plan3Mode === "summing_up" ? (
                           <button
                             onClick={() => handlePushAndDone(req)}
                             disabled={loading || rawCents === 0}
-                            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-blue-500/20"
+                            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-blue-500/20"
                           >
                             Push RM {amountRM.toFixed(2)}
                           </button>
                         ) : (
                           <button
                             onClick={() => handleBossComingDone(req)}
-                            className="bg-slate-950 hover:bg-black text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all"
+                            className="bg-slate-950 hover:bg-black text-white px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all"
                           >
                             Done
                           </button>
                         )}
                         <button
                           onClick={() => handleClearRequest(req)}
-                          className="text-red-500 hover:bg-red-50 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                          className="text-red-500 hover:bg-red-50 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all"
                         >
-                          Cancel
+                          Clear
                         </button>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
-            </>
+            </div>
+          )}
+
+          {/* Tables / Stickers Grid (Plan 2 & 3) */}
+          {(plan === "plan2" || plan === "plan3") && (
+            <div className="space-y-4 pt-4 border-t-4 border-slate-100">
+              <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">All Tables / Active Bills</p>
+              <div className="grid grid-cols-2 gap-4">
+                {stickers.map((s) => (
+                  <div key={s.id} className="relative group">
+                    <button
+                      onClick={() => handleAssignToSticker(s.id)}
+                      disabled={loading || (rawCents === 0 && !s.pushedBill)}
+                      className={`w-full p-6 rounded-[2rem] border-4 border-slate-950 flex flex-col items-center justify-center gap-2 transition-all active:scale-95 shadow-lg ${
+                        s.pushedBill ? "bg-blue-50 border-blue-600" : "bg-white"
+                      } ${loading ? "opacity-50" : ""}`}
+                    >
+                      <Table size={24} className={s.pushedBill ? "text-blue-600" : "text-slate-950"} />
+                      <p className="font-black text-slate-950 text-lg truncate w-full px-2 text-center">{s.tableName}</p>
+                      {s.pushedBill ? (
+                        <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">
+                          RM {s.pushedBill.amount.toFixed(2)}
+                        </p>
+                      ) : (
+                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                          {rawCents > 0 ? `Assign RM ${amountRM.toFixed(2)}` : "Empty"}
+                        </p>
+                      )}
+                    </button>
+                    {s.pushedBill && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleClearStickerBill(s.id);
+                        }}
+                        className="absolute -top-2 -right-2 w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white hover:bg-red-700 transition-all active:scale-90 z-10"
+                        title="Clear Bill"
+                      >
+                        <span className="text-xs font-black">×</span>
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </div>
       </div>
