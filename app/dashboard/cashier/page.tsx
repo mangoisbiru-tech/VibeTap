@@ -109,6 +109,25 @@ export default function CashierPage() {
     }
   }
 
+  function pressDigit(digit: string) {
+    if (amount === "0") {
+      if (digit === "00" || digit === "0") return;
+      setAmount(digit);
+    } else {
+      if (amount.length >= 7) return; 
+      setAmount(amount + digit);
+    }
+  }
+
+  function pressBackspace() {
+    if (amount === "0") return;
+    if (amount.length <= 1) {
+      setAmount("0");
+    } else {
+      setAmount(amount.slice(0, -1));
+    }
+  }
+
   function pressClear() {
     setAmount("0");
   }
@@ -259,7 +278,7 @@ export default function CashierPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div className="space-y-6">
           <div className="grid grid-cols-3 gap-4">
-            {["1", "2", "3", "4", "5", "6", "7", "8", "9", "00", "0"].map((digit) => (
+            {["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "00"].map((digit) => (
               <button
                 key={digit}
                 onClick={() => pressDigit(digit)}
@@ -269,10 +288,16 @@ export default function CashierPage() {
               </button>
             ))}
             <button
-              onClick={pressClear}
-              className="h-20 rounded-3xl bg-white border-4 border-red-600 hover:bg-red-50 text-red-600 font-black text-2xl transition-all active:scale-90 shadow-sm"
+              onClick={pressBackspace}
+              className="h-20 rounded-3xl bg-amber-50 border-4 border-slate-950 hover:bg-amber-100 text-slate-950 font-black text-3xl transition-all active:scale-90 shadow-sm flex items-center justify-center"
             >
-              CLR
+              ⌫
+            </button>
+            <button
+              onClick={pressClear}
+              className="col-span-3 h-16 rounded-2xl bg-white border-4 border-red-600 hover:bg-red-50 text-red-600 font-black text-xl uppercase tracking-widest transition-all active:scale-95 shadow-sm"
+            >
+              Clear Amount
             </button>
           </div>
 
