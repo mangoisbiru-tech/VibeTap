@@ -27,6 +27,7 @@ import {
   Copy,
   Check,
   Nfc,
+  Edit2,
 } from "lucide-react";
 
 type MenuItem = { name: string; price: number };
@@ -76,6 +77,8 @@ export default function SettingsPage() {
   const [copiedSlug, setCopiedSlug] = useState(false);
   const [addingSticker, setAddingSticker] = useState(false);
   const [newTableName, setNewTableName] = useState("");
+  const [editingStickerId, setEditingStickerId] = useState<string | null>(null);
+  const [editNameValue, setEditNameValue] = useState("");
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -166,7 +169,27 @@ export default function SettingsPage() {
   }
 
   async function deleteSticker(stickerId: string) {
+    if (!confirm("Delete this table?")) return;
     await deleteDoc(doc(db, "stickers", stickerId));
+  }
+
+  async function saveStickerName(id: string) {
+    if (!editNameValue.trim()) {
+      setEditingStickerId(null);
+      return;
+    }
+    try {
+      await setDoc(doc(db, "stickers", id), { tableName: editNameValue.trim() }, { merge: true });
+      setEditingStickerId(null);
+    } catch (e: any) {
+      console.error(e);
+      alert("Failed to update name");
+    }
+  }
+
+  function startEditing(s: Sticker) {
+    setEditingStickerId(s.id);
+    setEditNameValue(s.tableName);
   }
 
   function copyUrl(stickerId: string) {
@@ -328,7 +351,6 @@ export default function SettingsPage() {
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex justify-between">
               TNG Payment URL
-              <span className="text-blue-500 font-black">(Plan 1 only)</span>
             </label>
             <input
               type="text"
@@ -341,7 +363,6 @@ export default function SettingsPage() {
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex justify-between">
               Merchant QR Data
-              <span className="text-blue-500 font-black">(Plans 2 & 3 only)</span>
             </label>
             <input
               type="text"
@@ -391,15 +412,39 @@ export default function SettingsPage() {
                 <UtensilsCrossed size={20} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-black text-slate-900">{s.tableName}</p>
-                <p className="font-mono text-[10px] text-slate-400 truncate mt-0.5 uppercase tracking-tight">ID: {s.id}</p>
+                {editingStickerId === s.id ? (
+                  <input
+                    autoFocus
+                    type="text"
+                    value={editNameValue}
+                    onChange={(e) => setEditNameValue(e.target.value)}
+                    onBlur={() => saveStickerName(s.id)}
+                    onKeyDown={(e) => e.key === "Enter" && saveStickerName(s.id)}
+                    className="w-full bg-white border border-blue-500 rounded-lg px-2 py-1 text-slate-900 font-black text-sm focus:outline-none"
+                  />
+                ) : (
+                  <>
+                    <p className="font-black text-slate-900">{s.tableName}</p>
+                    <p className="font-mono text-[10px] text-slate-400 truncate mt-0.5 uppercase tracking-tight">ID: {s.id}</p>
+                  </>
+                )}
               </div>
-              <button
-                onClick={() => deleteSticker(s.id)}
-                className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all"
-              >
-                <Trash2 size={18} />
-              </button>
+              <div className="flex gap-2">
+                {editingStickerId !== s.id && (
+                  <button
+                    onClick={() => startEditing(s)}
+                    className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-400 hover:bg-blue-50 hover:text-blue-500 transition-all"
+                  >
+                    <Edit2 size={18} />
+                  </button>
+                )}
+                <button
+                  onClick={() => deleteSticker(s.id)}
+                  className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
             </div>
           ))}
         </div>
