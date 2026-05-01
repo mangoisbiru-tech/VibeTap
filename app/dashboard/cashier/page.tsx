@@ -31,6 +31,7 @@ interface MerchantData {
 
 interface BillRequest {
   id: string;
+  stickerId: string;
   tableName: string;
   wantsReceipt: boolean;
   createdAt: any;
@@ -182,12 +183,21 @@ export default function CashierPage() {
     if (!auth.currentUser) return;
     setLoading(true);
     try {
+      // 1. Update Merchant's global active bill (for Plan 1/fixed consistency)
       await updateDoc(doc(db, "merchants", auth.currentUser.uid), {
         fixedAmount: amountRM,
       });
+      // 2. Update the Request status
       await updateDoc(doc(db, "billRequests", req.id), {
         status: "pushed",
         amount: amountRM,
+      });
+      // 3. IMPORTANT: Update the Sticker so the customer phone sees it
+      await updateDoc(doc(db, "stickers", req.stickerId), {
+        pushedBill: {
+          amount: amountRM,
+          pushedAt: serverTimestamp(),
+        },
       });
       setAmount("0");
     } catch (err) {
