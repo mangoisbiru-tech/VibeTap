@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronRight } from "lucide-react";
 import { buildTngPayload } from "@/lib/crc16";
 
 export default function ShowBill({
@@ -18,13 +17,19 @@ export default function ShowBill({
   tngPaymentUrl: string;
 }) {
   const [paymentHref, setPaymentHref] = useState(tngPaymentUrl);
+  const [useQrMethod, setUseQrMethod] = useState(false);
 
   useEffect(() => {
     if (staticQrData && staticQrData.length > 20) {
-      setPaymentHref(`tngdwallet://pay?data=${buildTngPayload(staticQrData, amount)}`);
+      const builtPayload = buildTngPayload(staticQrData, amount);
+      // URL-encode the payload so special chars don't corrupt the deep link
+      const encoded = encodeURIComponent(builtPayload);
+      setPaymentHref(`tngdwallet://pay?data=${encoded}`);
+      setUseQrMethod(true);
       return;
     }
 
+    setUseQrMethod(false);
     if (/android/i.test(navigator.userAgent) && tngPaymentUrl.startsWith("https://")) {
       const withoutScheme = tngPaymentUrl.substring(8);
       setPaymentHref(`intent://${withoutScheme}#Intent;scheme=https;package=my.com.tngdigital.ewallet;end;`);
@@ -51,7 +56,7 @@ export default function ShowBill({
           <p className="text-slate-500 text-xs mt-4">Tap the button below to pay with TNG eWallet</p>
         </div>
 
-        {/* Pay Button */}
+        {/* Primary Pay Button */}
         <a
           href={paymentHref}
           className="w-full bg-gradient-to-r from-[#00AEEF] to-blue-600 text-white font-black py-5 rounded-2xl flex items-center justify-center gap-3 text-lg transition-all active:scale-95 shadow-xl shadow-blue-600/25 block text-center"
@@ -59,8 +64,20 @@ export default function ShowBill({
           PAY RM {amount.toFixed(2)} WITH TNG
         </a>
 
+        {/* Fallback button if QR method doesn't work */}
+        {useQrMethod && tngPaymentUrl && (
+          <a
+            href={tngPaymentUrl}
+            className="w-full bg-white border-2 border-slate-200 text-slate-600 font-bold py-3 rounded-2xl flex items-center justify-center gap-2 text-sm transition-all active:scale-95 block text-center"
+          >
+            Open TNG Manually (if button above fails)
+          </a>
+        )}
+
         <p className="text-center text-xs text-slate-500">
-          Amount is pre-filled. Just confirm in TNG eWallet.
+          {useQrMethod
+            ? "Amount is pre-filled. Just confirm in TNG eWallet."
+            : "You will be redirected to TNG eWallet."}
         </p>
       </div>
     </div>
