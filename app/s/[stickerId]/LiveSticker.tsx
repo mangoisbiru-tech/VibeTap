@@ -39,7 +39,6 @@ export default function LiveSticker({
     const amount = sticker.pushedBill?.amount || 0;
     if (activePlan === "plan3" && plan3Mode === "summing_up") {
       if (amount > 0 && previousAmount === 0) {
-        // Play notification sound when bill arrives
         try {
           const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
           if (AudioContext) {
@@ -69,7 +68,6 @@ export default function LiveSticker({
     setPreviousAmount(amount);
   }, [sticker.pushedBill?.amount, activePlan, plan3Mode, previousAmount]);
 
-  // If the merchant switched to Plan 1 while the page was open, render a manual button
   if (activePlan === "plan1") {
     const url = merchant.tngPaymentUrl || merchant.paymentUrl;
     if (url) {
@@ -92,8 +90,9 @@ export default function LiveSticker({
     }
   }
 
+  const amount = sticker.pushedBill?.amount as number | undefined;
+
   if (activePlan === "plan2") {
-    const amount = sticker.pushedBill?.amount as number | undefined;
     if (!amount || amount <= 0) {
       return (
         <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 text-slate-900 flex flex-col items-center justify-center p-6 text-center">
@@ -112,23 +111,17 @@ export default function LiveSticker({
         merchantName={merchant.name}
         tableName={sticker.tableName}
         amount={amount}
-        staticQrData={merchant.staticQrData || ""}
         tngPaymentUrl={merchant.tngPaymentUrl || merchant.paymentUrl || ""}
       />
     );
   }
 
-  // PLAN 3
-  const amount = sticker.pushedBill?.amount as number | undefined;
-
-  // If we are in "summing_up" mode and the boss has pushed an amount, transition to ShowBill
   if (plan3Mode === "summing_up" && amount && amount > 0) {
     return (
       <ShowBill
         merchantName={merchant.name}
         tableName={sticker.tableName}
         amount={amount}
-        staticQrData={merchant.staticQrData || ""}
         tngPaymentUrl={merchant.tngPaymentUrl || merchant.paymentUrl || ""}
       />
     );

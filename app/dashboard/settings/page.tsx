@@ -12,7 +12,6 @@ import {
   serverTimestamp,
   query,
   where,
-  getDocs,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/client";
 import {
@@ -65,7 +64,6 @@ export default function SettingsPage() {
   const [slug, setSlug] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [tngPaymentUrl, setTngPaymentUrl] = useState("");
-  const [staticQrData, setStaticQrData] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [plan, setPlan] = useState<"plan1" | "plan2" | "plan3">("plan1");
   const [plan3Mode, setPlan3Mode] = useState("summing_up"); // 'summing_up' or 'boss_coming'
@@ -74,7 +72,6 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [copiedSlug, setCopiedSlug] = useState(false);
   const [addingSticker, setAddingSticker] = useState(false);
   const [newTableName, setNewTableName] = useState("");
   const [editingStickerId, setEditingStickerId] = useState<string | null>(null);
@@ -92,7 +89,6 @@ export default function SettingsPage() {
           setName(d.name || "");
           setSlug(d.slug || null);
           setTngPaymentUrl(d.tngPaymentUrl || d.paymentUrl || "");
-          setStaticQrData(d.staticQrData || "");
           setIsActive(d.isActive ?? true);
           setPlan(d.plan || "plan1");
           setPlan3Mode(d.plan3Mode || "summing_up");
@@ -128,11 +124,10 @@ export default function SettingsPage() {
     setSaving(true);
     try {
       await setDoc(doc(db, "merchants", uid), {
-        uid, // Ensure uid is set
+        uid,
         name,
         tngPaymentUrl,
         paymentUrl: tngPaymentUrl, // keep backward compat
-        staticQrData,
         isActive,
         plan,
         plan3Mode,
@@ -192,13 +187,6 @@ export default function SettingsPage() {
     setEditNameValue(s.tableName);
   }
 
-  function copyUrl(stickerId: string) {
-    const url = `${SITE_URL}/s/${stickerId}`;
-    navigator.clipboard.writeText(url);
-    setCopiedId(stickerId);
-    setTimeout(() => setCopiedId(null), 2000);
-  }
-
   const addItem = () => {
     if (menuItems.length >= 8) return;
     setMenuItems([...menuItems, { name: "", price: 0 }]);
@@ -209,9 +197,6 @@ export default function SettingsPage() {
     setMenuItems(n);
   };
   const removeItem = (i: number) => setMenuItems(menuItems.filter((_, idx) => idx !== i));
-
-  const planColor = (p: string) =>
-    p === "plan1" ? "purple" : p === "plan2" ? "blue" : "orange";
 
   return (
     <div className="space-y-10 max-w-2xl pb-20">
@@ -235,7 +220,6 @@ export default function SettingsPage() {
 
         {uid ? (
           <div className="space-y-3">
-            {/* Plan 1 URL */}
             <div className="bg-white/60 border border-slate-100 rounded-2xl p-4 flex items-center gap-4 shadow-sm">
               <div className="flex-1 min-w-0">
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">Plan 1 — write this TNG link directly</p>
@@ -245,7 +229,6 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            {/* Plans 2 & 3 — sticker-specific URLs */}
             <div className="bg-white/60 border border-slate-100 rounded-2xl p-4 shadow-sm">
               <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-3">Plans 2 & 3 — unique URL per table</p>
               {stickers.length === 0 ? (
@@ -301,7 +284,6 @@ export default function SettingsPage() {
           ))}
         </div>
 
-        {/* Plan 3 Behavior Mode Toggle */}
         {plan === "plan3" && (
           <div className="mt-4 bg-orange-50 border border-orange-100 rounded-3xl p-5 animate-in zoom-in-95 duration-300">
             <h3 className="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-4">Plan 3 Customer Experience</h3>
@@ -359,21 +341,6 @@ export default function SettingsPage() {
               className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-slate-600 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300"
               placeholder="https://payment.tngdigital.com.my/sc/..."
             />
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex justify-between">
-              Merchant QR Data
-            </label>
-            <input
-              type="text"
-              value={staticQrData}
-              onChange={(e) => setStaticQrData(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-slate-600 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300"
-              placeholder="000201010211..."
-            />
-            <p className="text-[10px] text-slate-400 font-medium px-1">
-              Scan your TNG QR code with any scanner to get this data.
-            </p>
           </div>
         </div>
 
