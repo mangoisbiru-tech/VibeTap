@@ -74,10 +74,19 @@ export default function LiveSticker({
     const url = merchant.tngPaymentUrl || merchant.paymentUrl;
     if (url) {
       return (
-        <div className="min-h-screen bg-[#0A0A0F] text-white flex flex-col items-center justify-center p-6 text-center">
-          <a href={url} className="bg-blue-600 px-8 py-4 rounded-xl font-bold text-white text-lg w-full max-w-sm block">
-            Open TNG App
-          </a>
+        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
+          <div className="w-full max-w-sm bg-white border-4 border-slate-950 rounded-3xl p-8 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)]">
+            <h1 className="text-2xl font-black text-slate-950 mb-6">Payment Ready</h1>
+            <a 
+              href={url} 
+              className="w-full bg-slate-950 text-white font-black py-5 rounded-2xl flex items-center justify-center gap-3 text-lg transition-all active:translate-y-1 active:shadow-none shadow-[0px_6px_0px_0px_rgba(30,41,59,1)]"
+            >
+              OPEN TNG EWALLET
+            </a>
+            <p className="text-slate-500 text-xs mt-6 font-bold uppercase tracking-widest">
+              Tap above to continue
+            </p>
+          </div>
         </div>
       );
     }
