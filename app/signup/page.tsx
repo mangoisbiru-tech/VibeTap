@@ -89,14 +89,12 @@ export default function SignupPage() {
       <div className="w-full max-w-[440px] relative z-10 py-10">
         <div className="text-center mb-10">
           <Link href="/" className="inline-flex items-center gap-2 mb-6 group">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2D5BFF] to-[#00D4FF] flex items-center justify-center shadow-xl shadow-blue-500/20 group-hover:scale-110 transition-transform">
-              <Zap size={22} className="text-white" />
-            </div>
+            <img src="/TapPay_Logo.png" alt="TapPay" className="w-12 h-12 object-contain" />
             <span className="text-3xl font-black tracking-tight text-slate-900">
-              Vibe<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2D5BFF] to-[#00D4FF]">Tap</span>
+              Tap<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2D5BFF] to-[#00D4FF]">Pay</span>
             </span>
           </Link>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Join VibeTap</h1>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Join TapPay</h1>
           <p className="text-slate-500 font-medium mt-2">Start accepting digital payments instantly</p>
         </div>
 
@@ -123,7 +121,7 @@ export default function SignupPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="boss@vibetap.my"
+                placeholder="boss@tappay.my"
                 className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300"
               />
             </div>

@@ -89,7 +89,7 @@ export default function StickerPage() {
     return (
       <div className="min-h-screen bg-[#f1f5f9] flex flex-col items-center justify-center p-6 text-center">
         <Loader2 className="animate-spin text-blue-600 mb-4" size={40} />
-        <p className="text-slate-500 font-medium">Connecting to VibeTap...</p>
+        <p className="text-slate-500 font-medium">Connecting to TapPay...</p>
       </div>
     );
   }

@@ -171,10 +171,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Mobile header */}
       <header className="md:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-4 bg-white/80 border-b border-slate-200/50 backdrop-blur-xl">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#2D5BFF] to-[#00D4FF] flex items-center justify-center shadow-lg shadow-blue-500/20">
-            <Zap size={14} className="text-white" />
-          </div>
-          <span className="font-black tracking-tight text-slate-900">VibeTap</span>
+          <img src="/TapPay_Logo.png" alt="TapPay" className="w-8 h-8 object-contain" />
+          <span className="font-black tracking-tight text-slate-900">TapPay</span>
         </div>
         <button onClick={() => setMobileOpen(!mobileOpen)} className="text-slate-500 p-1">
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}

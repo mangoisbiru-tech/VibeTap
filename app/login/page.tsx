@@ -44,11 +44,9 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-10">
           <Link href="/" className="inline-flex items-center gap-2 mb-6 group">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2D5BFF] to-[#00D4FF] flex items-center justify-center shadow-xl shadow-blue-500/20 group-hover:scale-110 transition-transform">
-              <Zap size={22} className="text-white" />
-            </div>
+            <img src="/TapPay_Logo.png" alt="TapPay" className="w-12 h-12 object-contain" />
             <span className="text-3xl font-black tracking-tight text-slate-900">
-              Vibe<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2D5BFF] to-[#00D4FF]">Tap</span>
+              Tap<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2D5BFF] to-[#00D4FF]">Pay</span>
             </span>
           </Link>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">Welcome Back</h1>
@@ -66,7 +64,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="boss@vibetap.my"
+                placeholder="boss@tappay.my"
                 className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300"
               />
             </div>
@@ -116,7 +114,7 @@ export default function LoginPage() {
           <p className="text-center text-sm font-medium text-slate-400 mt-8">
             New here?{" "}
             <Link href="/signup" className="text-blue-600 hover:text-blue-700 font-black transition-colors">
-              Join VibeTap Free
+              Join TapPay Free
             </Link>
           </p>
         </div>

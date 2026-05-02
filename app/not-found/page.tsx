@@ -1,15 +1,15 @@
 import Link from "next/link";
-import { Zap } from "lucide-react";
 
 export default function NotFoundPage() {
   return (
     <div className="min-h-screen bg-[#0A0A0F] flex flex-col items-center justify-center px-6 text-center text-white">
-      <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#6C47FF] to-[#00D4FF] flex items-center justify-center mb-8 shadow-2xl shadow-purple-500/30">
-        <Zap size={36} className="text-white" />
+      <div className="w-20 h-20 rounded-3xl bg-slate-50 flex items-center justify-center mb-8 border-4 border-slate-950 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)] overflow-hidden">
+        <img src="/TapPay_Logo.png" alt="TapPay Logo" className="w-full h-full object-contain p-3" />
       </div>
-      <h1 className="text-4xl font-black mb-3">Merchant Not Found</h1>
+
+      <h1 className="text-4xl font-black mb-3">Not Linked</h1>
       <p className="text-gray-400 max-w-md mb-8">
-        This NFC sticker isn&apos;t linked to an active VibeTap merchant yet.
+        This NFC sticker isn&apos;t linked to an active TapPay merchant yet.
         If you&apos;re the business owner, log in to set up your payment link.
       </p>
       <div className="flex gap-4 flex-wrap justify-center">

@@ -43,12 +43,10 @@ export default function LandingPage() {
 
       {/* Nav */}
       <nav className="relative z-50 flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center shadow-md">
-            <Zap size={20} className="text-blue-400" />
-          </div>
+        <div className="flex items-center gap-3">
+          <img src="/TapPay_Logo.png" alt="TapPay Logo" className="w-10 h-10 object-contain" />
           <span className="text-2xl font-bold tracking-tight text-slate-900">
-            Vibe<span className="text-blue-600">Tap</span>
+            Tap<span className="text-blue-600">Pay</span>
           </span>
         </div>
         <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-slate-600">
@@ -151,13 +149,13 @@ export default function LandingPage() {
               step: "01",
               icon: <Smartphone size={28} />,
               title: "Customer Taps",
-              desc: "They tap their phone on your VibeTap sticker. Their browser opens automatically.",
+              desc: "They tap their phone on your TapPay sticker. Their browser opens automatically.",
             },
             {
               step: "02",
               icon: <Zap size={28} />,
               title: "Smart Redirect",
-              desc: "VibeTap looks up your current payment setting and redirects instantly — 302ms average.",
+              desc: "TapPay looks up your current payment setting and redirects instantly — 302ms average.",
             },
             {
               step: "03",
@@ -331,7 +329,7 @@ export default function LandingPage() {
             <div className="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center">
               <Zap size={14} className="text-blue-400" />
             </div>
-            <span className="text-slate-900 font-bold tracking-tight">VibeTap</span>
+            <span className="text-slate-900 font-bold tracking-tight">TapPay</span>
             <span className="ml-2">© 2025 · Made in Malaysia 🇲🇾</span>
           </div>
           <div className="flex gap-8">

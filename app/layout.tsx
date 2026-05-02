@@ -6,13 +6,14 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "VibeTap — NFC Payments for Malaysian Merchants",
+  title: "TapPay — NFC Payments for Malaysian Merchants",
   description:
     "One NFC sticker, any payment method. Switch between TNG, GrabPay, and DuitNow without changing your sticker. Smart redirector for Malaysian businesses.",
   keywords: "NFC payment Malaysia, Touch n Go, DuitNow, GrabPay, cashless payment sticker",
   openGraph: {
-    title: "VibeTap — Tap. Pay. Done.",
-    description: "Smart NFC payment stickers for Malaysian merchants.",
+    title: "TapPay — Tap. Pay. Done.",
+    description: "The smartest way to collect digital payments in Malaysia. Tap, Pay, and you're done.",
+    images: ["/TapPay_Logo.png"],
     type: "website",
   },
 };
