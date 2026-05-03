@@ -388,7 +388,7 @@ export default function DemoPage() {
             </div>
           </div>
         ) : (
-          <div className=\"max-w-2xl mx-auto space-y-12 pb-20\">
+          <div className="max-w-2xl mx-auto space-y-12 pb-20">
             {/* Settings View */}
               <div className="space-y-10">
                 <div className="relative">
