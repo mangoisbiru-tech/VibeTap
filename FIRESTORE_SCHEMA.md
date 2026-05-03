@@ -48,3 +48,17 @@ For `cashierSessions` query (composite index):
 
 Create this index in Firebase Console > Firestore > Indexes > Composite.
 Or the first redirect attempt will show an error with a direct link to create it.
+
+## `paymentConfirmations/{merchantId}`
+
+Written by the Android Listener App when TNG sends a payment notification.
+Read by the cashier web dashboard to trigger the full-screen green flash.
+Doc ID == Firebase Auth UID of the merchant.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `lastPaid` | number | RM amount, e.g. `10.00` |
+| `paidAt` | Timestamp | When the TNG notification was received |
+| `status` | string | `"confirmed"` → flash shown · `"cleared"` → dismissed |
+
+> Overwrites on every payment — no history kept here (history stays in `tapEvents`).

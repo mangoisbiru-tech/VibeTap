@@ -48,5 +48,19 @@ service cloud.firestore {
       allow update, delete: if request.auth != null
         && resource.data.merchantId == request.auth.uid;
     }
+
+    // Payment confirmations: Android app (logged in as merchant) writes here,
+    // cashier web page reads. Doc ID == merchant UID.
+    match /paymentConfirmations/{merchantId} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == merchantId;
+    }
+
+    // New collection for payment queue
+    match /receivedPayments/{paymentId} {
+      allow create: if request.auth != null;
+      allow read, update, delete: if request.auth != null
+        && resource.data.merchantId == request.auth.uid;
+    }
   }
 }

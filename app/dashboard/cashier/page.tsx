@@ -20,6 +20,7 @@ import {
   Loader2,
   Table,
 } from "lucide-react";
+import PaymentFlash from "./PaymentFlash";
 
 interface MerchantData {
   name: string;
@@ -43,6 +44,13 @@ interface Sticker {
   pushedBill?: { amount: number; pushedAt: any };
 }
 
+interface ReceivedPayment {
+  id: string;
+  amount: number;
+  receivedAt: any;
+  status: "pending" | "assigned";
+}
+
 export default function CashierPage() {
   const [amount, setAmount] = useState("0");
   const [loading, setLoading] = useState(false);
@@ -52,10 +60,14 @@ export default function CashierPage() {
   const [stickers, setStickers] = useState<Sticker[]>([]);
   const [plan, setPlan] = useState<string>("plan1");
   const [plan3Mode, setPlan3Mode] = useState<"summing_up" | "fixed">("summing_up");
+  const [merchantId, setMerchantId] = useState<string | null>(null);
+  const [receivedPayments, setReceivedPayments] = useState<ReceivedPayment[]>([]);
+  const [selectedPayment, setSelectedPayment] = useState<ReceivedPayment | null>(null);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) return;
+      setMerchantId(user.uid);
       
       const mRef = doc(db, "merchants", user.uid);
       const unsubSnap = onSnapshot(mRef, (snap) => {
@@ -84,10 +96,20 @@ export default function CashierPage() {
         setStickers(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Sticker)));
       });
 
+      const qPayments = query(
+        collection(db, "receivedPayments"),
+        where("merchantId", "==", user.uid),
+        where("status", "==", "pending")
+      );
+      const unsubPayments = onSnapshot(qPayments, (snap) => {
+        setReceivedPayments(snap.docs.map((d) => ({ id: d.id, ...d.data() } as ReceivedPayment)));
+      });
+
       return () => {
         unsubSnap();
         unsubReqs();
         unsubStickers();
+        unsubPayments();
       };
     });
     return () => unsub();
@@ -152,16 +174,36 @@ export default function CashierPage() {
   }
 
   async function handleAssignToSticker(stickerId: string) {
-    if (rawCents === 0) return;
+    // If we have a selected payment from the inbox, use that!
+    let assignAmount = amountRM;
+    let paymentToClose: string | null = null;
+
+    if (selectedPayment) {
+      assignAmount = selectedPayment.amount;
+      paymentToClose = selectedPayment.id;
+    }
+
+    if (assignAmount === 0) return;
     setLoading(true);
     try {
       await updateDoc(doc(db, "stickers", stickerId), {
         pushedBill: {
-          amount: amountRM,
+          amount: assignAmount,
           pushedAt: serverTimestamp(),
         },
       });
-      setAmount("0");
+
+      if (paymentToClose) {
+        await updateDoc(doc(db, "receivedPayments", paymentToClose), {
+          status: "assigned",
+          assignedTo: stickerId,
+          assignedAt: serverTimestamp()
+        });
+        setSelectedPayment(null);
+      } else {
+        setAmount("0");
+      }
+      
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
@@ -237,8 +279,18 @@ export default function CashierPage() {
     }
   }
 
+  async function handleDismissPayment(id: string) {
+    try {
+      await updateDoc(doc(db, "receivedPayments", id), { status: "cancelled" });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   return (
-    <div className="max-w-6xl mx-auto pb-20 px-4">
+    <>
+      {merchantId && <PaymentFlash merchantId={merchantId} />}
+      <div className="max-w-6xl mx-auto pb-20 px-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
         {/* ── LEFT COLUMN: Input & Amount ─────────────────────────────────── */}
         <div className="space-y-10 lg:pt-4">
@@ -370,6 +422,73 @@ export default function CashierPage() {
             </div>
           )}
 
+          {/* Money Received Inbox (The "Ding Ding" List) */}
+          <div className="space-y-6">
+            <div className="flex items-center justify-between px-2">
+              <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Received Payments (Inbox)</p>
+              {receivedPayments.length > 0 && (
+                <span className="bg-green-500 text-white text-[10px] font-black px-3 py-1 rounded-full animate-pulse">
+                  {receivedPayments.length} Pending
+                </span>
+              )}
+            </div>
+
+            {receivedPayments.length === 0 ? (
+              <div className="p-16 flex flex-col items-center justify-center bg-slate-50 rounded-[2.5rem] border-4 border-dashed border-slate-200">
+                <Zap size={40} className="text-slate-200 mb-4" />
+                <p className="text-slate-300 font-black text-[10px] uppercase tracking-widest text-center">No unassigned payments.<br/>Waiting for TNG Ding...</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4">
+                {receivedPayments.sort((a,b) => b.receivedAt?.seconds - a.receivedAt?.seconds).map((pay) => (
+                  <button 
+                    key={pay.id} 
+                    onClick={() => setSelectedPayment(selectedPayment?.id === pay.id ? null : pay)}
+                    className={`group relative bg-white border-4 rounded-[2.5rem] p-6 flex items-center gap-4 transition-all hover:scale-[1.02] active:scale-95 ${
+                      selectedPayment?.id === pay.id ? 'border-green-500 ring-4 ring-green-100 shadow-2xl' : 'border-slate-950 shadow-xl'
+                    }`}
+                  >
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg shrink-0 transition-colors ${
+                      selectedPayment?.id === pay.id ? 'bg-green-500 text-white' : 'bg-slate-950 text-white'
+                    }`}>
+                      <Zap size={28} className={selectedPayment?.id === pay.id ? 'fill-white' : ''} />
+                    </div>
+                    <div className="flex-1 text-left min-w-0">
+                      <p className="font-black text-slate-950 text-2xl tracking-tighter leading-none">
+                        RM {pay.amount.toFixed(2)}
+                      </p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
+                        {pay.receivedAt?.toDate 
+                          ? pay.receivedAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+                          : 'Just Now'}
+                      </p>
+                    </div>
+                    {selectedPayment?.id === pay.id ? (
+                      <div className="bg-green-500 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                        Selected
+                      </div>
+                    ) : (
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleDismissPayment(pay.id); }}
+                        className="opacity-0 group-hover:opacity-100 p-2 text-red-500 hover:bg-red-50 rounded-full transition-all"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+            
+            {selectedPayment && (
+              <div className="bg-green-50 border-4 border-green-500 rounded-3xl p-6 animate-bounce shadow-lg">
+                <p className="text-green-700 font-black text-xs uppercase tracking-widest text-center">
+                  👉 Click a table below to assign RM {selectedPayment.amount.toFixed(2)}
+                </p>
+              </div>
+            )}
+          </div>
+
           {/* Tables / Stickers Grid */}
           {(plan === "plan2" || plan === "plan3") && (
             <div className="space-y-6 pt-4 border-t-4 border-slate-50">
@@ -414,7 +533,29 @@ export default function CashierPage() {
             </div>
           )}
         </div>
+
+        {merchantId && <PaymentFlash merchantId={merchantId} />}
+
+        {/* Diagnosis Sticker */}
+        <div style={{
+          position: 'fixed',
+          bottom: '10px',
+          right: '10px',
+          background: 'rgba(0,0,0,0.5)',
+          color: '#666',
+          fontSize: '10px',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          zIndex: 100,
+          pointerEvents: 'none',
+          fontFamily: 'monospace'
+        }}>
+          DEBUG ID: {merchantId || 'NOT LOGGED IN'}
+        </div>
+
       </div>
-    </div>
+      </div>
+      </div>
+    </>
   );
 }
