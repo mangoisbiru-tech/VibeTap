@@ -174,7 +174,9 @@ export default function CashierPage() {
   }
 
   async function handleAssignToSticker(stickerId: string) {
-    // If we have a selected payment from the inbox, use that!
+    // If we have a selected payment from the inbox, it means the table JUST PAID.
+    // So we CLEAR the table and mark the payment as assigned.
+    
     let assignAmount = amountRM;
     let paymentToClose: string | null = null;
 
@@ -183,24 +185,43 @@ export default function CashierPage() {
       paymentToClose = selectedPayment.id;
     }
 
-    if (assignAmount === 0) return;
+    // Validation
+    if (!paymentToClose && assignAmount === 0) return;
+
     setLoading(true);
     try {
-      await updateDoc(doc(db, "stickers", stickerId), {
-        pushedBill: {
-          amount: assignAmount,
-          pushedAt: serverTimestamp(),
-        },
-      });
-
       if (paymentToClose) {
+        // SCENARIO A: Assigning a real payment from Inbox
+        // 1. Clear the sticker's bill (it's paid!)
+        await updateDoc(doc(db, "stickers", stickerId), {
+          pushedBill: null,
+        });
+
+        // 2. Mark the payment document as assigned
         await updateDoc(doc(db, "receivedPayments", paymentToClose), {
           status: "assigned",
           assignedTo: stickerId,
           assignedAt: serverTimestamp()
         });
+
+        // 3. Add to bill history
+        await addDoc(collection(db, "billHistory"), {
+          merchantId: auth.currentUser?.uid,
+          tableName: stickers.find(s => s.id === stickerId)?.tableName || "Unknown",
+          amount: assignAmount,
+          status: "paid",
+          createdAt: serverTimestamp(),
+        });
+
         setSelectedPayment(null);
       } else {
+        // SCENARIO B: Manual push (no payment selected)
+        await updateDoc(doc(db, "stickers", stickerId), {
+          pushedBill: {
+            amount: assignAmount,
+            pushedAt: serverTimestamp(),
+          },
+        });
         setAmount("0");
       }
       
