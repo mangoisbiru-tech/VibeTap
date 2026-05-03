@@ -359,69 +359,7 @@ export default function CashierPage() {
 
         {/* ── RIGHT COLUMN: Actions & Tables ──────────────────────────────── */}
         <div className="space-y-12 lg:pt-4">
-          {/* Incoming Requests Section */}
-          {(plan === "plan3" || plan === "plan2") && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between px-2">
-                <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Incoming Requests</p>
-                {billRequests.length > 0 && (
-                  <span className="bg-orange-500 text-white text-[10px] font-black px-3 py-1 rounded-full animate-bounce">
-                    {billRequests.length} New
-                  </span>
-                )}
-              </div>
-
-              {billRequests.length === 0 ? (
-                <div className="p-16 flex flex-col items-center justify-center bg-slate-50 rounded-[2.5rem] border-4 border-dashed border-slate-200">
-                  <Bell size={40} className="text-slate-300 mb-4" />
-                  <p className="text-slate-400 font-black text-[10px] uppercase tracking-widest">No Incoming Taps</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {billRequests.map((req) => (
-                    <div key={req.id} className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-6 flex items-center gap-4 shadow-xl">
-                      <div className="w-14 h-14 rounded-2xl bg-orange-500 text-white flex items-center justify-center shadow-lg shrink-0">
-                        <Bell size={28} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-black text-slate-950 text-xl truncate tracking-tight">{req.tableName}</p>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
-                          {req.createdAt?.toDate
-                            ? req.createdAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-                            : "Just now"}
-                        </p>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        {plan === "plan3" && plan3Mode === "summing_up" ? (
-                          <button
-                            onClick={() => handlePushAndDone(req)}
-                            disabled={loading || rawCents === 0}
-                            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white px-5 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-blue-500/20 active:translate-y-1"
-                          >
-                            Push RM {amountRM.toFixed(2)}
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleBossComingDone(req)}
-                            className="bg-slate-950 hover:bg-black text-white px-5 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all active:translate-y-1"
-                          >
-                            Done
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleClearRequest(req)}
-                          className="text-red-500 hover:bg-red-50 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
-                        >
-                          Clear
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
+          
           {/* Money Received Inbox (The "Ding Ding" List) */}
           <div className="space-y-6">
             <div className="flex items-center justify-between px-2">
@@ -488,6 +426,69 @@ export default function CashierPage() {
               </div>
             )}
           </div>
+
+          {/* Incoming Requests Section */}
+          {(plan === "plan3" || plan === "plan2") && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between px-2">
+                <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Incoming Requests</p>
+                {billRequests.length > 0 && (
+                  <span className="bg-orange-500 text-white text-[10px] font-black px-3 py-1 rounded-full animate-bounce">
+                    {billRequests.length} New
+                  </span>
+                )}
+              </div>
+
+              {billRequests.length === 0 ? (
+                <div className="p-16 flex flex-col items-center justify-center bg-slate-50 rounded-[2.5rem] border-4 border-dashed border-slate-200">
+                  <Bell size={40} className="text-slate-300 mb-4" />
+                  <p className="text-slate-400 font-black text-[10px] uppercase tracking-widest">No Incoming Taps</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {billRequests.map((req) => (
+                    <div key={req.id} className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-6 flex items-center gap-4 shadow-xl">
+                      <div className="w-14 h-14 rounded-2xl bg-orange-500 text-white flex items-center justify-center shadow-lg shrink-0">
+                        <Bell size={28} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-black text-slate-950 text-xl truncate tracking-tight">{req.tableName}</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
+                          {req.createdAt?.toDate
+                            ? req.createdAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                            : "Just now"}
+                        </p>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        {plan === "plan3" && plan3Mode === "summing_up" ? (
+                          <button
+                            onClick={() => handlePushAndDone(req)}
+                            disabled={loading || rawCents === 0}
+                            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white px-5 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-blue-500/20 active:translate-y-1"
+                          >
+                            Push RM {amountRM.toFixed(2)}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleBossComingDone(req)}
+                            className="bg-slate-950 hover:bg-black text-white px-5 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all active:translate-y-1"
+                          >
+                            Done
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleClearRequest(req)}
+                          className="text-red-500 hover:bg-red-50 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Tables / Stickers Grid */}
           {(plan === "plan2" || plan === "plan3") && (
