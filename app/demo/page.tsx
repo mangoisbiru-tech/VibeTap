@@ -389,7 +389,7 @@ export default function DemoPage() {
             </div>
           </div>
         ) : (
-              /* Settings View */
+              {/* Settings View */}
               <div className="space-y-10">
                 <div className="relative">
                   <h2 className="text-3xl font-black text-slate-900 tracking-tight">Settings</h2>
