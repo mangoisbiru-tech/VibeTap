@@ -385,11 +385,11 @@ export default function DemoPage() {
                     ))}
                   </div>
                 </div>
-              </div>
             </div>
           </div>
         ) : (
-              {/* Settings View */}
+          <div className=\"max-w-2xl mx-auto space-y-12 pb-20\">
+            {/* Settings View */}
               <div className="space-y-10">
                 <div className="relative">
                   <h2 className="text-3xl font-black text-slate-900 tracking-tight">Settings</h2>
@@ -495,8 +495,8 @@ export default function DemoPage() {
                 >
                   {loading ? <Loader2 size={24} className="animate-spin" /> : saved ? <Check size={24}/> : "Update Store Settings"}
                   {saved ? "Demo Saved" : ""}
-                </button>
               </div>
+            </div>
             </div>
           </div>
         )}
