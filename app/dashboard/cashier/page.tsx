@@ -556,7 +556,6 @@ export default function CashierPage() {
 
       </div>
       </div>
-      </div>
     </>
   );
 }
