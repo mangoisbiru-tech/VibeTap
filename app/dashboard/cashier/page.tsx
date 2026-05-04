@@ -179,6 +179,15 @@ export default function CashierPage() {
     let paymentToClose: string | null = null;
 
     if (selectedPayment) {
+      const sticker = stickers.find(s => s.id === stickerId);
+      const billAmount = sticker?.pushedBill?.amount || 0;
+      
+      // Strict matching: Payment amount must match Table bill amount
+      if (selectedPayment.amount !== billAmount) {
+        alert(`Amount Mismatch!\n\nPayment: RM ${selectedPayment.amount.toFixed(2)}\nTable Bill: RM ${billAmount.toFixed(2)}\n\nPlease match with the correct table.`);
+        return;
+      }
+
       assignAmount = selectedPayment.amount;
       paymentToClose = selectedPayment.id;
     }
@@ -203,8 +212,6 @@ export default function CashierPage() {
         });
 
         // 3. Add to bill history with DETERMINISTIC ID to prevent double records
-        // If we have a paymentToClose (real payment), use its ID as the history ID
-        // Otherwise use a time-based ID for manual assignments.
         const now = new Date();
         const dateStr = now.toISOString().split('T')[0].replace(/-/g, '');
         const timeStr = now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0');
