@@ -289,15 +289,15 @@ export default function CashierPage() {
   }
 
   return (
-    \u003c\u003e
-      {merchantId \u0026\u0026 \u003cPaymentFlash merchantId={merchantId} isListening={true} /\u003e}
-      \u003cdiv className=\"max-w-6xl mx-auto pb-20 px-4\"\u003e
-      \u003cdiv className=\"grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start\"\u003e
-        {/* ── LEFT COLUMN: Input \u0026 Amount ─────────────────────────────────── */}
-        \u003cdiv className=\"space-y-10 lg:pt-4\"\u003e
+    <>
+      {merchantId && <PaymentFlash merchantId={merchantId} isListening={true} />}
+      <div className="max-w-6xl mx-auto pb-20 px-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+        {/* ── LEFT COLUMN: Input & Amount ─────────────────────────────────── */}
+        <div className="space-y-10 lg:pt-4">
           {/* Amount Display */}
-          \u003cdiv className=\"bg-white border-4 border-slate-950 rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)]\"\u003e
-            \u003cp className=\"text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-4\"\u003eTotal Amount to Collect\u003c/p\u003e
+          <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)]">
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-4">Total Amount to Collect</p>
             <div className="flex items-start gap-3">
               <span className="text-3xl font-black text-slate-950 mt-4">RM</span>
               <span className="text-8xl md:text-9xl font-black text-slate-950 tracking-tighter tabular-nums leading-none">
