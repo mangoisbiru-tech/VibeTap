@@ -249,22 +249,29 @@ export default function CashierPage() {
 
   async function handlePushAndDone(req: BillRequest) {
     if (!auth.currentUser) return;
+    if (rawCents === 0) return;
     setLoading(true);
     try {
-      await updateDoc(doc(db, "merchants", auth.currentUser.uid), {
-        fixedAmount: amountRM,
-      });
-      await updateDoc(doc(db, "billRequests", req.id), {
-        status: "pushed",
-        amount: amountRM,
-      });
-      await updateDoc(doc(db, "stickers", req.stickerId), {
-        pushedBill: {
+      // Update merchant fixed amount, sticker bill, AND mark request as pushed — all at once
+      // so there is no window where both the request card AND the table card show simultaneously
+      await Promise.all([
+        updateDoc(doc(db, "merchants", auth.currentUser.uid), {
+          fixedAmount: amountRM,
+        }),
+        updateDoc(doc(db, "billRequests", req.id), {
+          status: "pushed",
           amount: amountRM,
-          pushedAt: serverTimestamp(),
-        },
-      });
+        }),
+        updateDoc(doc(db, "stickers", req.stickerId), {
+          pushedBill: {
+            amount: amountRM,
+            pushedAt: serverTimestamp(),
+          },
+        }),
+      ]);
       setAmount("0");
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
     } catch (err) {
       console.error(err);
     } finally {
@@ -358,12 +365,26 @@ export default function CashierPage() {
             </div>
 
             <div className="flex gap-4">
+              {/* ON/OFF Power Toggle */}
               <button
-                onClick={handleClearAmount}
-                disabled={loading || !merchant?.fixedAmount}
-                className="flex-1 bg-slate-100 hover:bg-slate-200 disabled:opacity-30 text-slate-950 py-5 rounded-3xl font-black text-xs uppercase tracking-widest transition-all active:scale-95"
+                onClick={merchant?.fixedAmount ? handleClearAmount : handleSetAmount}
+                disabled={loading || (!merchant?.fixedAmount && rawCents === 0)}
+                className={`flex-1 py-5 rounded-3xl font-black text-sm uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2 border-4 ${
+                  merchant?.fixedAmount
+                    ? "bg-green-500 border-green-600 text-white shadow-lg shadow-green-500/30 hover:bg-red-500 hover:border-red-600"
+                    : "bg-slate-100 border-slate-300 text-slate-400 disabled:opacity-40"
+                }`}
               >
-                Reset
+                {loading ? (
+                  <Loader2 size={20} className="animate-spin" />
+                ) : merchant?.fixedAmount ? (
+                  <>
+                    <span className="w-3 h-3 rounded-full bg-white animate-pulse" />
+                    ON
+                  </>
+                ) : (
+                  <>OFF</>
+                )}
               </button>
               <button
                 id="set-amount-btn"
@@ -556,24 +577,7 @@ export default function CashierPage() {
           )}
         </div>
 
-        {merchantId && <PaymentFlash merchantId={merchantId} />}
 
-        {/* Diagnosis Sticker */}
-        <div style={{
-          position: 'fixed',
-          bottom: '10px',
-          right: '10px',
-          background: 'rgba(0,0,0,0.5)',
-          color: '#666',
-          fontSize: '10px',
-          padding: '4px 8px',
-          borderRadius: '4px',
-          zIndex: 100,
-          pointerEvents: 'none',
-          fontFamily: 'monospace'
-        }}>
-          DEBUG ID: {merchantId || 'NOT LOGGED IN'}
-        </div>
 
       </div>
       </div>
