@@ -15,10 +15,7 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/client";
 import {
-  Zap,
   Bell,
-  Check,
-  Loader2,
   Table,
 } from "lucide-react";
 import PaymentFlash from "./PaymentFlash";
@@ -142,38 +139,6 @@ export default function CashierPage() {
     setAmount("0");
   }
 
-  async function handleSetAmount() {
-    if (!auth.currentUser) return;
-    setLoading(true);
-    try {
-      await updateDoc(doc(db, "merchants", auth.currentUser.uid), {
-        fixedAmount: amountRM,
-        lastTappedAt: null,
-      });
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleClearAmount() {
-    if (!auth.currentUser) return;
-    setLoading(true);
-    try {
-      await updateDoc(doc(db, "merchants", auth.currentUser.uid), {
-        fixedAmount: null,
-      });
-      setAmount("0");
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
   async function handleAssignToSticker(stickerId: string) {
     if (!auth.currentUser) return;
     // If we have a selected payment from the inbox, it means the table JUST PAID.
@@ -234,8 +199,7 @@ export default function CashierPage() {
         setAmount("0");
       }
       
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
+      setAmount("0");
     } catch (err) {
       console.error(err);
     } finally {
@@ -340,11 +304,6 @@ export default function CashierPage() {
                 {amountRM.toFixed(2)}
               </span>
             </div>
-            {merchant?.fixedAmount && (
-              <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest animate-pulse">
-                <Zap size={12} className="fill-white" /> Active Tap Enabled
-              </div>
-            )}
           </div>
 
           {/* Numpad */}
@@ -373,24 +332,7 @@ export default function CashierPage() {
               </button>
             </div>
 
-            <div className="flex gap-4">
-              <button
-                onClick={handleClearAmount}
-                disabled={loading || !merchant?.fixedAmount}
-                className="flex-1 bg-slate-100 hover:bg-slate-200 disabled:opacity-30 text-slate-950 py-5 rounded-3xl font-black text-xs uppercase tracking-widest transition-all active:scale-95"
-              >
-                Reset
-              </button>
-              <button
-                id="set-amount-btn"
-                onClick={handleSetAmount}
-                disabled={loading || rawCents === 0}
-                className="flex-[2] bg-slate-950 hover:bg-black disabled:opacity-30 text-white py-5 rounded-3xl font-black text-lg uppercase tracking-widest transition-all shadow-xl shadow-slate-900/20 active:scale-95 flex items-center justify-center gap-3"
-              >
-                {loading ? <Loader2 className="animate-spin" /> : saved ? <Check /> : <Zap className="fill-white" />}
-                {saved ? "Activated" : "Activate Tap"}
-              </button>
-            </div>
+            {/* Numpad Clear Logic is now just inside the grid */}
           </div>
         </div>
 
@@ -410,7 +352,7 @@ export default function CashierPage() {
 
             {receivedPayments.length === 0 ? (
               <div className="p-16 flex flex-col items-center justify-center bg-slate-50 rounded-[2.5rem] border-4 border-dashed border-slate-200">
-                <Zap size={40} className="text-slate-200 mb-4" />
+                <Bell size={40} className="text-slate-200 mb-4" />
                 <p className="text-slate-300 font-black text-[10px] uppercase tracking-widest text-center">No unassigned payments.<br/>Waiting for TNG Ding...</p>
               </div>
             ) : (
@@ -426,7 +368,7 @@ export default function CashierPage() {
                     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg shrink-0 transition-colors ${
                       selectedPayment?.id === pay.id ? 'bg-green-500 text-white' : 'bg-slate-950 text-white'
                     }`}>
-                      <Zap size={28} className={selectedPayment?.id === pay.id ? 'fill-white' : ''} />
+                      <Bell size={28} />
                     </div>
                     <div className="flex-1 text-left min-w-0">
                       <p className="font-black text-slate-950 text-2xl tracking-tighter leading-none">
