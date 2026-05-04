@@ -245,10 +245,8 @@ export default function HistoryPage() {
               </div>
             ))}
           </div>
-        )}
       </div>
-    </div>
-  );
+
       {entries.length > 0 && (
         <p className="text-center text-xs text-slate-400 mt-8">
           Historical records are displayed in chronological order.
