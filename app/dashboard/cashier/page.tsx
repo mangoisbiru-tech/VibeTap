@@ -291,7 +291,9 @@ export default function CashierPage() {
   return (
     <>
       {merchantId && <PaymentFlash merchantId={merchantId} isListening={true} />}
-        {/* ── COLUMN 1: Input & Amount (THE CALCULATOR) ────────────────────────── */}
+      <div className="max-w-[1600px] mx-auto pb-20 px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 xl:gap-12 items-start">
+          {/* ── COLUMN 1: Input & Amount (THE CALCULATOR) ────────────────────────── */}
         <div className="space-y-8 lg:pt-4">
           {/* Amount Display */}
           <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-6 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)] min-h-[160px] flex flex-col justify-center">
