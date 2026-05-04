@@ -154,7 +154,6 @@ export default function CashierPage() {
   };
 
   const handleRemovePreset = async (val: number) => {
-    if (!confirm(`Remove RM ${val}?`)) return;
     if (!merchantId || !merchant) return;
     const currentPresets = merchant.presets || [10, 20, 50];
     const nextPresets = currentPresets.filter(p => p !== val);
