@@ -245,6 +245,7 @@ export default function HistoryPage() {
               </div>
             ))}
           </div>
+        )}
       </div>
 
       {entries.length > 0 && (
