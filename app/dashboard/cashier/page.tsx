@@ -290,16 +290,16 @@ export default function CashierPage() {
   return (
     <>
       {merchantId && <PaymentFlash merchantId={merchantId} isListening={true} />}
-      <div className="max-w-6xl mx-auto pb-20 px-4">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-        {/* ── LEFT COLUMN: Input & Amount ─────────────────────────────────── */}
-        <div className="space-y-10 lg:pt-4">
+      <div className="max-w-[1600px] mx-auto pb-20 px-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 xl:gap-12 items-start">
+        {/* ── COLUMN 1: Input & Amount (THE CALCULATOR) ────────────────────────── */}
+        <div className="space-y-8 lg:pt-4">
           {/* Amount Display */}
-          <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)]">
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-4">Total Amount to Collect</p>
-            <div className="flex items-start gap-3">
-              <span className="text-3xl font-black text-slate-950 mt-4">RM</span>
-              <span className="text-8xl md:text-9xl font-black text-slate-950 tracking-tighter tabular-nums leading-none">
+          <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-6 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)]">
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-2">Total Amount</p>
+            <div className="flex items-start gap-2">
+              <span className="text-2xl font-black text-slate-950 mt-3">RM</span>
+              <span className="text-7xl md:text-8xl font-black text-slate-950 tracking-tighter tabular-nums leading-none">
                 {amountRM.toFixed(2)}
               </span>
             </div>
@@ -307,100 +307,83 @@ export default function CashierPage() {
 
           {/* Numpad */}
           <div className="space-y-6">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-3">
               {["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "00"].map((digit) => (
                 <button
                   key={digit}
                   onClick={() => pressDigit(digit)}
-                  className="h-20 rounded-3xl bg-white border-4 border-slate-950 hover:bg-slate-50 text-slate-950 font-black text-4xl transition-all active:scale-90 shadow-sm"
+                  className="h-16 rounded-2xl bg-white border-4 border-slate-950 hover:bg-slate-50 text-slate-950 font-black text-3xl transition-all active:scale-90 shadow-sm"
                 >
                   {digit}
                 </button>
               ))}
               <button
                 onClick={pressBackspace}
-                className="h-20 rounded-3xl bg-amber-50 border-4 border-slate-950 hover:bg-amber-100 text-slate-950 font-black text-3xl transition-all active:scale-90 shadow-sm flex items-center justify-center"
+                className="h-16 rounded-2xl bg-amber-50 border-4 border-slate-950 hover:bg-amber-100 text-slate-950 font-black text-2xl transition-all active:scale-90 shadow-sm flex items-center justify-center"
               >
                 ⌫
               </button>
               <button
                 onClick={pressClear}
-                className="col-span-3 h-16 rounded-2xl bg-white border-4 border-red-600 hover:bg-red-50 text-red-600 font-black text-xl uppercase tracking-widest transition-all active:scale-95 shadow-sm"
+                className="col-span-3 h-14 rounded-xl bg-white border-4 border-red-600 hover:bg-red-50 text-red-600 font-black text-lg uppercase tracking-widest transition-all active:scale-95 shadow-sm"
               >
                 Clear Amount
               </button>
             </div>
-
-            {/* Numpad Clear Logic is now just inside the grid */}
           </div>
         </div>
 
-        {/* ── RIGHT COLUMN: Actions & Tables ──────────────────────────────── */}
-        <div className="space-y-12 lg:pt-4">
+        {/* ── COLUMN 2: Money Received & Requests ────────────────────────────── */}
+        <div className="space-y-10 lg:pt-4">
           
-          {/* Money Received Inbox (The "Ding Ding" List) */}
+          {/* Money Received Inbox */}
           <div className="space-y-6">
             <div className="flex items-center justify-between px-2">
-              <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Received Payments (Inbox)</p>
+              <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Inbox</p>
               {receivedPayments.length > 0 && (
                 <span className="bg-green-500 text-white text-[10px] font-black px-3 py-1 rounded-full animate-pulse">
-                  {receivedPayments.length} Pending
+                  {receivedPayments.length} New
                 </span>
               )}
             </div>
 
             {receivedPayments.length === 0 ? (
-              <div className="p-16 flex flex-col items-center justify-center bg-slate-50 rounded-[2.5rem] border-4 border-dashed border-slate-200">
-                <Bell size={40} className="text-slate-200 mb-4" />
-                <p className="text-slate-300 font-black text-[10px] uppercase tracking-widest text-center">No unassigned payments.<br/>Waiting for TNG Ding...</p>
+              <div className="p-12 flex flex-col items-center justify-center bg-slate-50 rounded-[2rem] border-4 border-dashed border-slate-200">
+                <Bell size={32} className="text-slate-200 mb-3" />
+                <p className="text-slate-300 font-black text-[10px] uppercase tracking-widest text-center leading-relaxed">No payments yet.<br/>Waiting for TNG Ding...</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-1 gap-3">
                 {receivedPayments.sort((a,b) => b.receivedAt?.seconds - a.receivedAt?.seconds).map((pay) => (
                   <button 
                     key={pay.id} 
                     onClick={() => setSelectedPayment(selectedPayment?.id === pay.id ? null : pay)}
-                    className={`group relative bg-white border-4 rounded-[2.5rem] p-6 flex items-center gap-4 transition-all hover:scale-[1.02] active:scale-95 ${
-                      selectedPayment?.id === pay.id ? 'border-green-500 ring-4 ring-green-100 shadow-2xl' : 'border-slate-950 shadow-xl'
+                    className={`group relative bg-white border-4 rounded-3xl p-4 flex items-center gap-4 transition-all hover:scale-[1.02] active:scale-95 ${
+                      selectedPayment?.id === pay.id ? 'border-green-500 ring-4 ring-green-100 shadow-xl' : 'border-slate-950 shadow-lg'
                     }`}
                   >
-                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg shrink-0 transition-colors ${
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
                       selectedPayment?.id === pay.id ? 'bg-green-500 text-white' : 'bg-slate-950 text-white'
                     }`}>
-                      <Bell size={28} />
+                      <Bell size={24} />
                     </div>
                     <div className="flex-1 text-left min-w-0">
-                      <p className="font-black text-slate-950 text-2xl tracking-tighter leading-none">
+                      <p className="font-black text-slate-950 text-xl tracking-tight leading-none">
                         RM {pay.amount.toFixed(2)}
                       </p>
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">
                         {pay.receivedAt?.toDate 
-                          ? pay.receivedAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+                          ? pay.receivedAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                           : 'Just Now'}
                       </p>
                     </div>
-                    {selectedPayment?.id === pay.id ? (
-                      <div className="bg-green-500 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                    {selectedPayment?.id === pay.id && (
+                      <div className="bg-green-500 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest">
                         Selected
                       </div>
-                    ) : (
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); handleDismissPayment(pay.id); }}
-                        className="opacity-0 group-hover:opacity-100 p-2 text-red-500 hover:bg-red-50 rounded-full transition-all"
-                      >
-                        ×
-                      </button>
                     )}
                   </button>
                 ))}
-              </div>
-            )}
-            
-            {selectedPayment && (
-              <div className="bg-green-50 border-4 border-green-500 rounded-3xl p-6 animate-bounce shadow-lg">
-                <p className="text-green-700 font-black text-xs uppercase tracking-widest text-center">
-                  👉 Click a table below to assign RM {selectedPayment.amount.toFixed(2)}
-                </p>
               </div>
             )}
           </div>
@@ -409,7 +392,7 @@ export default function CashierPage() {
           {(plan === "plan3" || plan === "plan2") && (
             <div className="space-y-6">
               <div className="flex items-center justify-between px-2">
-                <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Incoming Requests</p>
+                <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Table Requests</p>
                 {billRequests.length > 0 && (
                   <span className="bg-orange-500 text-white text-[10px] font-black px-3 py-1 rounded-full animate-bounce">
                     {billRequests.length} New
@@ -418,48 +401,37 @@ export default function CashierPage() {
               </div>
 
               {billRequests.length === 0 ? (
-                <div className="p-16 flex flex-col items-center justify-center bg-slate-50 rounded-[2.5rem] border-4 border-dashed border-slate-200">
-                  <Bell size={40} className="text-slate-300 mb-4" />
+                <div className="p-12 flex flex-col items-center justify-center bg-slate-50 rounded-[2rem] border-4 border-dashed border-slate-200">
+                  <Bell size={32} className="text-slate-300 mb-3" />
                   <p className="text-slate-400 font-black text-[10px] uppercase tracking-widest">No Incoming Taps</p>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {billRequests.map((req) => (
-                    <div key={req.id} className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-6 flex items-center gap-4 shadow-xl">
-                      <div className="w-14 h-14 rounded-2xl bg-orange-500 text-white flex items-center justify-center shadow-lg shrink-0">
-                        <Bell size={28} />
+                    <div key={req.id} className="bg-white border-4 border-slate-950 rounded-3xl p-4 flex items-center gap-4 shadow-lg">
+                      <div className="w-12 h-12 rounded-xl bg-orange-500 text-white flex items-center justify-center shrink-0">
+                        <Bell size={24} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-black text-slate-950 text-xl truncate tracking-tight">{req.tableName}</p>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
-                          {req.createdAt?.toDate
-                            ? req.createdAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-                            : "Just now"}
-                        </p>
+                        <p className="font-black text-slate-950 text-lg truncate tracking-tight">{req.tableName}</p>
                       </div>
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-1">
                         {plan === "plan3" && plan3Mode === "summing_up" ? (
                           <button
                             onClick={() => handlePushAndDone(req)}
                             disabled={loading || rawCents === 0}
-                            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white px-5 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-blue-500/20 active:translate-y-1"
+                            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all"
                           >
                             Push RM {amountRM.toFixed(2)}
                           </button>
                         ) : (
                           <button
                             onClick={() => handleBossComingDone(req)}
-                            className="bg-slate-950 hover:bg-black text-white px-5 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all active:translate-y-1"
+                            className="bg-slate-950 hover:bg-black text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all"
                           >
                             Done
                           </button>
                         )}
-                        <button
-                          onClick={() => handleClearRequest(req)}
-                          className="text-red-500 hover:bg-red-50 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
-                        >
-                          Clear
-                        </button>
                       </div>
                     </div>
                   ))}
@@ -467,50 +439,56 @@ export default function CashierPage() {
               )}
             </div>
           )}
+        </div>
 
-          {/* Tables / Stickers Grid */}
-          {(plan === "plan2" || plan === "plan3") && (
-            <div className="space-y-6 pt-4 border-t-4 border-slate-50">
-              <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black px-2">All Tables / Active Bills</p>
-              <div className="grid grid-cols-2 gap-4">
-                {stickers.map((s) => (
-                  <div key={s.id} className="relative">
-                    <button
-                      onClick={() => handleAssignToSticker(s.id)}
-                      disabled={loading || (rawCents === 0 && !s.pushedBill)}
-                      className={`w-full p-8 rounded-[2.5rem] border-4 border-slate-950 flex flex-col items-center justify-center gap-3 transition-all active:scale-95 shadow-lg ${
-                        s.pushedBill ? "bg-blue-50 border-blue-600 shadow-blue-900/10" : "bg-white"
-                      } ${loading ? "opacity-50" : ""}`}
-                    >
-                      <Table size={28} className={s.pushedBill ? "text-blue-600" : "text-slate-950"} />
-                      <p className="font-black text-slate-950 text-xl truncate w-full px-2 text-center tracking-tight">{s.tableName}</p>
-                      {s.pushedBill ? (
-                        <p className="text-xs font-black text-blue-600 uppercase tracking-widest">
-                          RM {s.pushedBill.amount.toFixed(2)}
-                        </p>
-                      ) : (
-                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
-                          {rawCents > 0 ? `Assign RM ${amountRM.toFixed(2)}` : "Empty"}
-                        </p>
-                      )}
-                    </button>
-                    {s.pushedBill && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleClearStickerBill(s.id);
-                        }}
-                        className="absolute -top-3 -right-3 w-10 h-10 bg-red-600 text-white rounded-full flex items-center justify-center shadow-xl border-4 border-white hover:bg-red-700 transition-all active:scale-90 z-10"
-                        title="Clear Bill"
-                      >
-                        <span className="text-xl font-black">×</span>
-                      </button>
-                    )}
-                  </div>
-                ))}
+        {/* ── COLUMN 3: All Tables / Targets ─────────────────────────────────── */}
+        <div className="space-y-6 lg:pt-4">
+          <div className="flex items-center justify-between px-2">
+            <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">All Tables</p>
+            {selectedPayment && (
+              <span className="bg-green-100 text-green-700 text-[10px] font-black px-3 py-1 rounded-full animate-bounce">
+                Pick a table
+              </span>
+            )}
+          </div>
+          
+          <div className="grid grid-cols-2 gap-3">
+            {stickers.map((s) => (
+              <div key={s.id} className="relative">
+                <button
+                  onClick={() => handleAssignToSticker(s.id)}
+                  disabled={loading || (rawCents === 0 && !s.pushedBill)}
+                  className={`w-full p-5 rounded-[2rem] border-4 border-slate-950 flex flex-col items-center justify-center gap-2 transition-all active:scale-95 shadow-md ${
+                    s.pushedBill ? "bg-blue-50 border-blue-600 shadow-blue-900/10" : "bg-white"
+                  } ${loading ? "opacity-50" : ""}`}
+                >
+                  <Table size={20} className={s.pushedBill ? "text-blue-600" : "text-slate-950"} />
+                  <p className="font-black text-slate-950 text-sm truncate w-full px-1 text-center tracking-tight">{s.tableName}</p>
+                  {s.pushedBill ? (
+                    <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">
+                      RM {s.pushedBill.amount.toFixed(2)}
+                    </p>
+                  ) : (
+                    <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">
+                      {rawCents > 0 ? "Assign" : "Empty"}
+                    </p>
+                  )}
+                </button>
+                {s.pushedBill && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleClearStickerBill(s.id);
+                    }}
+                    className="absolute -top-2 -right-2 w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white hover:bg-red-700 transition-all active:scale-90 z-10"
+                    title="Clear Bill"
+                  >
+                    <span className="text-lg font-black">×</span>
+                  </button>
+                )}
               </div>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
 
         {/* Diagnosis Sticker */}
