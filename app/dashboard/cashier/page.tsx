@@ -441,53 +441,79 @@ export default function CashierPage() {
           )}
         </div>
 
-        {/* ── COLUMN 3: All Tables / Targets ─────────────────────────────────── */}
-        <div className="space-y-6 lg:pt-4">
-          <div className="flex items-center justify-between px-2">
-            <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">All Tables</p>
-            {selectedPayment && (
-              <span className="bg-green-100 text-green-700 text-[10px] font-black px-3 py-1 rounded-full animate-bounce">
-                Pick a table
-              </span>
-            )}
-          </div>
+        {/* ── COLUMN 3: All Tables & Quick RM ─────────────────────────────────── */}
+        <div className="space-y-8 lg:pt-4">
           
-          <div className="grid grid-cols-2 gap-3">
-            {stickers.map((s) => (
-              <div key={s.id} className="relative">
-                <button
-                  onClick={() => handleAssignToSticker(s.id)}
-                  disabled={loading || (rawCents === 0 && !s.pushedBill)}
-                  className={`w-full p-5 rounded-[2rem] border-4 border-slate-950 flex flex-col items-center justify-center gap-2 transition-all active:scale-95 shadow-md ${
-                    s.pushedBill ? "bg-blue-50 border-blue-600 shadow-blue-900/10" : "bg-white"
-                  } ${loading ? "opacity-50" : ""}`}
-                >
-                  <Table size={20} className={s.pushedBill ? "text-blue-600" : "text-slate-950"} />
-                  <p className="font-black text-slate-950 text-sm truncate w-full px-1 text-center tracking-tight">{s.tableName}</p>
-                  {s.pushedBill ? (
-                    <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">
-                      RM {s.pushedBill.amount.toFixed(2)}
-                    </p>
-                  ) : (
-                    <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">
-                      {rawCents > 0 ? "Assign" : "Empty"}
-                    </p>
-                  )}
-                </button>
-                {s.pushedBill && (
+          {/* Tables Section */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between px-2">
+              <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Tables</p>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-2">
+              {stickers.map((s) => (
+                <div key={s.id} className="relative">
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleClearStickerBill(s.id);
-                    }}
-                    className="absolute -top-2 -right-2 w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white hover:bg-red-700 transition-all active:scale-90 z-10"
-                    title="Clear Bill"
+                    onClick={() => handleAssignToSticker(s.id)}
+                    disabled={loading || (rawCents === 0 && !s.pushedBill)}
+                    className={`w-full py-3 px-2 rounded-2xl border-2 border-slate-950 flex flex-col items-center justify-center gap-1 transition-all active:scale-95 shadow-sm ${
+                      s.pushedBill ? "bg-blue-50 border-blue-600 shadow-blue-900/5" : "bg-white"
+                    } ${loading ? "opacity-50" : ""}`}
                   >
-                    <span className="text-lg font-black">×</span>
+                    <p className="font-black text-slate-950 text-[11px] truncate w-full text-center tracking-tight leading-none">{s.tableName}</p>
+                    {s.pushedBill ? (
+                      <p className="text-[9px] font-black text-blue-600 uppercase tracking-tighter">
+                        RM {s.pushedBill.amount.toFixed(0)}
+                      </p>
+                    ) : (
+                      <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">
+                        {rawCents > 0 ? "Assign" : "Empty"}
+                      </p>
+                    )}
                   </button>
-                )}
-              </div>
-            ))}
+                  {s.pushedBill && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleClearStickerBill(s.id);
+                      }}
+                      className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center shadow-md border-2 border-white hover:bg-red-700 transition-all active:scale-90 z-10"
+                    >
+                      <span className="text-sm font-black">×</span>
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Quick RM Section (Favorite Bills) */}
+          <div className="space-y-4 pt-4 border-t-2 border-slate-100">
+            <div className="flex items-center justify-between px-2">
+              <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Quick RM</p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-2">
+              {[10, 20, 50, 100].map((val) => (
+                <button
+                  key={val}
+                  onClick={() => setAmount((val * 100).toString())}
+                  className="w-full bg-white border-2 border-slate-950 py-4 rounded-2xl flex items-center justify-between px-6 hover:bg-slate-50 active:scale-95 transition-all shadow-sm group"
+                >
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-slate-600">RM</span>
+                  <span className="text-2xl font-black text-slate-950">{val}</span>
+                  <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Zap size={12} className="text-slate-400" />
+                  </div>
+                </button>
+              ))}
+              <button 
+                className="w-full border-2 border-dashed border-slate-200 py-4 rounded-2xl text-slate-300 font-black text-[10px] uppercase tracking-widest hover:border-slate-400 hover:text-slate-400 transition-all"
+                onClick={() => alert("Setting custom presets coming soon!")}
+              >
+                + Add Preset
+              </button>
+            </div>
           </div>
         </div>
 
