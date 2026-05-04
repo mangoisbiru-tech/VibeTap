@@ -17,6 +17,7 @@ import { auth, db } from "@/lib/firebase/client";
 import {
   Bell,
   Table,
+  Zap,
 } from "lucide-react";
 import PaymentFlash from "./PaymentFlash";
 
