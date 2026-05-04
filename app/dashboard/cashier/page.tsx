@@ -48,8 +48,9 @@ interface Sticker {
 interface ReceivedPayment {
   id: string;
   amount: number;
+  content?: string;
   receivedAt: any;
-  status: "pending" | "assigned";
+  status: "pending" | "assigned" | "cancelled";
 }
 
 export default function CashierPage() {
@@ -398,11 +399,16 @@ export default function CashierPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-3">
-                {receivedPayments.sort((a,b) => b.receivedAt?.seconds - a.receivedAt?.seconds).map((pay) => (
+                {receivedPayments.sort((a,b) => (b.receivedAt?.toMillis() || 0) - (a.receivedAt?.toMillis() || 0)).map((pay) => (
                   <button 
                     key={pay.id} 
+                    draggable
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData("paymentId", pay.id);
+                      setSelectedPayment(pay);
+                    }}
                     onClick={() => setSelectedPayment(selectedPayment?.id === pay.id ? null : pay)}
-                    className={`group relative bg-white border-4 rounded-3xl p-4 flex items-center gap-4 transition-all hover:scale-[1.02] active:scale-95 ${
+                    className={`group relative bg-white border-4 rounded-3xl p-4 flex items-center gap-4 transition-all hover:scale-[1.02] active:scale-95 cursor-grab active:cursor-grabbing ${
                       selectedPayment?.id === pay.id ? 'border-green-500 ring-4 ring-green-100 shadow-xl' : 'border-slate-950 shadow-lg'
                     }`}
                   >
@@ -417,12 +423,17 @@ export default function CashierPage() {
                       </p>
                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">
                         {pay.receivedAt?.toDate 
-                          ? pay.receivedAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                          ? pay.receivedAt.toDate().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
                           : 'Just Now'}
                       </p>
+                      {pay.content && (
+                        <p className="text-[10px] text-slate-500 truncate mt-1 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
+                          {pay.content}
+                        </p>
+                      )}
                     </div>
                     {selectedPayment?.id === pay.id && (
-                      <div className="bg-green-500 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest">
+                      <div className="bg-green-500 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest hidden sm:block">
                         Selected
                       </div>
                     )}
@@ -443,14 +454,30 @@ export default function CashierPage() {
                       alert("Select a payment from the log above first to throw it away.");
                     }
                   }}
+                  onDragOver={(e) => {
+                    e.preventDefault(); // Necessary to allow dropping
+                    e.currentTarget.classList.add("bg-red-100", "border-red-500", "text-red-600");
+                  }}
+                  onDragLeave={(e) => {
+                    e.currentTarget.classList.remove("bg-red-100", "border-red-500", "text-red-600");
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.classList.remove("bg-red-100", "border-red-500", "text-red-600");
+                    const paymentId = e.dataTransfer.getData("paymentId");
+                    if (paymentId) {
+                      handleDismissPayment(paymentId);
+                      if (selectedPayment?.id === paymentId) setSelectedPayment(null);
+                    }
+                  }}
                   className={`w-full py-6 rounded-2xl border-4 border-dashed flex flex-col items-center justify-center gap-2 transition-all active:scale-95 shadow-md ${
                     selectedPayment 
                       ? "bg-red-50 border-red-500 text-red-500 animate-pulse shadow-red-100" 
-                      : "bg-slate-50 border-slate-200 text-slate-300"
+                      : "bg-slate-50 border-slate-200 text-slate-300 hover:bg-slate-100"
                   }`}
                 >
                   <Trash2 size={24} />
-                  <p className="font-black text-[10px] uppercase tracking-[0.2em]">Dustbin</p>
+                  <p className="font-black text-[10px] uppercase tracking-[0.2em]">Drag here to delete</p>
                 </button>
               </div>
             )}
@@ -554,7 +581,7 @@ export default function CashierPage() {
                 </div>
               ))}
 
-              {/* DUSTBIN / TRASH AREA */}
+              {/* DUSTBIN / TRASH AREA (For Plan 2/3) */}
               <button
                 onClick={() => {
                   if (selectedPayment) {
@@ -564,10 +591,26 @@ export default function CashierPage() {
                     alert("Select a payment from the Inbox first to throw it away.");
                   }
                 }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.classList.add("bg-red-100", "border-red-500", "text-red-600");
+                }}
+                onDragLeave={(e) => {
+                  e.currentTarget.classList.remove("bg-red-100", "border-red-500", "text-red-600");
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.classList.remove("bg-red-100", "border-red-500", "text-red-600");
+                  const paymentId = e.dataTransfer.getData("paymentId");
+                  if (paymentId) {
+                    handleDismissPayment(paymentId);
+                    if (selectedPayment?.id === paymentId) setSelectedPayment(null);
+                  }
+                }}
                 className={`w-full aspect-square rounded-lg border-4 border-dashed flex flex-col items-center justify-center gap-2 transition-all active:scale-95 shadow-md ${
                   selectedPayment 
                     ? "bg-red-50 border-red-500 text-red-500 animate-pulse shadow-red-100" 
-                    : "bg-slate-50 border-slate-200 text-slate-300"
+                    : "bg-slate-50 border-slate-200 text-slate-300 hover:bg-slate-100"
                 }`}
               >
                 <Trash2 size={24} />

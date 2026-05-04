@@ -32,8 +32,9 @@ interface MerchantData {
 }
 
 type HistoryEntry = {
+  id: string;
   amount: number;
-  status: "paid" | "cleared";
+  status: "paid" | "cleared" | "pending";
   createdAt: Timestamp | null;
 };
 
@@ -138,30 +139,44 @@ export default function DashboardPage() {
         collection(db, "billHistory"),
         where("merchantId", "==", user.uid)
       );
-      const unsubHist = onSnapshot(histQ, (snap) => {
-        const monthStart = new Date();
-        monthStart.setDate(1);
-        monthStart.setHours(0, 0, 0, 0);
+      
+      const receivedQ = query(
+        collection(db, "receivedPayments"),
+        where("merchantId", "==", user.uid)
+      );
 
-        setHistoryEntries(
-          snap.docs
-            .map((d) => ({
-              amount: d.data().amount ?? 0,
-              status: d.data().status,
-              createdAt: d.data().createdAt ?? null,
-            }))
-            .filter((d) => {
-              if (!d.createdAt?.toDate) return true;
-              return d.createdAt.toDate() >= monthStart;
-            })
-        );
-      }, (err) => {
-        console.error("Dashboard history query error:", err);
+      const unsubHist = onSnapshot(histQ, (snap) => {
+        const newHist = snap.docs.map((d) => ({
+          id: d.id,
+          amount: d.data().amount ?? 0,
+          status: d.data().status,
+          createdAt: d.data().createdAt ?? null,
+        }));
+        setHistoryEntries((prev) => {
+          // Merge avoiding duplicates by ID, though collections are different
+          const others = prev.filter(p => !newHist.some(n => n.id === p.id));
+          return [...others, ...newHist];
+        });
+      });
+
+      const unsubReceived = onSnapshot(receivedQ, (snap) => {
+        const newReceived = snap.docs.map((d) => ({
+          id: d.id,
+          amount: d.data().amount ?? 0,
+          status: d.data().status === "pending" ? "paid" : d.data().status, // count pending as paid for revenue
+          createdAt: d.data().receivedAt ?? null, // receivedPayments uses receivedAt
+        })).filter(d => d.status !== "cancelled"); // ignore cancelled ones (dustbin)
+
+        setHistoryEntries((prev) => {
+          const others = prev.filter(p => !newReceived.some(n => n.id === p.id));
+          return [...others, ...newReceived];
+        });
       });
 
       return () => {
         unsubSnap();
         unsubHist();
+        unsubReceived();
       };
     });
     return () => unsub();
@@ -197,16 +212,22 @@ export default function DashboardPage() {
   weekStart.setDate(weekStart.getDate() - 6);
   weekStart.setHours(0, 0, 0, 0);
 
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  monthStart.setHours(0, 0, 0, 0);
+
+  const thisMonthEntries = historyEntries.filter((e) => e.createdAt?.toDate && e.createdAt.toDate() >= monthStart);
+
   const weekRevenue = historyEntries
     .filter((e) => e.status === "paid" && e.createdAt?.toDate && e.createdAt.toDate() >= weekStart)
     .reduce((sum, e) => sum + e.amount, 0);
 
-  const monthRevenue = historyEntries
+  const monthRevenue = thisMonthEntries
     .filter((e) => e.status === "paid")
     .reduce((sum, e) => sum + e.amount, 0);
 
-  const monthTaps = historyEntries.length;
-  const monthPaid = historyEntries.filter((e) => e.status === "paid").length;
+  const monthTaps = thisMonthEntries.length;
+  const monthPaid = thisMonthEntries.filter((e) => e.status === "paid").length;
   const conversionRate = monthTaps > 0 ? Math.round((monthPaid / monthTaps) * 100) : 0;
 
   // Calculate "All Time" taps by merging merchant.tapCount with total history entries
