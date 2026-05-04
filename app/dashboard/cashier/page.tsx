@@ -26,6 +26,7 @@ interface MerchantData {
   plan?: string;
   plan3Mode?: "summing_up" | "fixed";
   fixedAmount: number | null;
+  presets?: number[];
 }
 
 interface BillRequest {
@@ -138,6 +139,41 @@ export default function CashierPage() {
   function pressClear() {
     setAmount("0");
   }
+
+  const handleEditPreset = async (oldVal: number) => {
+    const newValStr = prompt("Enter new RM value:", oldVal.toString());
+    if (!newValStr) return;
+    const newVal = parseFloat(newValStr);
+    if (isNaN(newVal)) return;
+
+    if (!merchantId || !merchant) return;
+    const currentPresets = merchant.presets || [10, 20, 50];
+    const nextPresets = currentPresets.map(p => p === oldVal ? newVal : p);
+    
+    await updateDoc(doc(db, "merchants", merchantId), { presets: nextPresets });
+  };
+
+  const handleRemovePreset = async (val: number) => {
+    if (!confirm(`Remove RM ${val}?`)) return;
+    if (!merchantId || !merchant) return;
+    const currentPresets = merchant.presets || [10, 20, 50];
+    const nextPresets = currentPresets.filter(p => p !== val);
+    
+    await updateDoc(doc(db, "merchants", merchantId), { presets: nextPresets });
+  };
+
+  const handleAddPreset = async () => {
+    const newValStr = prompt("Enter new preset amount (RM):");
+    if (!newValStr) return;
+    const newVal = parseFloat(newValStr);
+    if (isNaN(newVal)) return;
+
+    if (!merchantId || !merchant) return;
+    const currentPresets = merchant.presets || [10, 20, 50];
+    await updateDoc(doc(db, "merchants", merchantId), { 
+      presets: [...currentPresets, newVal] 
+    });
+  };
 
   async function handleAssignToSticker(stickerId: string) {
     if (!auth.currentUser) return;
@@ -298,9 +334,9 @@ export default function CashierPage() {
           {/* Amount Display */}
           <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-6 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)] min-h-[160px] flex flex-col justify-center">
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-2">Total Amount</p>
-            <div className="flex items-baseline gap-2 overflow-hidden">
+            <div className="flex items-baseline gap-2 flex-wrap">
               <span className="text-xl font-black text-slate-950">RM</span>
-              <span className="text-6xl md:text-7xl font-black text-slate-950 tracking-tighter tabular-nums leading-none truncate">
+              <span className="text-5xl md:text-6xl font-black text-slate-950 tracking-tighter tabular-nums leading-tight">
                 {amountRM.toFixed(2)}
               </span>
             </div>
@@ -457,7 +493,7 @@ export default function CashierPage() {
                   <button
                     onClick={() => handleAssignToSticker(s.id)}
                     disabled={loading || (rawCents === 0 && !s.pushedBill)}
-                    className={`w-full aspect-square rounded-2xl border-4 border-slate-950 flex flex-col items-center justify-center gap-1 transition-all active:scale-95 shadow-md ${
+                    className={`w-full aspect-square rounded-lg border-4 border-slate-950 flex flex-col items-center justify-center gap-1 transition-all active:scale-95 shadow-md ${
                       s.pushedBill ? "bg-blue-50 border-blue-600 shadow-blue-900/10" : "bg-white"
                     } ${loading ? "opacity-50" : ""}`}
                   >
@@ -492,23 +528,39 @@ export default function CashierPage() {
           <div className="space-y-4 pt-4 border-t-4 border-slate-50">
             <div className="flex items-center justify-between px-2">
               <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Quick RM</p>
+              <button 
+                onClick={handleAddPreset}
+                className="text-[9px] font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest"
+              >
+                + Add
+              </button>
             </div>
 
             <div className="border-4 border-slate-950 bg-white overflow-hidden shadow-[4px_4px_0px_0px_rgba(2,6,23,1)]">
-              {[10, 20, 50].map((val, idx) => (
-                <div key={val} className={`flex items-stretch ${idx !== 0 ? 'border-t-2 border-slate-950' : ''}`}>
+              {(merchant?.presets || [10, 20, 50]).map((val, idx) => (
+                <div key={`${val}-${idx}`} className={`flex items-stretch group ${idx !== 0 ? 'border-t-2 border-slate-950' : ''}`}>
                   <button
                     onClick={() => setAmount((val * 100).toString())}
-                    className="flex-1 py-4 text-center hover:bg-slate-50 active:bg-slate-100 transition-colors flex items-center justify-center gap-4 group"
+                    className="flex-1 py-4 text-center hover:bg-slate-50 active:bg-slate-100 transition-colors flex items-center justify-center gap-4"
                   >
                     <span className="text-2xl font-black text-slate-950">{val}</span>
                   </button>
-                  <button 
-                    className="px-4 border-l-2 border-slate-950 text-slate-300 hover:text-slate-500 transition-colors"
-                    onClick={() => alert("Edit RM " + val)}
-                  >
-                    ✎
-                  </button>
+                  <div className="flex border-l-2 border-slate-950">
+                    <button 
+                      className="px-3 text-slate-300 hover:text-slate-600 hover:bg-slate-50 transition-all border-r border-slate-200"
+                      onClick={() => handleEditPreset(val)}
+                      title="Edit"
+                    >
+                      ✎
+                    </button>
+                    <button 
+                      className="px-3 text-red-200 hover:text-red-500 hover:bg-red-50 transition-all"
+                      onClick={() => handleRemovePreset(val)}
+                      title="Remove"
+                    >
+                      ×
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
