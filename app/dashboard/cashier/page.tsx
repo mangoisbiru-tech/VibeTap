@@ -538,7 +538,7 @@ export default function CashierPage() {
                     onClick={() => setAmount((val * 100).toString())}
                     className="flex-1 py-4 text-center hover:bg-slate-50 active:bg-slate-100 transition-colors flex items-center justify-center gap-4"
                   >
-                    <span className="text-2xl font-black text-slate-950">{val}</span>
+                    <span className="text-2xl font-black text-slate-950">{val.toFixed(2)}</span>
                   </button>
                   <div className="flex border-l-2 border-slate-950">
                     <button 
