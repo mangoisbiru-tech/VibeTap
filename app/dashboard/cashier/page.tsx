@@ -141,14 +141,10 @@ export default function CashierPage() {
   }
 
   const handleEditPreset = async (oldVal: number) => {
-    const newValStr = prompt("Enter new RM value:", oldVal.toString());
-    if (!newValStr) return;
-    const newVal = parseFloat(newValStr);
-    if (isNaN(newVal)) return;
-
+    if (amountRM <= 0) return;
     if (!merchantId || !merchant) return;
     const currentPresets = merchant.presets || [10, 20, 50];
-    const nextPresets = currentPresets.map(p => p === oldVal ? newVal : p);
+    const nextPresets = currentPresets.map(p => p === oldVal ? amountRM : p);
     
     await updateDoc(doc(db, "merchants", merchantId), { presets: nextPresets });
   };
@@ -162,15 +158,15 @@ export default function CashierPage() {
   };
 
   const handleAddPreset = async () => {
-    const newValStr = prompt("Enter new preset amount (RM):");
-    if (!newValStr) return;
-    const newVal = parseFloat(newValStr);
-    if (isNaN(newVal)) return;
-
+    if (amountRM <= 0) return;
     if (!merchantId || !merchant) return;
     const currentPresets = merchant.presets || [10, 20, 50];
+    
+    // Prevent duplicates
+    if (currentPresets.includes(amountRM)) return;
+    
     await updateDoc(doc(db, "merchants", merchantId), { 
-      presets: [...currentPresets, newVal] 
+      presets: [...currentPresets, amountRM] 
     });
   };
 
