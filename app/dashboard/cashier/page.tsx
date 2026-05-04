@@ -291,16 +291,14 @@ export default function CashierPage() {
   return (
     <>
       {merchantId && <PaymentFlash merchantId={merchantId} isListening={true} />}
-      <div className="max-w-[1600px] mx-auto pb-20 px-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 xl:gap-12 items-start">
         {/* ── COLUMN 1: Input & Amount (THE CALCULATOR) ────────────────────────── */}
         <div className="space-y-8 lg:pt-4">
           {/* Amount Display */}
-          <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-6 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)]">
+          <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-6 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)] min-h-[160px] flex flex-col justify-center">
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-2">Total Amount</p>
-            <div className="flex items-start gap-2">
-              <span className="text-2xl font-black text-slate-950 mt-3">RM</span>
-              <span className="text-7xl md:text-8xl font-black text-slate-950 tracking-tighter tabular-nums leading-none">
+            <div className="flex items-baseline gap-2 overflow-hidden">
+              <span className="text-xl font-black text-slate-950">RM</span>
+              <span className="text-6xl md:text-7xl font-black text-slate-950 tracking-tighter tabular-nums leading-none truncate">
                 {amountRM.toFixed(2)}
               </span>
             </div>
@@ -451,24 +449,24 @@ export default function CashierPage() {
               <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Tables</p>
             </div>
             
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-3">
               {stickers.map((s) => (
                 <div key={s.id} className="relative">
                   <button
                     onClick={() => handleAssignToSticker(s.id)}
                     disabled={loading || (rawCents === 0 && !s.pushedBill)}
-                    className={`w-full py-3 px-2 rounded-2xl border-2 border-slate-950 flex flex-col items-center justify-center gap-1 transition-all active:scale-95 shadow-sm ${
-                      s.pushedBill ? "bg-blue-50 border-blue-600 shadow-blue-900/5" : "bg-white"
+                    className={`w-full aspect-square rounded-2xl border-4 border-slate-950 flex flex-col items-center justify-center gap-1 transition-all active:scale-95 shadow-md ${
+                      s.pushedBill ? "bg-blue-50 border-blue-600 shadow-blue-900/10" : "bg-white"
                     } ${loading ? "opacity-50" : ""}`}
                   >
-                    <p className="font-black text-slate-950 text-[11px] truncate w-full text-center tracking-tight leading-none">{s.tableName}</p>
+                    <p className="font-black text-slate-950 text-xs truncate w-full text-center tracking-tight leading-tight px-1">{s.tableName}</p>
                     {s.pushedBill ? (
-                      <p className="text-[9px] font-black text-blue-600 uppercase tracking-tighter">
+                      <p className="text-[10px] font-black text-blue-600 uppercase tracking-tighter">
                         RM {s.pushedBill.amount.toFixed(0)}
                       </p>
                     ) : (
-                      <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">
-                        {rawCents > 0 ? "Assign" : "Empty"}
+                      <p className="text-[8px] font-black text-slate-200 uppercase tracking-widest">
+                        Assign
                       </p>
                     )}
                   </button>
@@ -478,9 +476,9 @@ export default function CashierPage() {
                         e.stopPropagation();
                         handleClearStickerBill(s.id);
                       }}
-                      className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center shadow-md border-2 border-white hover:bg-red-700 transition-all active:scale-90 z-10"
+                      className="absolute -top-1 -right-1 w-7 h-7 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white hover:bg-red-700 transition-all active:scale-90 z-10"
                     >
-                      <span className="text-sm font-black">×</span>
+                      <span className="text-base font-black">×</span>
                     </button>
                   )}
                 </div>
@@ -488,32 +486,29 @@ export default function CashierPage() {
             </div>
           </div>
 
-          {/* Quick RM Section (Favorite Bills) */}
-          <div className="space-y-4 pt-4 border-t-2 border-slate-100">
+          {/* Quick RM Section (Excel Style) */}
+          <div className="space-y-4 pt-4 border-t-4 border-slate-50">
             <div className="flex items-center justify-between px-2">
               <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Quick RM</p>
             </div>
 
-            <div className="grid grid-cols-1 gap-2">
-              {[10, 20, 50, 100].map((val) => (
-                <button
-                  key={val}
-                  onClick={() => setAmount((val * 100).toString())}
-                  className="w-full bg-white border-2 border-slate-950 py-4 rounded-2xl flex items-center justify-between px-6 hover:bg-slate-50 active:scale-95 transition-all shadow-sm group"
-                >
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-slate-600">RM</span>
-                  <span className="text-2xl font-black text-slate-950">{val}</span>
-                  <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Zap size={12} className="text-slate-400" />
-                  </div>
-                </button>
+            <div className="border-4 border-slate-950 bg-white overflow-hidden shadow-[4px_4px_0px_0px_rgba(2,6,23,1)]">
+              {[10, 20, 50].map((val, idx) => (
+                <div key={val} className={`flex items-stretch ${idx !== 0 ? 'border-t-2 border-slate-950' : ''}`}>
+                  <button
+                    onClick={() => setAmount((val * 100).toString())}
+                    className="flex-1 py-4 text-center hover:bg-slate-50 active:bg-slate-100 transition-colors flex items-center justify-center gap-4 group"
+                  >
+                    <span className="text-2xl font-black text-slate-950">{val}</span>
+                  </button>
+                  <button 
+                    className="px-4 border-l-2 border-slate-950 text-slate-300 hover:text-slate-500 transition-colors"
+                    onClick={() => alert("Edit RM " + val)}
+                  >
+                    ✎
+                  </button>
+                </div>
               ))}
-              <button 
-                className="w-full border-2 border-dashed border-slate-200 py-4 rounded-2xl text-slate-300 font-black text-[10px] uppercase tracking-widest hover:border-slate-400 hover:text-slate-400 transition-all"
-                onClick={() => alert("Setting custom presets coming soon!")}
-              >
-                + Add Preset
-              </button>
             </div>
           </div>
         </div>
