@@ -381,7 +381,9 @@ export default function CashierPage() {
           {/* Money Received Inbox (Today's Log) */}
           <div className="space-y-6">
             <div className="flex items-center justify-between px-2">
-              <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Inbox</p>
+              <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">
+                {plan === "plan1" ? "Today's Log" : "Inbox"}
+              </p>
               {receivedPayments.length > 0 && (
                 <span className="bg-green-500 text-white text-[10px] font-black px-3 py-1 rounded-full animate-pulse">
                   {receivedPayments.length} New
@@ -426,6 +428,30 @@ export default function CashierPage() {
                     )}
                   </button>
                 ))}
+              </div>
+            )}
+
+            {/* DUSTBIN FOR PLAN 1 (Since Column 3 is hidden) */}
+            {plan === "plan1" && receivedPayments.length > 0 && (
+              <div className="pt-4 border-t-4 border-slate-50 mt-4">
+                <button
+                  onClick={() => {
+                    if (selectedPayment) {
+                      handleDismissPayment(selectedPayment.id);
+                      setSelectedPayment(null);
+                    } else {
+                      alert("Select a payment from the log above first to throw it away.");
+                    }
+                  }}
+                  className={`w-full py-6 rounded-2xl border-4 border-dashed flex flex-col items-center justify-center gap-2 transition-all active:scale-95 shadow-md ${
+                    selectedPayment 
+                      ? "bg-red-50 border-red-500 text-red-500 animate-pulse shadow-red-100" 
+                      : "bg-slate-50 border-slate-200 text-slate-300"
+                  }`}
+                >
+                  <Trash2 size={24} />
+                  <p className="font-black text-[10px] uppercase tracking-[0.2em]">Dustbin</p>
+                </button>
               </div>
             )}
           </div>
