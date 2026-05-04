@@ -162,15 +162,15 @@ export default function CashierPage() {
   };
 
   const handleAddPreset = async () => {
-    if (amountRM <= 0) return;
+    const newValStr = prompt("Enter new preset amount (RM):");
+    if (!newValStr) return;
+    const newVal = parseFloat(newValStr);
+    if (isNaN(newVal)) return;
+
     if (!merchantId || !merchant) return;
     const currentPresets = merchant.presets || [10, 20, 50];
-    
-    // Prevent duplicates
-    if (currentPresets.includes(amountRM)) return;
-    
     await updateDoc(doc(db, "merchants", merchantId), { 
-      presets: [...currentPresets, amountRM] 
+      presets: [...currentPresets, newVal] 
     });
   };
 
