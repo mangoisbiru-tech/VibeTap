@@ -74,9 +74,20 @@ export default function StickerPage() {
         }
 
         setData({ sticker, merchant });
+        
+        // Log the tap for dashboard analytics
+        fetch("/api/log-tap", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            merchantId: sticker.merchantId, 
+            stickerId: stickerId 
+          }),
+        }).catch(err => console.error("Analytics failed:", err));
+
       } catch (err) {
         console.error("Fetch error:", err);
-        setError("Failed to connect to VibeTap network. Please check your internet.");
+        setError("Failed to connect to TapPay network. Please check your internet.");
       } finally {
         setLoading(false);
       }

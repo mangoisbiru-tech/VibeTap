@@ -82,7 +82,7 @@ export async function GET(
     // 4. Execute the 302 redirect
     return NextResponse.redirect(paymentUrl, { status: 302 });
   } catch (error) {
-    console.error("[VibeTap] Redirect error:", error);
+    console.error("[TapPay] Redirect error:", error);
     // Fail gracefully — redirect to homepage
     return NextResponse.redirect(new URL("/", request.url));
   }
@@ -118,6 +118,6 @@ async function logAnalytics(
       }),
     ]);
   } catch (err) {
-    console.error("[VibeTap] Analytics write failed:", err);
+    console.error("[TapPay] Analytics write failed:", err);
   }
 }

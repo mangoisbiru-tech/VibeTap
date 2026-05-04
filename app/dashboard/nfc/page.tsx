@@ -152,7 +152,7 @@ export default function NfcToolPage() {
           NFC Tool Suite
         </h1>
         <p className="text-slate-500 text-sm mt-1 font-medium">
-          Program physical NFC stickers with your VibeTap URLs using your Android phone.
+          Program physical NFC stickers with your TapPay URLs using your Android phone.
         </p>
       </div>
 

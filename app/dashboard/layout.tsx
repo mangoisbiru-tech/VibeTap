@@ -116,11 +116,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <aside className="hidden md:flex fixed left-0 top-0 h-full w-60 flex-col glass-panel border-r border-slate-200/50 z-40">
         {/* Logo */}
         <div className="flex items-center gap-2 px-6 py-6 border-b border-slate-200/50">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#2D5BFF] to-[#00D4FF] flex items-center justify-center shadow-lg shadow-blue-500/20">
-            <Zap size={15} className="text-white" />
-          </div>
+          <img src="/TapPay_Logo.png" alt="TapPay" className="w-8 h-8 object-contain" />
           <span className="font-black text-2xl tracking-tighter text-slate-950">
-            Vibe<span className="text-blue-600">Tap</span>
+            Tap<span className="text-blue-600">Pay</span>
           </span>
         </div>
 
