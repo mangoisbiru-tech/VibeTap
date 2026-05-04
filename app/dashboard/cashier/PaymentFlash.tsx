@@ -13,9 +13,10 @@ interface PaymentConfirmation {
 
 interface PaymentFlashProps {
   merchantId: string;
+  isListening: boolean;
 }
 
-export default function PaymentFlash({ merchantId }: PaymentFlashProps) {
+export default function PaymentFlash({ merchantId, isListening }: PaymentFlashProps) {
   const [flash, setFlash] = useState<PaymentConfirmation | null>(null);
   const [visible, setVisible] = useState(false);
 
@@ -32,6 +33,11 @@ export default function PaymentFlash({ merchantId }: PaymentFlashProps) {
   }, [merchantId]);
 
   useEffect(() => {
+    if (!isListening) {
+      setVisible(false);
+      return;
+    }
+
     const unsubscribe = onSnapshot(
       doc(db, "paymentConfirmations", merchantId),
       (snap) => {
@@ -55,7 +61,7 @@ export default function PaymentFlash({ merchantId }: PaymentFlashProps) {
     );
 
     return () => unsubscribe();
-  }, [merchantId, dismiss]);
+  }, [merchantId, dismiss, isListening]);
 
   if (!visible || !flash) return null;
 

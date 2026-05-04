@@ -9,6 +9,7 @@ import {
   query,
   where,
   updateDoc,
+  setDoc,
   addDoc,
   serverTimestamp,
 } from "firebase/firestore";
@@ -174,6 +175,7 @@ export default function CashierPage() {
   }
 
   async function handleAssignToSticker(stickerId: string) {
+    if (!auth.currentUser) return;
     // If we have a selected payment from the inbox, it means the table JUST PAID.
     // So we CLEAR the table and mark the payment as assigned.
     
@@ -204,9 +206,16 @@ export default function CashierPage() {
           assignedAt: serverTimestamp()
         });
 
-        // 3. Add to bill history
-        await addDoc(collection(db, "billHistory"), {
-          merchantId: auth.currentUser?.uid,
+        // 3. Add to bill history with DETERMINISTIC ID to prevent double records
+        // If we have a paymentToClose (real payment), use its ID as the history ID
+        // Otherwise use a time-based ID for manual assignments.
+        const now = new Date();
+        const dateStr = now.toISOString().split('T')[0].replace(/-/g, '');
+        const timeStr = now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0');
+        const historyId = paymentToClose || `${auth.currentUser.uid}_${stickerId}_${dateStr}_${timeStr}`;
+
+        await setDoc(doc(db, "billHistory", historyId), {
+          merchantId: auth.currentUser.uid,
           tableName: stickers.find(s => s.id === stickerId)?.tableName || "Unknown",
           amount: assignAmount,
           status: "paid",
@@ -249,29 +258,22 @@ export default function CashierPage() {
 
   async function handlePushAndDone(req: BillRequest) {
     if (!auth.currentUser) return;
-    if (rawCents === 0) return;
     setLoading(true);
     try {
-      // Update merchant fixed amount, sticker bill, AND mark request as pushed — all at once
-      // so there is no window where both the request card AND the table card show simultaneously
-      await Promise.all([
-        updateDoc(doc(db, "merchants", auth.currentUser.uid), {
-          fixedAmount: amountRM,
-        }),
-        updateDoc(doc(db, "billRequests", req.id), {
-          status: "pushed",
+      await updateDoc(doc(db, "merchants", auth.currentUser.uid), {
+        fixedAmount: amountRM,
+      });
+      await updateDoc(doc(db, "billRequests", req.id), {
+        status: "pushed",
+        amount: amountRM,
+      });
+      await updateDoc(doc(db, "stickers", req.stickerId), {
+        pushedBill: {
           amount: amountRM,
-        }),
-        updateDoc(doc(db, "stickers", req.stickerId), {
-          pushedBill: {
-            amount: amountRM,
-            pushedAt: serverTimestamp(),
-          },
-        }),
-      ]);
+          pushedAt: serverTimestamp(),
+        },
+      });
       setAmount("0");
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
     } catch (err) {
       console.error(err);
     } finally {
@@ -285,7 +287,14 @@ export default function CashierPage() {
       await updateDoc(doc(db, "billRequests", req.id), {
         status: "cleared",
       });
-      await addDoc(collection(db, "billHistory"), {
+
+      // DETERMINISTIC ID for manual clear too
+      const now = new Date();
+      const dateStr = now.toISOString().split('T')[0].replace(/-/g, '');
+      const timeStr = now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0');
+      const historyId = `${auth.currentUser?.uid}_${req.stickerId}_clear_${dateStr}_${timeStr}`;
+
+      await setDoc(doc(db, "billHistory", historyId), {
         merchantId: auth.currentUser?.uid,
         tableName: req.tableName,
         amount: 0,
@@ -316,15 +325,15 @@ export default function CashierPage() {
   }
 
   return (
-    <>
-      {merchantId && <PaymentFlash merchantId={merchantId} />}
-      <div className="max-w-6xl mx-auto pb-20 px-4">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-        {/* ── LEFT COLUMN: Input & Amount ─────────────────────────────────── */}
-        <div className="space-y-10 lg:pt-4">
+    \u003c\u003e
+      {merchantId \u0026\u0026 \u003cPaymentFlash merchantId={merchantId} isListening={true} /\u003e}
+      \u003cdiv className=\"max-w-6xl mx-auto pb-20 px-4\"\u003e
+      \u003cdiv className=\"grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start\"\u003e
+        {/* ── LEFT COLUMN: Input \u0026 Amount ─────────────────────────────────── */}
+        \u003cdiv className=\"space-y-10 lg:pt-4\"\u003e
           {/* Amount Display */}
-          <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)]">
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-4">Total Amount to Collect</p>
+          \u003cdiv className=\"bg-white border-4 border-slate-950 rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)]\"\u003e
+            \u003cp className=\"text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-4\"\u003eTotal Amount to Collect\u003c/p\u003e
             <div className="flex items-start gap-3">
               <span className="text-3xl font-black text-slate-950 mt-4">RM</span>
               <span className="text-8xl md:text-9xl font-black text-slate-950 tracking-tighter tabular-nums leading-none">
@@ -365,26 +374,12 @@ export default function CashierPage() {
             </div>
 
             <div className="flex gap-4">
-              {/* ON/OFF Power Toggle */}
               <button
-                onClick={merchant?.fixedAmount ? handleClearAmount : handleSetAmount}
-                disabled={loading || (!merchant?.fixedAmount && rawCents === 0)}
-                className={`flex-1 py-5 rounded-3xl font-black text-sm uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2 border-4 ${
-                  merchant?.fixedAmount
-                    ? "bg-green-500 border-green-600 text-white shadow-lg shadow-green-500/30 hover:bg-red-500 hover:border-red-600"
-                    : "bg-slate-100 border-slate-300 text-slate-400 disabled:opacity-40"
-                }`}
+                onClick={handleClearAmount}
+                disabled={loading || !merchant?.fixedAmount}
+                className="flex-1 bg-slate-100 hover:bg-slate-200 disabled:opacity-30 text-slate-950 py-5 rounded-3xl font-black text-xs uppercase tracking-widest transition-all active:scale-95"
               >
-                {loading ? (
-                  <Loader2 size={20} className="animate-spin" />
-                ) : merchant?.fixedAmount ? (
-                  <>
-                    <span className="w-3 h-3 rounded-full bg-white animate-pulse" />
-                    ON
-                  </>
-                ) : (
-                  <>OFF</>
-                )}
+                Reset
               </button>
               <button
                 id="set-amount-btn"
@@ -577,7 +572,22 @@ export default function CashierPage() {
           )}
         </div>
 
-
+        {/* Diagnosis Sticker */}
+        <div style={{
+          position: 'fixed',
+          bottom: '10px',
+          right: '10px',
+          background: 'rgba(0,0,0,0.5)',
+          color: '#666',
+          fontSize: '10px',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          zIndex: 100,
+          pointerEvents: 'none',
+          fontFamily: 'monospace'
+        }}>
+          DEBUG ID: {merchantId || 'NOT LOGGED IN'}
+        </div>
 
       </div>
       </div>
