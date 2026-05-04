@@ -167,13 +167,30 @@ export default function DashboardPage() {
     return () => unsub();
   }, []);
 
+  // Merge merchant.dailyTaps with data derived from historyEntries to ensure consistency
+  const mergedDailyTaps: Record<string, number> = { ...(merchant?.dailyTaps || {}) };
+  
+  // Group history entries by day
+  const historyTapsByDay: Record<string, number> = {};
+  historyEntries.forEach(entry => {
+    if (entry.createdAt?.toDate) {
+      const day = entry.createdAt.toDate().toISOString().slice(0, 10);
+      historyTapsByDay[day] = (historyTapsByDay[day] || 0) + 1;
+    }
+  });
+
+  // Ensure mergedDailyTaps is at least as high as history counts
+  Object.entries(historyTapsByDay).forEach(([day, count]) => {
+    mergedDailyTaps[day] = Math.max(mergedDailyTaps[day] || 0, count);
+  });
+
   const todayKey = new Date().toISOString().slice(0, 10);
-  const todayTaps = merchant?.dailyTaps?.[todayKey] || 0;
+  const todayTaps = mergedDailyTaps[todayKey] || 0;
   const weekTaps = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - i);
     return d.toISOString().slice(0, 10);
-  }).reduce((acc, d) => acc + (merchant?.dailyTaps?.[d] || 0), 0);
+  }).reduce((acc, d) => acc + (mergedDailyTaps[d] || 0), 0);
 
   // Revenue stats
   const weekStart = new Date();
@@ -191,6 +208,13 @@ export default function DashboardPage() {
   const monthTaps = historyEntries.length;
   const monthPaid = historyEntries.filter((e) => e.status === "paid").length;
   const conversionRate = monthTaps > 0 ? Math.round((monthPaid / monthTaps) * 100) : 0;
+
+  // Calculate "All Time" taps by merging merchant.tapCount with total history entries
+  // but taking the max to avoid double counting if possible.
+  // Actually, merchant.tapCount should ideally be the total, but we can't easily merge 
+  // without knowing how many history entries are already in tapCount.
+  // For now, let's just make sure allTimeTaps is at least historyEntries.length.
+  const allTimeTaps = Math.max(merchant?.tapCount || 0, historyEntries.length);
 
   if (!merchant) {
     return (
@@ -211,7 +235,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Chart */}
-      <TapChart dailyTaps={merchant.dailyTaps || {}} />
+      <TapChart dailyTaps={mergedDailyTaps} />
 
       {/* Tap stats */}
       <div className="space-y-4">
@@ -232,7 +256,7 @@ export default function DashboardPage() {
           <StatCard
             icon={<TrendingUp size={20} />}
             label="All Time"
-            value={(merchant.tapCount || 0).toLocaleString()}
+            value={allTimeTaps.toLocaleString()}
             color="#6C47FF"
             sub={`Since ${merchant.createdAt?.toDate ? merchant.createdAt.toDate().toLocaleDateString("en-MY") : "—"}`}
           />
