@@ -331,8 +331,9 @@ export default function CashierPage() {
     <>
       {merchantId && <PaymentFlash merchantId={merchantId} isListening={true} />}
       <div className="max-w-[1600px] mx-auto pb-20 px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 xl:gap-12 items-start">
+        <div className={`grid grid-cols-1 ${plan === "plan1" ? "max-w-3xl mx-auto" : "md:grid-cols-2 xl:grid-cols-3"} gap-8 xl:gap-12 items-start`}>
           {/* ── COLUMN 1: Input & Amount (THE CALCULATOR) ────────────────────────── */}
+          {plan !== "plan1" && (
         <div className="space-y-8 lg:pt-4">
           {/* Amount Display */}
           <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-6 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)] min-h-[160px] flex flex-col justify-center">
@@ -372,11 +373,12 @@ export default function CashierPage() {
             </div>
           </div>
         </div>
+          )}
 
         {/* ── COLUMN 2: Money Received & Requests ────────────────────────────── */}
         <div className="space-y-10 lg:pt-4">
           
-          {/* Money Received Inbox */}
+          {/* Money Received Inbox (Today's Log) */}
           <div className="space-y-6">
             <div className="flex items-center justify-between px-2">
               <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Inbox</p>
@@ -482,6 +484,7 @@ export default function CashierPage() {
         </div>
 
         {/* ── COLUMN 3: All Tables & Quick RM ─────────────────────────────────── */}
+        {plan !== "plan1" && (
         <div className="space-y-8 lg:pt-4">
           
           {/* Tables Section */}
@@ -589,6 +592,7 @@ export default function CashierPage() {
             </div>
           </div>
         </div>
+        )}
 
         {/* Diagnosis Sticker */}
         <div style={{
