@@ -52,7 +52,6 @@ interface ReceivedPayment {
 export default function CashierPage() {
   const [amount, setAmount] = useState("0");
   const [loading, setLoading] = useState(false);
-  const [saved, setSaved] = useState(false);
   const [merchant, setMerchant] = useState<MerchantData | null>(null);
   const [billRequests, setBillRequests] = useState<BillRequest[]>([]);
   const [stickers, setStickers] = useState<Sticker[]>([]);
