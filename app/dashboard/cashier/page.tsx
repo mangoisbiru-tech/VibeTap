@@ -18,6 +18,7 @@ import {
   Bell,
   Table,
   Zap,
+  Trash2,
 } from "lucide-react";
 import PaymentFlash from "./PaymentFlash";
 
@@ -523,6 +524,26 @@ export default function CashierPage() {
                   )}
                 </div>
               ))}
+
+              {/* DUSTBIN / TRASH AREA */}
+              <button
+                onClick={() => {
+                  if (selectedPayment) {
+                    handleDismissPayment(selectedPayment.id);
+                    setSelectedPayment(null);
+                  } else {
+                    alert("Select a payment from the Inbox first to throw it away.");
+                  }
+                }}
+                className={`w-full aspect-square rounded-lg border-4 border-dashed flex flex-col items-center justify-center gap-2 transition-all active:scale-95 shadow-md ${
+                  selectedPayment 
+                    ? "bg-red-50 border-red-500 text-red-500 animate-pulse shadow-red-100" 
+                    : "bg-slate-50 border-slate-200 text-slate-300"
+                }`}
+              >
+                <Trash2 size={24} />
+                <p className="font-black text-[10px] uppercase tracking-[0.2em]">Dustbin</p>
+              </button>
             </div>
           </div>
 
