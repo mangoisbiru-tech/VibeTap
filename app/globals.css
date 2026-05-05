@@ -100,6 +100,18 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
 }
 
+@keyframes magic-flow {
+  0% { transform: translateX(-100%) skewX(-45deg); opacity: 0; }
+  5% { opacity: 0.8; }
+  95% { opacity: 0.8; }
+  100% { transform: translateX(200vw) skewX(-45deg); opacity: 0; }
+}
+
+.animate-magic-flow {
+  animation: magic-flow var(--duration, 10s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+
 .text-gradient-aurora {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-[#2D5BFF] via-[#00D4FF] to-[#00FFF2];
 }

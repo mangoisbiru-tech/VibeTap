@@ -2,6 +2,18 @@
 
 import { useEffect, useRef } from "react";
 
+const MagicLine = ({ top, delay, duration, width }: { top: string; delay: string; duration: string; width: string }) => (
+  <div 
+    className="absolute h-[1px] md:h-[2px] bg-gradient-to-r from-transparent via-blue-500/30 to-transparent blur-[1px] animate-magic-flow pointer-events-none"
+    style={{ 
+      top, 
+      width,
+      '--delay': delay,
+      '--duration': duration
+    } as any}
+  />
+);
+
 export default function ParticleBackground() {
   const orb1Ref = useRef<HTMLDivElement>(null);
   const orb2Ref = useRef<HTMLDivElement>(null);
@@ -41,6 +53,13 @@ export default function ParticleBackground() {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      {/* Magic Lines - Digital Flow */}
+      <MagicLine top="15%" delay="0s" duration="14s" width="400px" />
+      <MagicLine top="35%" delay="4s" duration="18s" width="600px" />
+      <MagicLine top="65%" delay="2s" duration="12s" width="350px" />
+      <MagicLine top="85%" delay="7s" duration="20s" width="500px" />
+      <MagicLine top="50%" delay="10s" duration="15s" width="450px" />
+
       {/* Orb 1: Cyan/Aurora */}
       <div 
         ref={orb1Ref}
