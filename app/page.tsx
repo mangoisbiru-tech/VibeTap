@@ -257,9 +257,35 @@ export default function LandingPage() {
             <p className="text-slate-600 text-lg leading-relaxed font-medium">
               Keep your hands busy cooking—you will hear exactly when you get paid, so you never miss a transaction.
             </p>
+
+            {/* Disclaimer Accordion */}
+            <details className="mt-8 group border border-slate-200 bg-white rounded-2xl shadow-sm [&_summary::-webkit-details-marker]:hidden">
+              <summary className="font-bold text-slate-800 px-6 py-4 cursor-pointer hover:bg-slate-50 flex items-center justify-between transition-colors list-none">
+                <span className="flex items-center gap-2"><ShieldCheck size={18} className="text-blue-600" /> Important App Disclaimers</span>
+                <span className="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div className="px-6 pb-6 pt-2 border-t border-slate-100 space-y-5 text-sm text-slate-600">
+                <div>
+                  <strong className="text-slate-900 block mb-1 text-[15px]">1. Auxiliary Tool Disclaimer</strong>
+                  This product is intended solely as an auxiliary notification tool. Merchants must always verify final payments via their official banking or eWallet application. We are not liable for any losses caused by network delays, missed flashes, or device errors.
+                </div>
+                <div>
+                  <strong className="text-slate-900 block mb-1 text-[15px]">2. Privacy Notice</strong>
+                  The TapPay Listener App relies on standard Android notification listening permissions to detect payment alerts. It does <strong>not</strong> have access to your bank account, and it does <strong>not</strong> read passwords.
+                </div>
+                <div>
+                  <strong className="text-slate-900 block mb-1 text-[15px]">3. App Distribution</strong>
+                  Due to Google Play's strict policies regarding "Notification Listener" permissions, the app is provided as a direct APK download from our secure Web App dashboard for installation on your Android device.
+                </div>
+              </div>
+            </details>
           </div>
-          <div className="flex-1 w-full bg-slate-50 rounded-3xl p-4 md:p-8 border border-blue-100 shadow-lg relative flex flex-col items-center justify-center min-h-[300px]">
-             <img src="/LED.result.png" alt="Android Listener App flashing blue" className="w-full h-auto max-h-[400px] object-contain rounded-2xl shadow-sm border border-slate-200" />
+          <div className="flex-1 w-full bg-gradient-to-br from-blue-50 via-slate-50 to-blue-100 rounded-3xl p-4 md:p-8 border border-blue-200 shadow-lg relative overflow-hidden flex flex-col items-center justify-center min-h-[380px]">
+             {/* Decorative glow effect */}
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] bg-blue-400/15 blur-[80px] rounded-full z-0 pointer-events-none" />
+             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.8)_0%,transparent_100%)] z-0 pointer-events-none" />
+             
+             <img src="/LED.result.png" alt="Android Listener App flashing blue" className="w-[65%] max-w-[260px] h-auto object-contain rounded-3xl shadow-2xl shadow-blue-900/20 border-[6px] border-white relative z-10 hover:scale-105 transition-transform duration-500" />
              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 mt-8 text-center bg-white/90 backdrop-blur-md px-6 py-3 rounded-2xl border border-blue-50 shadow-xl w-[85%] max-w-sm">
                <div className="text-2xl font-black text-slate-900">"Received RM 8.50"</div>
                <div className="text-blue-600 font-bold mt-1 text-sm flex items-center justify-center gap-2">
