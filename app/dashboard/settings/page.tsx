@@ -63,6 +63,7 @@ export default function SettingsPage() {
   const [uid, setUid] = useState<string | null>(null);
   const [slug, setSlug] = useState<string | null>(null);
   const [name, setName] = useState("");
+  const [iconUrl, setIconUrl] = useState("");
   const [tngPaymentUrl, setTngPaymentUrl] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [plan, setPlan] = useState<"plan1" | "plan2" | "plan3">("plan1");
@@ -87,6 +88,7 @@ export default function SettingsPage() {
         if (snap.exists()) {
           const d = snap.data();
           setName(d.name || "");
+          setIconUrl(d.iconUrl || "");
           setSlug(d.slug || null);
           setTngPaymentUrl(d.tngPaymentUrl || d.paymentUrl || "");
           setIsActive(d.isActive ?? true);
@@ -126,6 +128,7 @@ export default function SettingsPage() {
       await setDoc(doc(db, "merchants", uid), {
         uid,
         name,
+        iconUrl,
         tngPaymentUrl,
         paymentUrl: tngPaymentUrl, // keep backward compat
         isActive,
@@ -328,6 +331,18 @@ export default function SettingsPage() {
               onChange={(e) => setName(e.target.value)}
               className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300"
               placeholder="e.g. Mamak Ali Kopitiam"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+              Icon Picture URL
+            </label>
+            <input
+              type="text"
+              value={iconUrl}
+              onChange={(e) => setIconUrl(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-slate-900 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300"
+              placeholder="https://example.com/logo.png"
             />
           </div>
           <div className="space-y-2">

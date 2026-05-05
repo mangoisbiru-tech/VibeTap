@@ -25,6 +25,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [merchantName, setMerchantName] = useState("");
+  const [merchantIconUrl, setMerchantIconUrl] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [pendingRequests, setPendingRequests] = useState(0);
@@ -42,6 +43,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       const unsub = onSnapshot(doc(db, "merchants", u.uid), (snap) => {
         if (snap.exists()) {
           setMerchantName(snap.data().name || "Merchant");
+          setMerchantIconUrl(snap.data().iconUrl || "");
         }
       });
 
@@ -131,9 +133,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* User */}
         <div className="px-4 py-6">
           <div className="flex items-center gap-3 px-3 py-3 rounded-2xl bg-white/50 border border-white/80 shadow-sm">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#2D5BFF] to-[#00D4FF] flex items-center justify-center text-xs font-bold text-white shadow-md">
-              {merchantName.charAt(0).toUpperCase()}
-            </div>
+            {merchantIconUrl ? (
+              <img src={merchantIconUrl} alt={merchantName} className="w-9 h-9 rounded-full object-cover shadow-md" />
+            ) : (
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#2D5BFF] to-[#00D4FF] flex items-center justify-center text-xs font-bold text-white shadow-md">
+                {merchantName.charAt(0).toUpperCase()}
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <p className="text-sm font-black text-slate-950 truncate">{merchantName}</p>
               <p className="text-[10px] font-black text-slate-950 truncate uppercase tracking-widest">{user?.email}</p>
