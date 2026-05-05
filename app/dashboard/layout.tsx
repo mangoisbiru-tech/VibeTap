@@ -16,6 +16,7 @@ import {
   X,
   Nfc,
   History,
+  ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -110,6 +111,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { href: "/dashboard/nfc", icon: <Nfc size={18} />, label: "NFC Writer" },
     { href: "/dashboard/settings", icon: <Settings size={18} />, label: "Settings" },
   ];
+
+  if (user?.email === "tappaymy@hotmail.com") {
+    navItems.push({ href: "/dashboard/admin", icon: <ShieldCheck size={18} />, label: "Admin Dashboard" });
+  }
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] selection:bg-blue-100 selection:text-blue-900">

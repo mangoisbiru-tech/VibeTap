@@ -60,6 +60,8 @@ export default function SignupPage() {
         tapCount: 0,
         dailyTaps: {},
         isActive: true,
+        planTier: "free",
+        role: "merchant",
         fixedAmount: null,
         createdAt: serverTimestamp(),
         lastTappedAt: null,
