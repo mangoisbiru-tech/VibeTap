@@ -43,7 +43,7 @@ export default function PricingPage() {
         <Link href="/signup" className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold transition-all">Get Started</Link>
       </nav>
 
-      <section className="relative py-20 px-6 text-center overflow-hidden">
+      <section className="relative py-10 px-6 text-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-blue-50 to-slate-50 pointer-events-none" />
         <div className="relative z-10 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-sm font-semibold mb-8">
@@ -277,14 +277,14 @@ export default function PricingPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 px-6">
+      <section className="py-10 px-6">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl font-black text-slate-900 mb-4">Ready to go cashless the smart way?</h2>
           <p className="text-slate-500 font-medium mb-8">Start with any kit and upgrade anytime.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/signup" className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-blue-600/20">
-              Create Free Account <ArrowRight size={20} />
-            </Link>
+            <a href="mailto:tappaymy@hotmail.com" className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-blue-600/20">
+              Contact Us for Payment <ArrowRight size={20} />
+            </a>
             <a href="mailto:tappaymy@hotmail.com" className="flex items-center justify-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 px-8 py-4 rounded-2xl font-bold text-lg transition-all">
               <Mail size={20} /> Ask a Question
             </a>

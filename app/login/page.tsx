@@ -114,7 +114,7 @@ export default function LoginPage() {
           <p className="text-center text-sm font-medium text-slate-400 mt-8">
             New here?{" "}
             <Link href="/signup" className="text-blue-600 hover:text-blue-700 font-black transition-colors">
-              Join TapPay Free
+              Sign up here!
             </Link>
           </p>
         </div>

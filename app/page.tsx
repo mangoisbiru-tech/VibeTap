@@ -116,7 +116,7 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section className="relative z-10 flex flex-col items-center text-center pt-24 pb-20 px-6 max-w-5xl mx-auto">
+      <section className="relative z-10 flex flex-col items-center text-center pt-12 pb-10 px-6 max-w-5xl mx-auto">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-sm font-semibold mb-8 shadow-sm">
           <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
           Now live for Malaysian Merchants 🇲🇾

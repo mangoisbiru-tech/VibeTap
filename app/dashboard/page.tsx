@@ -29,6 +29,7 @@ interface MerchantData {
   isActive: boolean;
   fixedAmount: number | null;
   createdAt: { toDate?: () => Date } | null;
+  planTier?: "free" | "lite" | "basic" | "pro";
 }
 
 type HistoryEntry = {
@@ -249,10 +250,24 @@ export default function DashboardPage() {
     <div className="space-y-10">
       {/* Page header */}
       <div className="relative">
-        <h1 className="text-4xl font-black text-slate-950 tracking-tight">Overview</h1>
-        <p className="text-slate-950 text-sm mt-1 font-bold">
-          Welcome back, <span className="text-blue-600">{merchant.name}</span>
-        </p>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-4xl font-black text-slate-950 tracking-tight">Overview</h1>
+            <p className="text-slate-950 text-sm mt-1 font-bold">
+              Welcome back, <span className="text-blue-600">{merchant.name}</span>
+            </p>
+          </div>
+          <div>
+            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-bold uppercase tracking-wider shadow-sm
+              ${(!merchant.planTier || merchant.planTier === "free")
+                ? "bg-slate-100 border-slate-200 text-slate-500" 
+                : merchant.planTier === "pro"
+                ? "bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-950 border-yellow-400/50 shadow-yellow-500/20"
+                : "bg-blue-50 border-blue-200 text-blue-700"}`}>
+              {(!merchant.planTier || merchant.planTier === "free") ? "Free Account (Locked)" : `${merchant.planTier} Account`}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Chart */}
