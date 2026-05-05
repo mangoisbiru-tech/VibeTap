@@ -68,10 +68,7 @@ function InteractiveSticker() {
       {/* The Fake Phone sliding in */}
       <div className={`absolute bottom-0 w-64 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-20 ${tapped ? 'translate-y-4 opacity-100' : 'translate-y-64 opacity-0'}`}>
         <div className="w-full h-80 bg-white rounded-t-[2.5rem] border-[6px] border-b-0 border-slate-800 shadow-2xl flex flex-col items-center p-6">
-          <div className="w-16 h-1.5 bg-slate-200 rounded-full mb-6" />
-          <div className="w-full flex justify-center items-center mb-4">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/Touch_%27n_Go_eWallet_logo.svg" alt="Touch 'n Go eWallet" className="h-6 w-auto" />
-          </div>
+          <div className="w-16 h-1.5 bg-slate-200 rounded-full mb-8" />
           <div className="w-16 h-16 bg-blue-100 rounded-full text-blue-600 flex items-center justify-center mb-4 shadow-inner">
             <CheckCircle2 size={32} />
           </div>
@@ -130,7 +127,7 @@ export default function LandingPage() {
         </h1>
 
         <p className="text-xl text-slate-600 max-w-2xl mb-12 leading-relaxed font-medium">
-          The premium <span className="inline-flex items-center gap-1.5 align-middle mx-1 bg-white border border-slate-200 px-2.5 py-1 rounded-lg shadow-sm"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/Touch_%27n_Go_eWallet_logo.svg" alt="Touch 'n Go eWallet" className="h-4 w-auto" /></span> payment experience for fast-moving stalls. 
+          The premium Touch 'n Go payment experience for fast-moving stalls. 
           No more waiting, no more ads—just tap, pay, and keep the line moving.
         </p>
 
@@ -262,7 +259,7 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="flex-1 w-full bg-slate-50 rounded-3xl p-4 md:p-8 border border-blue-100 shadow-lg relative flex flex-col items-center justify-center min-h-[300px]">
-             <img src="/LED.result.jpg" alt="Android Listener App flashing blue" className="w-full h-auto max-h-[400px] object-contain rounded-2xl shadow-sm border border-slate-200" />
+             <img src="/LED.result.png" alt="Android Listener App flashing blue" className="w-full h-auto max-h-[400px] object-contain rounded-2xl shadow-sm border border-slate-200" />
              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 mt-8 text-center bg-white/90 backdrop-blur-md px-6 py-3 rounded-2xl border border-blue-50 shadow-xl w-[85%] max-w-sm">
                <div className="text-2xl font-black text-slate-900">"Received RM 8.50"</div>
                <div className="text-blue-600 font-bold mt-1 text-sm flex items-center justify-center gap-2">
