@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/client";
-import { ShieldAlert, Loader2, CheckCircle2 } from "lucide-react";
+import { ShieldAlert, Loader2, CheckCircle2, Trash2, Power, Edit3, PowerOff } from "lucide-react";
 
 type Merchant = {
   id: string;
@@ -88,6 +88,57 @@ export default function AdminDashboardPage() {
     }
   }
 
+  async function toggleStatus(merchantId: string, currentStatus: boolean) {
+    setUpdatingId(merchantId);
+    try {
+      await updateDoc(doc(db, "merchants", merchantId), {
+        isActive: !currentStatus,
+      });
+      setMerchants((prev) =>
+        prev.map((m) => (m.id === merchantId ? { ...m, isActive: !currentStatus } : m))
+      );
+    } catch (err) {
+      alert("Failed to update status");
+    } finally {
+      setUpdatingId(null);
+    }
+  }
+
+  async function deleteMerchant(merchantId: string, name: string) {
+    if (!confirm(`DANGER: Are you sure you want to PERMANENTLY DELETE ${name}? This cannot be undone.`)) return;
+    setUpdatingId(merchantId);
+    try {
+      await deleteDoc(doc(db, "merchants", merchantId));
+      setMerchants((prev) => prev.filter((m) => m.id !== merchantId));
+    } catch (err) {
+      alert("Failed to delete merchant");
+    } finally {
+      setUpdatingId(null);
+    }
+  }
+
+  async function editMerchantInfo(merchantId: string, currentName: string, currentEmail: string) {
+    const newName = prompt("New Business Name:", currentName);
+    if (newName === null) return;
+    const newEmail = prompt("New Email:", currentEmail === "No email" ? "" : currentEmail);
+    if (newEmail === null) return;
+
+    setUpdatingId(merchantId);
+    try {
+      await updateDoc(doc(db, "merchants", merchantId), {
+        name: newName || currentName,
+        email: newEmail || currentEmail,
+      });
+      setMerchants((prev) =>
+        prev.map((m) => (m.id === merchantId ? { ...m, name: newName || currentName, email: newEmail || currentEmail } : m))
+      );
+    } catch (err) {
+      alert("Failed to update info");
+    } finally {
+      setUpdatingId(null);
+    }
+  }
+
   if (loading || !authorized) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -123,6 +174,7 @@ export default function AdminDashboardPage() {
                 <th className="px-6 py-4">Joined</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Subscription Plan</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -171,6 +223,38 @@ export default function AdminDashboardPage() {
                           ▼
                         </div>
                       )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => editMerchantInfo(merchant.id, merchant.name, merchant.email)}
+                        disabled={updatingId === merchant.id}
+                        className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Edit Info"
+                      >
+                        <Edit3 size={18} />
+                      </button>
+                      <button
+                        onClick={() => toggleStatus(merchant.id, merchant.isActive)}
+                        disabled={updatingId === merchant.id}
+                        className={`p-2 rounded-lg transition-colors ${
+                          merchant.isActive 
+                            ? "text-slate-400 hover:text-orange-600 hover:bg-orange-50" 
+                            : "text-emerald-500 hover:bg-emerald-50"
+                        }`}
+                        title={merchant.isActive ? "Make Offline" : "Make Online"}
+                      >
+                        {merchant.isActive ? <PowerOff size={18} /> : <Power size={18} />}
+                      </button>
+                      <button
+                        onClick={() => deleteMerchant(merchant.id, merchant.name)}
+                        disabled={updatingId === merchant.id}
+                        className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Delete Account"
+                      >
+                        <Trash2 size={18} />
+                      </button>
                     </div>
                   </td>
                 </tr>
