@@ -70,7 +70,7 @@ export default function PricingPage() {
             </div>
             <div className="mb-6">
               <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 25</span><span className="text-slate-400 mb-2">one-time</span></div>
-              <PromoBox msg="🎉 Launch Promo: 2 months Plan 1 FREE" sub="Then RM 10/month. 1st month included." />
+              <PromoBox msg="🎉 Includes Plan 1 SaaS plan" sub="1st month free + 1 bonus month. Then RM 10/month." />
             </div>
             <ul className="space-y-3 flex-1 mb-8">
               {liteKitFeatures.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
@@ -88,7 +88,7 @@ export default function PricingPage() {
             </div>
             <div className="mb-6">
               <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 35</span><span className="text-slate-400 mb-2">one-time</span></div>
-              <PromoBox msg="🎉 Launch Promo: 2 months Plan 1 FREE" sub="Then RM 15/month. 1st month included." />
+              <PromoBox msg="🎉 Includes Plan 1 SaaS plan" sub="1st month free + 1 bonus month. Then RM 15/month." />
             </div>
             <ul className="space-y-3 flex-1 mb-8">
               {starterFeatures.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
@@ -109,7 +109,7 @@ export default function PricingPage() {
             </div>
             <div className="mb-6">
               <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 95</span><span className="text-blue-200 mb-2">one-time</span></div>
-              <PromoBox dark msg="🎉 Launch Promo: 2 months Plan 1,2,3 + App FREE" sub="Then RM 35/month + RM 8/month App. 1st month included." />
+              <PromoBox dark msg="🎉 Includes Plan 1,2,3 SaaS + App" sub="1st month free + 1 bonus month. Then RM 35/month + RM 7/month App." />
             </div>
             <ul className="space-y-3 flex-1 mb-8">
               {proFeatures.map(f => <li key={f} className="flex items-start gap-3 font-medium text-sm"><Check c="text-yellow-300" />{f}</li>)}
@@ -175,7 +175,7 @@ export default function PricingPage() {
           {[
             { icon: <Smartphone size={22} />, label: "Listener App", sub: "For Lite Pack users", price: "RM 12", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
             { icon: <Bell size={22} />, label: "Listener App", sub: "For Starter Pack users", price: "RM 10", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-blue-100 text-blue-600", priceCls: "text-slate-900" },
-            { icon: <Bell size={22} />, label: "Listener App", sub: "For Pro Pack users", price: "RM 8", unit: "/month", desc: "Same full Listener App — discounted for Pro Pack subscribers.", bg: "bg-blue-50 border-blue-200", iconBg: "bg-blue-200 text-blue-700", priceCls: "text-blue-700" },
+            { icon: <Bell size={22} />, label: "Listener App", sub: "For Pro Pack users", price: "RM 7", unit: "/month", desc: "Same full Listener App — discounted for Pro Pack subscribers.", bg: "bg-blue-50 border-blue-200", iconBg: "bg-blue-200 text-blue-700", priceCls: "text-blue-700" },
             { icon: <Tag size={22} />, label: "NFC Sticker", sub: "Standard (plain)", price: "RM 4.99", unit: "/piece", desc: "Replacement or extra stickers. Minimum order may apply.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
           ].map(({ icon, label, sub, price, unit, desc, bg, iconBg, priceCls }) => (
             <div key={sub} className={`${bg} rounded-3xl border shadow-sm p-6 flex flex-col gap-4`}>
@@ -238,7 +238,13 @@ export default function PricingPage() {
           <h2 className="text-3xl font-black text-slate-900 mb-3">Quick Comparison</h2>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm font-medium border-collapse">
+          <table className="w-full text-sm font-medium border-collapse table-fixed">
+            <colgroup>
+              <col className="w-1/3 md:w-2/5" />
+              <col className="w-1/5" />
+              <col className="w-1/5" />
+              <col className="w-1/5" />
+            </colgroup>
             <thead>
               <tr className="bg-slate-100">
                 <th className="text-left px-5 py-4 rounded-l-2xl text-slate-600 font-bold">Feature</th>
@@ -253,9 +259,8 @@ export default function PricingPage() {
                 ["Payment Inbox", "✓", "✓", "✓"],
                 ["Table Mgmt & Amount Push", "—", "—", "✓"],
                 ["Call for Staff & Bill", "—", "—", "✓"],
-                ["Listener App Add-on", "+RM12/mo", "+RM10/mo", "+RM8/mo"],
+                ["Listener App Add-on", "+RM12/mo", "+RM10/mo", "+RM7/mo"],
                 ["Lifetime Account", "Lite", "Starter", "Pro"],
-                ["Launch Promo", "2 mo FREE", "2 mo FREE", "2 mo FREE"],
               ].map(([feature, ...cols], i) => (
                 <tr key={feature} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
                   <td className="px-5 py-3.5 text-slate-700 font-semibold rounded-l-xl">{feature}</td>
