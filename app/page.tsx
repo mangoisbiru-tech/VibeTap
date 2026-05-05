@@ -48,7 +48,7 @@ function InteractiveSticker() {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center p-8 bg-blue-50/50 rounded-[3rem] border border-blue-100 my-16 shadow-inner w-full max-w-md mx-auto overflow-hidden h-[340px]">
+    <div className="relative flex flex-col items-center justify-center p-8 bg-blue-50/50 rounded-[3rem] border border-blue-100 shadow-inner w-full overflow-hidden h-full min-h-[340px]">
       <div className="text-center mb-8 z-30 transition-opacity duration-300">
         <h3 className="font-black text-slate-900 text-xl mb-1">Simulate a Tap</h3>
         <p className="text-slate-500 text-sm font-medium">Hover your mouse over the sticker</p>
@@ -132,7 +132,7 @@ export default function LandingPage() {
           No more waiting, no more ads—just tap, pay, and keep the line moving.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 mb-16 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row gap-4 mb-8 w-full sm:w-auto">
           <Link
             href="/signup"
             className="group flex items-center justify-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-xl shadow-blue-600/20 hover:shadow-blue-600/30 hover:-translate-y-1 transition-all"
@@ -147,19 +147,17 @@ export default function LandingPage() {
             Try Cashier Demo
           </Link>
         </div>
-
-        <InteractiveSticker />
       </section>
 
-      {/* The Problem vs Solution */}
-      <section id="how" className="relative z-10 py-20 px-6 max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-8">
+      {/* The Comparison & Simulation Grid */}
+      <section id="how" className="relative z-10 py-12 px-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
           {/* Old Way */}
-          <div className="p-8 rounded-3xl bg-white border border-slate-200 shadow-sm opacity-80">
+          <div className="p-8 rounded-3xl bg-white border border-slate-200 shadow-sm opacity-80 h-full">
             <div className="inline-flex items-center gap-2 text-slate-500 font-bold mb-6">
               <Clock size={20} /> The Old Way (Paper QR)
             </div>
-            <ul className="space-y-4 text-slate-600 font-medium">
+            <ul className="space-y-4 text-slate-600 font-medium text-sm">
               <li className="flex gap-3"><span className="text-slate-400">1.</span> Customer unlocks phone</li>
               <li className="flex gap-3"><span className="text-slate-400">2.</span> Searches for the Touch 'n Go app</li>
               <li className="flex gap-3"><span className="text-slate-400">3.</span> Waits for a 5-second advertisement</li>
@@ -169,8 +167,13 @@ export default function LandingPage() {
             </ul>
           </div>
 
+          {/* SIMULATION (Middle) */}
+          <div className="flex justify-center h-full">
+            <InteractiveSticker />
+          </div>
+
           {/* New Way */}
-          <div className="p-8 rounded-3xl bg-gradient-to-br from-blue-50 to-white border border-blue-200 shadow-xl shadow-blue-100 relative overflow-hidden">
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-blue-50 to-white border border-blue-200 shadow-xl shadow-blue-100 relative overflow-hidden h-full">
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[40px] rounded-full" />
             <div className="relative z-10">
               <div className="inline-flex items-center gap-2 text-blue-600 font-bold mb-6">
@@ -178,19 +181,19 @@ export default function LandingPage() {
               </div>
               <ul className="space-y-6 text-slate-800 font-bold text-lg">
                 <li className="flex items-start gap-3">
-                  <div className="mt-1 bg-blue-100 text-blue-600 p-1 rounded-full"><CheckCircle2 size={16} /></div>
+                  <div className="mt-1 bg-blue-100 text-blue-600 p-1 rounded-full flex-shrink-0"><CheckCircle2 size={16} /></div>
                   Customer taps phone to your premium sticker
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="mt-1 bg-blue-100 text-blue-600 p-1 rounded-full"><CheckCircle2 size={16} /></div>
+                  <div className="mt-1 bg-blue-100 text-blue-600 p-1 rounded-full flex-shrink-0"><CheckCircle2 size={16} /></div>
                   Payment screen opens instantly
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="mt-1 bg-blue-100 text-blue-600 p-1 rounded-full"><CheckCircle2 size={16} /></div>
+                  <div className="mt-1 bg-blue-100 text-blue-600 p-1 rounded-full flex-shrink-0"><CheckCircle2 size={16} /></div>
                   Paid.
                 </li>
               </ul>
-              <p className="mt-8 text-blue-700 font-medium bg-blue-100/50 p-4 rounded-xl border border-blue-200/50">
+              <p className="mt-8 text-blue-700 font-medium bg-blue-100/50 p-4 rounded-xl border border-blue-200/50 text-sm">
                 Less anxiety for them, faster lines and more revenue for you.
               </p>
             </div>
