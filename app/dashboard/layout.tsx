@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { doc, onSnapshot, query, collection, where } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/client";
@@ -21,6 +21,7 @@ import Link from "next/link";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [merchantName, setMerchantName] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -137,21 +138,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Nav */}
         <nav className="flex-1 px-3 py-2 space-y-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex items-center gap-3 px-4 py-4 rounded-xl text-slate-950 hover:bg-white hover:shadow-md transition-all text-sm font-black uppercase tracking-widest group"
-            >
-              <span className="group-hover:text-blue-600 transition-colors flex-shrink-0">{item.icon}</span>
-              <span className="flex-1">{item.label}</span>
-              {item.badge && (
-                <span className="bg-orange-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm shadow-orange-500/20">
-                  {item.badge}
+          {navItems.map((item) => {
+            const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-4 py-4 transition-all text-sm font-black uppercase tracking-widest group ${
+                  isActive
+                    ? "bg-blue-50 text-blue-600 border-l-4 border-blue-600"
+                    : "text-slate-950 hover:bg-white hover:shadow-md rounded-xl border-l-4 border-transparent"
+                }`}
+              >
+                <span className={`${isActive ? "text-blue-600" : "group-hover:text-blue-600"} transition-colors flex-shrink-0`}>
+                  {item.icon}
                 </span>
-              )}
-            </Link>
-          ))}
+                <span className="flex-1">{item.label}</span>
+                {item.badge && (
+                  <span className="bg-orange-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm shadow-orange-500/20">
+                    {item.badge}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Logout */}

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import ParticleBackground from "@/components/ParticleBackground";
 import {
   Zap,
@@ -14,6 +15,72 @@ import {
   Clock,
   ShieldCheck
 } from "lucide-react";
+
+function InteractiveSticker() {
+  const [tapped, setTapped] = useState(false);
+
+  const handleTap = () => {
+    if (!tapped) {
+      setTapped(true);
+      try {
+        const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+        if (AudioContext) {
+          const ctx = new AudioContext();
+          const playTone = (freq: number, startTime: number) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(freq, startTime);
+            gain.gain.setValueAtTime(0.1, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.3);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(startTime);
+            osc.stop(startTime + 0.3);
+          };
+          playTone(880, ctx.currentTime);
+          playTone(1046.50, ctx.currentTime + 0.1);
+        }
+      } catch (e) {}
+
+      setTimeout(() => setTapped(false), 3000);
+    }
+  };
+
+  return (
+    <div className="relative flex flex-col items-center justify-center p-8 bg-blue-50/50 rounded-[3rem] border border-blue-100 mt-8 shadow-inner w-full max-w-md mx-auto overflow-hidden h-[400px]">
+      <div className="text-center mb-8 z-30 transition-opacity duration-300">
+        <h3 className="font-black text-slate-900 text-xl mb-1">Simulate a Tap</h3>
+        <p className="text-slate-500 text-sm font-medium">Hover your mouse over the sticker</p>
+      </div>
+      
+      {/* The Sticker */}
+      <div 
+        onMouseEnter={handleTap}
+        className="relative w-36 h-36 bg-slate-900 rounded-full shadow-2xl flex items-center justify-center cursor-pointer transition-transform hover:scale-105 z-30 ring-8 ring-blue-100"
+      >
+        <div className="w-28 h-28 rounded-full border-2 border-slate-700 flex flex-col items-center justify-center">
+          <Zap className="text-blue-500 mb-1" size={28} />
+          <span className="text-white font-black tracking-tight text-lg">TapPay</span>
+        </div>
+      </div>
+
+      {/* The Fake Phone sliding in */}
+      <div className={`absolute bottom-0 w-64 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-20 ${tapped ? 'translate-y-4 opacity-100' : 'translate-y-64 opacity-0'}`}>
+        <div className="w-full h-80 bg-white rounded-t-[2.5rem] border-[6px] border-b-0 border-slate-800 shadow-2xl flex flex-col items-center p-6">
+          <div className="w-16 h-1.5 bg-slate-200 rounded-full mb-8" />
+          <div className="w-16 h-16 bg-blue-100 rounded-full text-blue-600 flex items-center justify-center mb-4 shadow-inner">
+            <CheckCircle2 size={32} />
+          </div>
+          <p className="font-black text-slate-900 text-3xl">RM 8.50</p>
+          <p className="text-slate-500 text-sm mt-1 font-bold">Payment Successful</p>
+          <div className="mt-6 w-full h-12 bg-slate-100 rounded-xl animate-pulse" />
+          <div className="mt-3 w-3/4 h-8 bg-slate-100 rounded-xl animate-pulse" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function LandingPage() {
   return (
@@ -79,6 +146,8 @@ export default function LandingPage() {
             Try Cashier Demo
           </Link>
         </div>
+
+        <InteractiveSticker />
       </section>
 
       {/* The Problem vs Solution */}
