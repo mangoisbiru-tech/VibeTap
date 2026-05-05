@@ -13,8 +13,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { auth, db, storage } from "@/lib/firebase/client";
+import { auth, db } from "@/lib/firebase/client";
 import {
   Settings,
   Loader2,
@@ -152,21 +151,26 @@ export default function SettingsPage() {
     if (!uid || !e.target.files || e.target.files.length === 0) return;
     const file = e.target.files[0];
     
-    if (file.size > 2 * 1024 * 1024) {
-      alert("File too large. Maximum size is 2MB.");
+    // Limit to 500KB for Base64 to keep Firestore documents lean
+    if (file.size > 500 * 1024) {
+      alert("Logo is too large! Please use a photo smaller than 500KB for best performance.");
       return;
     }
 
     setUploadingIcon(true);
     try {
-      const fileRef = ref(storage, `merchants/${uid}/icon_${Date.now()}`);
-      await uploadBytes(fileRef, file);
-      const url = await getDownloadURL(fileRef);
-      setIconUrl(url);
-    } catch (err: any) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setIconUrl(reader.result as string);
+        setUploadingIcon(false);
+      };
+      reader.onerror = () => {
+        alert("Failed to read image file.");
+        setUploadingIcon(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
       console.error("Upload failed:", err);
-      alert("Upload failed. Make sure your Firebase Storage rules allow writing.");
-    } finally {
       setUploadingIcon(false);
     }
   }
