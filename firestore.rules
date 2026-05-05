@@ -2,10 +2,10 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Merchants: public can read profile, only owner can write
+    // Merchants: public can read profile, only owner or admin can write
     match /merchants/{uid} {
       allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth != null && (request.auth.uid == uid || request.auth.token.email == "tappaymy@hotmail.com");
     }
 
     // Tap events: owner can read their tap history
