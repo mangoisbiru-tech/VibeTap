@@ -13,7 +13,8 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { auth, db } from "@/lib/firebase/client";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { auth, db, storage } from "@/lib/firebase/client";
 import {
   Settings,
   Loader2,
@@ -77,6 +78,7 @@ export default function SettingsPage() {
   const [newTableName, setNewTableName] = useState("");
   const [editingStickerId, setEditingStickerId] = useState<string | null>(null);
   const [editNameValue, setEditNameValue] = useState("");
+  const [uploadingIcon, setUploadingIcon] = useState(false);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -143,6 +145,29 @@ export default function SettingsPage() {
       alert(`Failed to save settings: ${e.message}`);
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleIconUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!uid || !e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    
+    if (file.size > 2 * 1024 * 1024) {
+      alert("File too large. Maximum size is 2MB.");
+      return;
+    }
+
+    setUploadingIcon(true);
+    try {
+      const fileRef = ref(storage, `merchants/${uid}/icon_${Date.now()}`);
+      await uploadBytes(fileRef, file);
+      const url = await getDownloadURL(fileRef);
+      setIconUrl(url);
+    } catch (err: any) {
+      console.error("Upload failed:", err);
+      alert("Upload failed. Make sure your Firebase Storage rules allow writing.");
+    } finally {
+      setUploadingIcon(false);
     }
   }
 
@@ -335,15 +360,40 @@ export default function SettingsPage() {
           </div>
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-              Icon Picture URL
+              Store Logo / Icon
             </label>
-            <input
-              type="text"
-              value={iconUrl}
-              onChange={(e) => setIconUrl(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-slate-900 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-300"
-              placeholder="https://example.com/logo.png"
-            />
+            <div className="flex items-center gap-4">
+              {iconUrl ? (
+                <div className="relative group w-16 h-16 rounded-full flex-shrink-0">
+                  <img src={iconUrl} alt="Store Logo" className="w-16 h-16 rounded-full object-cover shadow-sm border border-slate-200" />
+                  <button 
+                    onClick={() => setIconUrl("")}
+                    className="absolute inset-0 bg-red-500/80 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              ) : (
+                <div className="w-16 h-16 rounded-full bg-slate-100 border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-400 flex-shrink-0">
+                  <UtensilsCrossed size={24} />
+                </div>
+              )}
+              
+              <div className="flex-1">
+                <label className="flex items-center justify-center gap-2 bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-xl font-bold text-sm cursor-pointer transition-all border border-blue-200 w-fit">
+                  {uploadingIcon ? <Loader2 size={16} className="animate-spin" /> : <Edit2 size={16} />}
+                  {uploadingIcon ? "Uploading..." : "Upload Picture"}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleIconUpload}
+                    className="hidden"
+                    disabled={uploadingIcon}
+                  />
+                </label>
+                <p className="text-[10px] text-slate-400 mt-2 font-medium">Recommended: Square image, max 2MB.</p>
+              </div>
+            </div>
           </div>
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex justify-between">
