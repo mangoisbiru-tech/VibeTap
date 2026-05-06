@@ -260,6 +260,7 @@ export default function PricingPage() {
                 ["Table Mgmt & Amount Push", "—", "—", "✓"],
                 ["Call for Staff & Bill", "—", "—", "✓"],
                 ["Listener App Add-on", "+RM12/mo", "+RM10/mo", "+RM7/mo"],
+                ["Included Plan", "Plan 1", "Plan 1", "Plan 1, 2, 3"],
                 ["Badge Acc", "Lite", "Starter", "Pro"],
                 ["Monthly SaaS", "RM 12/mo", "RM 12/mo", "RM 32/mo"],
               ].map(([feature, ...cols], i) => (

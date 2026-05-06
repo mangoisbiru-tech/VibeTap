@@ -371,7 +371,7 @@ export default function LandingPage() {
           </p>
 
           {/* NFC Photos Showcase */}
-          <div className="grid md:grid-cols-2 gap-6 mb-12 max-w-3xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6 mb-3 max-w-3xl mx-auto">
             <div className="rounded-3xl border border-slate-200 overflow-hidden shadow-md bg-slate-50 flex items-center justify-center p-2">
               <img src="/demo_NFC1.jpg" alt="Physical NFC Sticker Design" className="w-full h-auto max-h-64 object-contain rounded-2xl hover:scale-105 transition-transform duration-500" />
             </div>
@@ -379,6 +379,9 @@ export default function LandingPage() {
               <img src="/demo_NFC2.jpg" alt="Physical NFC Sticker Setup" className="w-full h-auto max-h-64 object-contain rounded-2xl hover:scale-105 transition-transform duration-500" />
             </div>
           </div>
+          <p className="text-center text-sm text-slate-500 font-medium italic mb-12">
+            * Product images are for illustration purposes only. Actual products may vary slightly.
+          </p>
           
           <a href="mailto:tappaymy@hotmail.com" className="inline-flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-lg hover:shadow-blue-500/30">
             <Mail size={20} />
