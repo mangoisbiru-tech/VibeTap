@@ -19,11 +19,11 @@ import ParticleBackground from "@/components/ParticleBackground";
 
 export default function SolutionsPage() {
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans overflow-x-hidden">
-      <ParticleBackground />
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans overflow-x-hidden">
 
       {/* Nav */}
-      <nav className="relative z-50 flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
+      <nav className="sticky top-0 z-50 bg-white/100 border-b border-slate-200 backdrop-blur-none">
+        <div className="flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
         <Link href="/" className="flex items-center gap-3">
           <img src="/TapPay_Logo.png" alt="TapPay" className="w-10 h-10 object-contain" />
           <span className="text-2xl font-bold tracking-tight text-slate-900">
@@ -68,21 +68,21 @@ export default function SolutionsPage() {
               scenario: "The 'App Hunt' Stress",
               frustration: "It's your turn to pay. You're scrolling for the e-wallet app, it opens with a big ad, then you have to find the 'Scan' button while everyone behind you waits...",
               relief: "Just tap the NFC sticker. TNG opens instantly. Done in 1 second.",
-              color: "border-[#8b5e3c]/30 bg-[#f5e6d3]"
+              color: "border-[#8b5e3c] bg-[#f5e6d3]"
             },
             {
               icon: <Users className="text-[#8b5e3c]" />,
               scenario: "The Counter Queue",
               frustration: "You've finished your meal, but you have to walk to the counter, stand in line, and wait for the cashier just to scan a QR code.",
               relief: "Pay right at your table. No queuing, no walking. Total freedom.",
-              color: "border-[#8b5e3c]/30 bg-[#f5e6d3]"
+              color: "border-[#8b5e3c] bg-[#f5e6d3]"
             },
             {
               icon: <ShieldCheck className="text-[#8b5e3c]" />,
               scenario: "The Dirty Button",
               frustration: "You need help or the bill, but the physical 'Call Waiter' button on the table looks greasy and unhygienic. You don't want to touch it.",
               relief: "NFC is 100% contactless. Tap with your phone to call for service or your bill.",
-              color: "border-[#8b5e3c]/30 bg-[#f5e6d3]"
+              color: "border-[#8b5e3c] bg-[#f5e6d3]"
             }
           ].map((item, i) => (
             <div key={i} className={`group p-8 rounded-[2.5rem] border ${item.color} flex flex-col gap-6 hover:-translate-y-2 transition-all duration-300 shadow-sm hover:shadow-xl`}>
