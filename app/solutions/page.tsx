@@ -56,6 +56,57 @@ export default function SolutionsPage() {
 
       {/* The Pain vs Solution */}
       <section className="py-20 px-6 max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-black mb-4 italic">"Ever had this happen?"</h2>
+          <p className="text-slate-500 text-lg">We've all been there. Here is why we built TapPay.</p>
+        </div>
+        
+        <div className="grid lg:grid-cols-3 gap-8">
+          {[
+            {
+              icon: <Clock className="text-red-500" />,
+              scenario: "The 'App Hunt' Stress",
+              frustration: "It's your turn to pay. You're scrolling for the e-wallet app, it opens with a big ad, then you have to find the 'Scan' button while everyone behind you waits...",
+              relief: "Just tap the NFC sticker. TNG opens instantly. Done in 1 second.",
+              color: "border-red-100 bg-red-50/30"
+            },
+            {
+              icon: <Users className="text-amber-500" />,
+              scenario: "The Counter Queue",
+              frustration: "You've finished your meal, but you have to walk to the counter, stand in line, and wait for the cashier just to scan a QR code.",
+              relief: "Pay right at your table. No queuing, no walking. Total freedom.",
+              color: "border-amber-100 bg-amber-50/30"
+            },
+            {
+              icon: <ShieldCheck className="text-purple-500" />,
+              scenario: "The Dirty Button",
+              frustration: "You need help or the bill, but the physical 'Call Waiter' button on the table looks greasy and unhygienic. You don't want to touch it.",
+              relief: "NFC is 100% contactless. Tap with your phone to call for service or your bill.",
+              color: "border-purple-100 bg-purple-50/30"
+            }
+          ].map((item, i) => (
+            <div key={i} className={`group p-8 rounded-[2.5rem] border ${item.color} flex flex-col gap-6 hover:-translate-y-2 transition-all duration-300 shadow-sm hover:shadow-xl`}>
+              <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">{item.icon}</div>
+              <div>
+                <h3 className="text-2xl font-black mb-4">{item.scenario}</h3>
+                <div className="space-y-4">
+                  <div className="flex gap-3 text-slate-500 text-sm leading-relaxed">
+                    <X size={18} className="text-red-400 shrink-0 mt-0.5" />
+                    <p><span className="font-bold text-slate-700">Frustration:</span> {item.frustration}</p>
+                  </div>
+                  <div className="flex gap-3 text-blue-600 text-sm leading-relaxed">
+                    <CheckCircle2 size={18} className="text-blue-500 shrink-0 mt-0.5" />
+                    <p><span className="font-bold">TapPay Relief:</span> {item.relief}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Deep Dive Section */}
+      <section className="py-20 px-6 max-w-7xl mx-auto border-t border-slate-100">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-8">
             <h2 className="text-4xl font-black">QR Codes are killing your peak-hour sales.</h2>
