@@ -112,6 +112,17 @@
   animation-delay: var(--delay, 0s);
 }
 
+@keyframes svg-flow {
+  0% { stroke-dashoffset: 2000; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.animate-svg-flow {
+  stroke-dasharray: 400 1600;
+  animation: svg-flow var(--duration, 15s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+
 .text-gradient-aurora {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-[#2D5BFF] via-[#00D4FF] to-[#00FFF2];
 }

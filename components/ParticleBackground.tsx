@@ -2,16 +2,32 @@
 
 import { useEffect, useRef } from "react";
 
-const MagicLine = ({ top, delay, duration, width }: { top: string; delay: string; duration: string; width: string }) => (
-  <div 
-    className="absolute h-[1px] md:h-[2px] bg-gradient-to-r from-transparent via-blue-500/30 to-transparent blur-[1px] animate-magic-flow pointer-events-none"
-    style={{ 
-      top, 
-      width,
-      '--delay': delay,
-      '--duration': duration
-    } as any}
-  />
+const CurvedFlow = ({ path, delay, duration }: { path: string; delay: string; duration: string }) => (
+  <svg 
+    className="absolute inset-0 w-full h-full pointer-events-none opacity-40" 
+    viewBox="0 0 1000 1000" 
+    preserveAspectRatio="none"
+  >
+    <defs>
+      <linearGradient id={`grad-${delay}`} x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stopColor="transparent" />
+        <stop offset="50%" stopColor="#3b82f6" />
+        <stop offset="100%" stopColor="transparent" />
+      </linearGradient>
+    </defs>
+    <path
+      d={path}
+      fill="none"
+      stroke={`url(#grad-${delay})`}
+      strokeWidth="2"
+      strokeLinecap="round"
+      className="animate-svg-flow"
+      style={{ 
+        '--delay': delay,
+        '--duration': duration
+      } as any}
+    />
+  </svg>
 );
 
 export default function ParticleBackground() {
@@ -52,13 +68,23 @@ export default function ParticleBackground() {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {/* Magic Lines - Digital Flow */}
-      <MagicLine top="15%" delay="0s" duration="14s" width="400px" />
-      <MagicLine top="35%" delay="4s" duration="18s" width="600px" />
-      <MagicLine top="65%" delay="2s" duration="12s" width="350px" />
-      <MagicLine top="85%" delay="7s" duration="20s" width="500px" />
-      <MagicLine top="50%" delay="10s" duration="15s" width="450px" />
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-slate-50/50">
+      {/* Curved Flow Lines - Weaving around content */}
+      
+      {/* Path 1: Top Curve (dips down between elements) */}
+      <CurvedFlow path="M 0 100 Q 250 50 500 100 T 1000 50" delay="0s" duration="12s" />
+      
+      {/* Path 2: Middle Weave (goes up to avoid hero text, then down) */}
+      <CurvedFlow path="M 0 500 Q 150 300 350 400 T 650 600 T 1000 400" delay="3s" duration="18s" />
+      
+      {/* Path 3: Bottom Curve (curves up slightly) */}
+      <CurvedFlow path="M 0 850 Q 300 950 600 850 T 1000 900" delay="7s" duration="15s" />
+      
+      {/* Path 4: Vertical-ish Weave (from left-mid to right-top) */}
+      <CurvedFlow path="M 0 300 C 200 300 400 100 600 300 S 800 500 1000 200" delay="10s" duration="22s" />
+
+      {/* Subtle Grid Pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]" />
 
       {/* Orb 1: Cyan/Aurora */}
       <div 
