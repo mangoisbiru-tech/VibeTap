@@ -32,6 +32,29 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${sora.variable} font-sans antialiased`}>
         {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "TapPay",
+              "description": "NFC Payment infrastructure for Malaysian Merchants.",
+              "operatingSystem": "Web, Android",
+              "applicationCategory": "BusinessApplication",
+              "offers": {
+                "@type": "AggregateOffer",
+                "priceCurrency": "MYR",
+                "lowPrice": "25.00",
+                "highPrice": "95.00"
+              },
+              "provider": {
+                "@type": "Organization",
+                "name": "TapPay Malaysia"
+              }
+            })
+          }}
+        />
       </body>
     </html>
   );
