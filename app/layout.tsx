@@ -7,10 +7,14 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const sora = Sora({ subsets: ["latin"], variable: "--font-sora", weight: ["400", "600", "700", "800"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://tappay-malaysia-nfc.vercel.app'),
   title: "TapPay — NFC Payments for Malaysian Merchants",
   description:
     "One NFC sticker, any payment method. Switch between TNG, GrabPay, and DuitNow without changing your sticker. Smart redirector for Malaysian businesses.",
   keywords: "NFC payment Malaysia, Touch n Go, DuitNow, GrabPay, cashless payment sticker",
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: "TapPay — Tap. Pay. Done.",
     description: "The smartest way to collect digital payments in Malaysia. Tap, Pay, and you're done.",
