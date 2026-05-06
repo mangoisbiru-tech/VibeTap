@@ -70,7 +70,7 @@ export default function PricingPage() {
             </div>
             <div className="mb-6">
               <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 25</span><span className="text-slate-400 mb-2">one-time</span></div>
-              <PromoBox msg="🎉 Includes Plan 1 SaaS plan" sub="1st month free + 1 bonus month. Then RM 10/month." />
+              <PromoBox msg="🎉 Includes Plan 1 SaaS plan" sub="1st month free + 1 bonus month. Then RM 10/month for SaaS ONLY." />
             </div>
             <ul className="space-y-3 flex-1 mb-8">
               {liteKitFeatures.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
@@ -88,7 +88,7 @@ export default function PricingPage() {
             </div>
             <div className="mb-6">
               <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 35</span><span className="text-slate-400 mb-2">one-time</span></div>
-              <PromoBox msg="🎉 Includes Plan 1 SaaS plan" sub="1st month free + 1 bonus month. Then RM 15/month." />
+              <PromoBox msg="🎉 Includes Plan 1 SaaS plan" sub="1st month free + 1 bonus month. Then RM 15/month for SaaS ONLY.." />
             </div>
             <ul className="space-y-3 flex-1 mb-8">
               {starterFeatures.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
@@ -109,7 +109,7 @@ export default function PricingPage() {
             </div>
             <div className="mb-6">
               <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 95</span><span className="text-blue-200 mb-2">one-time</span></div>
-              <PromoBox dark msg="🎉 Includes Plan 1,2,3 SaaS + App" sub="1st month free + 1 bonus month. Then RM 35/month + RM 7/month App." />
+              <PromoBox dark msg="🎉 Includes Plan 1,2,3 SaaS + App" sub="1st month free + 1 bonus month. Then RM 35/month + RM 7/month App for Saas Only." />
             </div>
             <ul className="space-y-3 flex-1 mb-8">
               {proFeatures.map(f => <li key={f} className="flex items-start gap-3 font-medium text-sm"><Check c="text-yellow-300" />{f}</li>)}

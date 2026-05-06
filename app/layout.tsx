@@ -1,9 +1,10 @@
 // v1.0.2 - Final Emoji Scrub
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Sora } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const sora = Sora({ subsets: ["latin"], variable: "--font-sora", weight: ["400", "600", "700", "800"] });
 
 export const metadata: Metadata = {
   title: "TapPay — NFC Payments for Malaysian Merchants",
@@ -25,7 +26,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${sora.variable} font-sans antialiased`}>
         {children}
       </body>
     </html>

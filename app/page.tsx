@@ -13,7 +13,10 @@ import {
   Mail,
   Store,
   Clock,
-  ShieldCheck
+  ShieldCheck,
+  Smartphone,
+  UserCheck,
+  Nfc
 } from "lucide-react";
 
 function InteractiveSticker() {
@@ -116,36 +119,90 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section className="relative z-10 flex flex-col items-center text-center pt-12 pb-10 px-6 max-w-5xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-sm font-semibold mb-8 shadow-sm">
-          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-          Now live for Malaysian Merchants 🇲🇾
-        </div>
+      <section className="relative z-10 pt-8 pb-0 px-6 max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          
+          {/* Left: Text Content */}
+          <div>
+            {/* Tech Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-sm font-bold mb-6 shadow-sm">
+              <Nfc size={16} className="text-blue-500" />
+              Powered by Ultra-Fast NFC Technology ⚡
+            </div>
 
-        <h1 className="text-5xl md:text-7xl font-black leading-tight tracking-tight mb-6 text-slate-900">
-          Skip the QR Code.<br/>
-          <span className="text-blue-600">Tap and Get Paid.</span>
-        </h1>
+            {/* Main Headline */}
+            <h1 className="font-[family-name:var(--font-sora)] text-5xl md:text-6xl font-extrabold leading-[1.1] tracking-tight mb-5 text-slate-900">
+              Upgrade Your
+              <span className="block text-blue-600">TNG QR to</span>
+              <span className="block">NFC Tap-to-Pay.</span>
+            </h1>
 
-        <p className="text-xl text-slate-600 max-w-2xl mb-12 leading-relaxed font-medium">
-          The premium Touch 'n Go payment experience for fast-moving stalls. 
-          No more waiting, no more ads—just tap, pay, and keep the line moving.
-        </p>
+            <p className="text-lg text-slate-500 max-w-xl mb-8 leading-relaxed">
+              One premium NFC sticker replaces your crumpled paper QR code. 
+              Customers tap — <strong className="text-slate-700">Touch 'n Go opens instantly</strong>, no searching, no 5-second ads, no typing amounts.
+            </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 mb-8 w-full sm:w-auto">
-          <Link
-            href="/signup"
-            className="group flex items-center justify-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-xl shadow-blue-600/20 hover:shadow-blue-600/30 hover:-translate-y-1 transition-all"
-          >
-            Create Free Account
-            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
-          <Link
-            href="/demo"
-            className="flex items-center justify-center gap-2 bg-white hover:bg-blue-50 border border-blue-100 text-blue-700 px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-sm"
-          >
-            Try Cashier Demo
-          </Link>
+            {/* 3 Key Points */}
+            <div className="grid grid-cols-1 gap-3 mb-8">
+              <div className="flex items-center gap-3 text-slate-700 font-semibold">
+                <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0"><Nfc size={16} /></div>
+                NFC Sticker → TNG opens instantly on customer phone
+              </div>
+              <div className="flex items-center gap-3 text-slate-700 font-semibold">
+                <div className="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0"><Smartphone size={16} /></div>
+                Android Listener App announces every payment out loud
+              </div>
+              <div className="flex items-center gap-3 text-slate-700 font-semibold">
+                <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0"><UserCheck size={16} /></div>
+                <span>Requires a <strong>TNG Merchant Account</strong> for deeplink to work</span>
+              </div>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link
+                href="/signup"
+                className="group flex items-center justify-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-xl shadow-blue-600/20 hover:shadow-blue-600/30 hover:-translate-y-1 transition-all"
+              >
+                Create Free Account
+                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
+                href="/demo"
+                className="flex items-center justify-center gap-2 bg-white hover:bg-blue-50 border border-blue-100 text-blue-700 px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-sm"
+              >
+                Try Cashier Demo
+              </Link>
+            </div>
+
+            {/* Merchant Account Notice */}
+            <div className="mt-6 flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-2xl">
+              <UserCheck size={20} className="text-amber-600 mt-0.5 shrink-0" />
+              <p className="text-sm text-amber-800 font-medium">
+                <strong>TNG Merchant Account required.</strong> The NFC deeplink only works if you have an official Touch 'n Go Merchant (Business) account so the app can pre-fill your payment details.
+              </p>
+            </div>
+          </div>
+
+          {/* Right: NFC Sticker Hero Image */}
+          <div className="relative flex items-center justify-center">
+            <div className="absolute inset-0 bg-blue-400/10 blur-[80px] rounded-full" />
+            <img
+              src="/nfc_sticker_hero.png"
+              alt="NFC Sticker being tapped at a Malaysian hawker stall"
+              className="relative z-10 w-full max-w-lg rounded-[2rem] shadow-2xl shadow-blue-900/20 object-cover border-4 border-white/60"
+            />
+            {/* Floating badge */}
+            <div className="absolute bottom-6 left-6 z-20 bg-white/95 backdrop-blur-md px-5 py-3 rounded-2xl shadow-xl border border-blue-50 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
+                <CheckCircle2 size={22} />
+              </div>
+              <div>
+                <div className="font-black text-slate-900 text-lg leading-none">Payment Received</div>
+                <div className="text-blue-600 font-bold text-sm mt-0.5">Touch 'n Go · RM 8.50</div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -205,7 +262,7 @@ export default function LandingPage() {
       <section id="features" className="relative z-10 py-24 bg-white border-y border-blue-50">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-4">
+            <h2 className="font-[family-name:var(--font-sora)] text-3xl md:text-4xl font-bold text-slate-900 mb-4">
               Built for Fast-Moving Stalls
             </h2>
           </div>
@@ -251,7 +308,7 @@ export default function LandingPage() {
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-200/50 text-blue-700 text-sm font-bold mb-6">
               <Bell size={16} /> Exclusive App
             </div>
-            <h2 className="text-3xl md:text-5xl font-black mb-6 text-slate-900 leading-tight">
+            <h2 className="font-[family-name:var(--font-sora)] text-3xl md:text-5xl font-bold mb-6 text-slate-900 leading-tight">
               Your Smart<br />Cashier Assistant.
             </h2>
             <p className="text-slate-600 text-lg mb-6 leading-relaxed font-medium">
@@ -307,7 +364,7 @@ export default function LandingPage() {
           <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-8">
             <Wifi size={32} />
           </div>
-          <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6">
+          <h2 className="font-[family-name:var(--font-sora)] text-3xl md:text-5xl font-bold text-slate-900 mb-6">
             Make Your Sticker Work For You
           </h2>
           <p className="text-lg text-slate-600 font-medium mb-12 max-w-2xl mx-auto leading-relaxed">
