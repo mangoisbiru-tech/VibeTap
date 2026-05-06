@@ -19,7 +19,8 @@ import ParticleBackground from "@/components/ParticleBackground";
 
 export default function SolutionsPage() {
   return (
-    <div className="min-h-screen bg-[#fdfaf7] text-[#2d1b10] font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-white text-slate-900 font-sans overflow-x-hidden">
+      <ParticleBackground />
 
       {/* Nav */}
       <nav className="relative z-50 flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
@@ -40,14 +41,14 @@ export default function SolutionsPage() {
 
       {/* Hero Header */}
       <section className="relative z-10 pt-20 pb-20 px-6 max-w-7xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#8b5e3c]/20 bg-[#f5e6d3] text-[#8b5e3c] text-sm font-bold mb-8">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-sm font-bold mb-8">
           <Zap size={16} /> Our Value: Why Merchants Upgrade to TapPay
         </div>
         <h1 className="text-5xl md:text-7xl font-black leading-[1.1] tracking-tight mb-8">
           The End of the <br />
-          <span className="text-[#8b5e3c]">Scanning Era.</span>
+          <span className="text-red-500">Scanning Era.</span>
         </h1>
-        <p className="text-xl text-[#5c4033] max-w-3xl mx-auto leading-relaxed">
+        <p className="text-xl text-slate-500 max-w-3xl mx-auto leading-relaxed">
           QR codes were a great start, but they are slow, error-prone, and frustrating. 
           TapPay moves your business into the <strong className="text-blue-600">Tap-to-Pay</strong> era.
         </p>
@@ -153,11 +154,11 @@ export default function SolutionsPage() {
       </section>
 
       {/* Target Audiences */}
-      <section className="py-24 bg-[#2d1b10] text-white">
+      <section className="py-24 bg-slate-900 text-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-black mb-4">Built for Every Business</h2>
-            <p className="text-orange-200/60">Whether you're a one-man stall or a multi-branch cafe.</p>
+            <p className="text-slate-400">Whether you're a one-man stall or a multi-branch cafe.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
@@ -168,13 +169,13 @@ export default function SolutionsPage() {
                 desc: "Handle long queues in seconds. No more asking customers to 're-scan' because of bad lighting." 
               },
               { 
-                icon: <UtensilsCrossed className="text-orange-400" />, 
+                icon: <UtensilsCrossed className="text-blue-400" />, 
                 title: "Cafes & Restaurants", 
                 benefit: "Table Management", 
                 desc: "Put stickers on every table. Customers can call for staff or pay for their exact table bill instantly." 
               },
               { 
-                icon: <Users className="text-blue-400" />, 
+                icon: <Users className="text-green-400" />, 
                 title: "Retail & Services", 
                 benefit: "Modern Image", 
                 desc: "Give your shop a premium feel. Replace ugly printed paper with a sleek, high-tech NFC badge." 
@@ -182,9 +183,9 @@ export default function SolutionsPage() {
             ].map((v, i) => (
               <div key={i} className="group p-8 rounded-[2.5rem] bg-white/5 border border-white/10 hover:bg-white/10 transition-all">
                 <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">{v.icon}</div>
-                <div className="text-xs font-black text-orange-300 uppercase tracking-widest mb-2">{v.benefit}</div>
+                <div className="text-xs font-black text-blue-400 uppercase tracking-widest mb-2">{v.benefit}</div>
                 <h3 className="text-2xl font-bold mb-4">{v.title}</h3>
-                <p className="text-orange-100/60 text-sm leading-relaxed">{v.desc}</p>
+                <p className="text-slate-400 text-sm leading-relaxed">{v.desc}</p>
               </div>
             ))}
           </div>
