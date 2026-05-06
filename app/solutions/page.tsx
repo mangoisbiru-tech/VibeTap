@@ -42,7 +42,7 @@ export default function SolutionsPage() {
       {/* Hero Header */}
       <section className="relative z-10 pt-20 pb-20 px-6 max-w-7xl mx-auto text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-sm font-bold mb-8">
-          <Zap size={16} /> Why Malaysian Merchants Love TapPay
+          <Zap size={16} /> Our Value: Why Merchants Upgrade to TapPay
         </div>
         <h1 className="text-5xl md:text-7xl font-black leading-[1.1] tracking-tight mb-8">
           The End of the <br />

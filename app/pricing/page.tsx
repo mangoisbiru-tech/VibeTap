@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Zap, CheckCircle2, Star, Package, Smartphone, Tag, Mail, ArrowRight, Sparkles, Wifi, UtensilsCrossed, Bell, Lightbulb, ShieldCheck, X } from "lucide-react";
+import { Zap, CheckCircle2, Star, Package, Smartphone, Tag, Mail, ArrowRight, Sparkles, Wifi, UtensilsCrossed, Bell, Lightbulb, ShieldCheck, X, Store } from "lucide-react";
 
 const Check = ({ c = "text-blue-500" }: { c?: string }) => <CheckCircle2 size={16} className={`${c} mt-0.5 shrink-0`} />;
 
@@ -36,7 +36,7 @@ export default function PricingPage() {
         </Link>
         <div className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
           <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
-          <Link href="/solutions" className="hover:text-blue-600 transition-colors">Why TapPay</Link>
+          <Link href="/solutions" className="hover:text-blue-600 transition-colors">Our Value</Link>
           <a href="#packs" className="hover:text-blue-600 transition-colors">Packages</a>
           <a href="#saas" className="hover:text-blue-600 transition-colors">SaaS Plans</a>
         </div>

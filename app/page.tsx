@@ -103,7 +103,7 @@ export default function LandingPage() {
           </span>
         </div>
         <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-slate-600">
-          <Link href="/solutions" className="hover:text-blue-600 transition-colors">Why TapPay</Link>
+          <Link href="/solutions" className="hover:text-blue-600 transition-colors">Our Value</Link>
           <a href="#how" className="hover:text-blue-600 transition-colors">How It Works</a>
           <a href="#features" className="hover:text-blue-600 transition-colors">Features</a>
           <Link href="/pricing" className="hover:text-blue-600 transition-colors">Pricing</Link>
