@@ -37,6 +37,7 @@ export default function SolutionsPage() {
         <Link href="/signup" className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-blue-500/20">
           Get Started
         </Link>
+        </div>
       </nav>
 
       {/* Hero Header */}
@@ -87,7 +88,7 @@ export default function SolutionsPage() {
           ].map((item, i) => (
             <div key={i} className={`group p-10 rounded-sm ${item.color} ${item.color.split(' ')[1]} flex flex-col gap-6 hover:scale-105 hover:rotate-0 transition-all duration-300 shadow-xl relative`}>
               {/* Sticky Tape Effect */}
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-white/40 backdrop-blur-sm -rotate-2 border-x border-white/20" />
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-slate-200 -rotate-2 border-x-4 border-slate-300 shadow-sm" />
               <div className="w-14 h-14 rounded-full bg-white/60 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">{item.icon}</div>
               <div>
                 <h3 className="text-2xl font-black mb-4 text-amber-900 leading-tight">{item.scenario}</h3>
