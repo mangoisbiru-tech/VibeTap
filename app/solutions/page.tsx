@@ -64,38 +64,40 @@ export default function SolutionsPage() {
         <div className="grid lg:grid-cols-3 gap-8">
           {[
             {
-              icon: <Clock className="text-[#8b5e3c]" />,
+              icon: <Clock className="text-amber-700" />,
               scenario: "The 'App Hunt' Stress",
               frustration: "It's your turn to pay. You're scrolling for the e-wallet app, it opens with a big ad, then you have to find the 'Scan' button while everyone behind you waits...",
               relief: "Just tap the NFC sticker. TNG opens instantly. Done in 1 second.",
-              color: "border-[#8b5e3c] bg-[#f5e6d3]"
+              color: "bg-yellow-200 rotate-1 shadow-yellow-200/50"
             },
             {
-              icon: <Users className="text-[#8b5e3c]" />,
+              icon: <Users className="text-amber-700" />,
               scenario: "The Counter Queue",
               frustration: "You've finished your meal, but you have to walk to the counter, stand in line, and wait for the cashier just to scan a QR code.",
               relief: "Pay right at your table. No queuing, no walking. Total freedom.",
-              color: "border-[#8b5e3c] bg-[#f5e6d3]"
+              color: "bg-yellow-100 -rotate-1 shadow-yellow-100/50"
             },
             {
-              icon: <ShieldCheck className="text-[#8b5e3c]" />,
+              icon: <ShieldCheck className="text-amber-700" />,
               scenario: "The Dirty Button",
               frustration: "You need help or the bill, but the physical 'Call Waiter' button on the table looks greasy and unhygienic. You don't want to touch it.",
               relief: "NFC is 100% contactless. Tap with your phone to call for service or your bill.",
-              color: "border-[#8b5e3c] bg-[#f5e6d3]"
+              color: "bg-yellow-200 rotate-1 shadow-yellow-200/50"
             }
           ].map((item, i) => (
-            <div key={i} className={`group p-8 rounded-[2.5rem] border ${item.color} flex flex-col gap-6 hover:-translate-y-2 transition-all duration-300 shadow-sm hover:shadow-xl`}>
-              <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">{item.icon}</div>
+            <div key={i} className={`group p-10 rounded-sm ${item.color} ${item.color.split(' ')[1]} flex flex-col gap-6 hover:scale-105 hover:rotate-0 transition-all duration-300 shadow-xl relative`}>
+              {/* Sticky Tape Effect */}
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-white/40 backdrop-blur-sm -rotate-2 border-x border-white/20" />
+              <div className="w-14 h-14 rounded-full bg-white/60 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">{item.icon}</div>
               <div>
-                <h3 className="text-2xl font-black mb-4 text-[#2d1b10]">{item.scenario}</h3>
+                <h3 className="text-2xl font-black mb-4 text-amber-900 leading-tight">{item.scenario}</h3>
                 <div className="space-y-4">
-                  <div className="flex gap-3 text-[#5c4033] text-sm leading-relaxed">
-                    <X size={18} className="text-red-800 shrink-0 mt-0.5" />
-                    <p><span className="font-bold text-[#2d1b10]">Frustration:</span> {item.frustration}</p>
+                  <div className="flex gap-3 text-amber-800 text-sm leading-relaxed">
+                    <X size={18} className="text-red-600 shrink-0 mt-0.5" />
+                    <p><span className="font-bold">Frustration:</span> {item.frustration}</p>
                   </div>
-                  <div className="flex gap-3 text-blue-800 text-sm leading-relaxed">
-                    <CheckCircle2 size={18} className="text-blue-700 shrink-0 mt-0.5" />
+                  <div className="flex gap-3 text-blue-800 text-sm leading-relaxed bg-white/40 p-3 rounded-lg border border-white/40">
+                    <CheckCircle2 size={18} className="text-blue-600 shrink-0 mt-0.5" />
                     <p><span className="font-bold">TapPay Relief:</span> {item.relief}</p>
                   </div>
                 </div>
