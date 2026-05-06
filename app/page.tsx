@@ -219,8 +219,7 @@ export default function LandingPage() {
               <li className="flex gap-3"><span className="text-slate-400">2.</span> Searches for the Touch 'n Go app</li>
               <li className="flex gap-3"><span className="text-slate-400">3.</span> Waits for a 5-second advertisement</li>
               <li className="flex gap-3"><span className="text-slate-400">4.</span> Scans a crumpled paper QR code</li>
-              <li className="flex gap-3"><span className="text-slate-400">5.</span> Types the amount manually</li>
-              <li className="flex gap-3"><span className="text-slate-400">6.</span> Anxiously shows the screen to the boss while holding up the line</li>
+              <li className="flex gap-3"><span className="text-slate-400">5.</span> Anxiously shows the screen to the boss while holding up the line</li>
             </ul>
           </div>
 

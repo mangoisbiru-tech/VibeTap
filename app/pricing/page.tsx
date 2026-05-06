@@ -58,7 +58,7 @@ export default function PricingPage() {
       <section id="packs" className="py-16 px-6 max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-black text-slate-900 mb-3">Starter Kits</h2>
-          <p className="text-slate-500 font-medium">Hardware + Software bundled. Pay once, use forever.</p>
+          <p className="text-slate-500 font-medium">One-Time Hardware Badge + Monthly SaaS bundled.</p>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
 
@@ -70,7 +70,7 @@ export default function PricingPage() {
             </div>
             <div className="mb-6">
               <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 25</span><span className="text-slate-400 mb-2">one-time</span></div>
-              <PromoBox msg="🎉 Includes Plan 1 SaaS plan" sub="1st month free + 1 bonus month. Then RM 10/month for SaaS ONLY." />
+              <PromoBox msg="🎉 Includes Plan 1 SaaS plan" sub="1st month free + 1 bonus month. Then RM 12/month for SaaS ONLY." />
             </div>
             <ul className="space-y-3 flex-1 mb-8">
               {liteKitFeatures.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
@@ -88,7 +88,7 @@ export default function PricingPage() {
             </div>
             <div className="mb-6">
               <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 35</span><span className="text-slate-400 mb-2">one-time</span></div>
-              <PromoBox msg="🎉 Includes Plan 1 SaaS plan" sub="1st month free + 1 bonus month. Then RM 15/month for SaaS ONLY.." />
+              <PromoBox msg="🎉 Includes Plan 1 SaaS plan" sub="1st month free + 1 bonus month. Then RM 12/month for SaaS ONLY." />
             </div>
             <ul className="space-y-3 flex-1 mb-8">
               {starterFeatures.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
@@ -133,7 +133,7 @@ export default function PricingPage() {
               <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Lite</p>
               <h3 className="text-2xl font-black mb-1">Lite Plan</h3>
               <p className="text-slate-500 text-sm mb-6">Just getting started</p>
-              <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black">RM 10</span><span className="text-slate-400 mb-1">/month</span></div>
+              <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black">RM 12</span><span className="text-slate-400 mb-1">/month</span></div>
               <ul className="space-y-3 flex-1 mb-8">
                 {liteMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
               </ul>
@@ -144,7 +144,7 @@ export default function PricingPage() {
               <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Plan 1</p>
               <h3 className="text-2xl font-black mb-1">Basic</h3>
               <p className="text-slate-500 text-sm mb-6">Solo stall owner</p>
-              <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black">RM 15</span><span className="text-slate-400 mb-1">/month</span></div>
+              <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black">RM 12</span><span className="text-slate-400 mb-1">/month</span></div>
               <ul className="space-y-3 flex-1 mb-8">
                 {basicMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
               </ul>
