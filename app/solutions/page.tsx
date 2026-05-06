@@ -68,21 +68,21 @@ export default function SolutionsPage() {
               scenario: "The 'App Hunt' Stress",
               frustration: "It's your turn to pay. You're scrolling for the e-wallet app, it opens with a big ad, then you have to find the 'Scan' button while everyone behind you waits...",
               relief: "Just tap the NFC sticker. TNG opens instantly. Done in 1 second.",
-              color: "border-[#8b5e3c]/20 bg-[#f5e6d3]/30"
+              color: "border-[#8b5e3c]/30 bg-[#f5e6d3]"
             },
             {
               icon: <Users className="text-[#8b5e3c]" />,
               scenario: "The Counter Queue",
               frustration: "You've finished your meal, but you have to walk to the counter, stand in line, and wait for the cashier just to scan a QR code.",
               relief: "Pay right at your table. No queuing, no walking. Total freedom.",
-              color: "border-[#8b5e3c]/20 bg-[#f5e6d3]/30"
+              color: "border-[#8b5e3c]/30 bg-[#f5e6d3]"
             },
             {
               icon: <ShieldCheck className="text-[#8b5e3c]" />,
               scenario: "The Dirty Button",
               frustration: "You need help or the bill, but the physical 'Call Waiter' button on the table looks greasy and unhygienic. You don't want to touch it.",
               relief: "NFC is 100% contactless. Tap with your phone to call for service or your bill.",
-              color: "border-[#8b5e3c]/20 bg-[#f5e6d3]/30"
+              color: "border-[#8b5e3c]/30 bg-[#f5e6d3]"
             }
           ].map((item, i) => (
             <div key={i} className={`group p-8 rounded-[2.5rem] border ${item.color} flex flex-col gap-6 hover:-translate-y-2 transition-all duration-300 shadow-sm hover:shadow-xl`}>
@@ -181,7 +181,7 @@ export default function SolutionsPage() {
                 desc: "Give your shop a premium feel. Replace ugly printed paper with a sleek, high-tech NFC badge." 
               }
             ].map((v, i) => (
-              <div key={i} className="group p-8 rounded-[2.5rem] bg-white/5 border border-white/10 hover:bg-white/10 transition-all">
+              <div key={i} className="group p-8 rounded-[2.5rem] bg-slate-800 border border-slate-700 hover:bg-slate-750 transition-all shadow-lg">
                 <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">{v.icon}</div>
                 <div className="text-xs font-black text-blue-400 uppercase tracking-widest mb-2">{v.benefit}</div>
                 <h3 className="text-2xl font-bold mb-4">{v.title}</h3>
