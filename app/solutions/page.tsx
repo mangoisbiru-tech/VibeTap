@@ -139,8 +139,8 @@ export default function SolutionsPage() {
               <ul className="space-y-8">
                 {[
                   { icon: <Nfc />, title: "Instant NFC Deep-linking", desc: "Customer taps sticker. TNG opens in 0.5s. No ads. No scanning." },
-                  { icon: <Smartphone />, title: "Instant Audio Alerts", desc: "Your Android phone announces the payment amount out loud the moment they pay." },
-                  { icon: <ShieldCheck />, title: "Real-time Verification", desc: "Check your Payment Inbox instantly to confirm the success of any transaction." }
+                  { icon: <Smartphone />, title: "Instant Audio Alerts", desc: "Your Android phone announces the payment amount out loud the moment they pay via TNG eWallet." },
+                  { icon: <ShieldCheck />, title: "Real-time Verification", desc: "Check your Payment Inbox instantly to confirm the success of any TNG eWallet transaction." }
                 ].map((v, i) => (
                   <li key={i} className="flex gap-5">
                     <div className="w-12 h-12 rounded-2xl bg-[#f5e6d3] text-[#8b5e3c] flex items-center justify-center shrink-0 border border-[#8b5e3c]/20">{v.icon}</div>
@@ -151,6 +151,71 @@ export default function SolutionsPage() {
                   </li>
                 ))}
               </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How it Works - The Loop */}
+      <section className="py-24 bg-white border-y border-slate-100">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-black mb-4">Start in 3 Simple Steps</h2>
+            <p className="text-slate-500">No complicated setup. Just paste and play.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-12">
+            {[
+              { 
+                step: "01", 
+                title: "Order Your NFC Kit", 
+                desc: "Pick a Lite, Starter, or Pro pack. We'll mail your high-quality, weather-proof NFC stickers to your shop." 
+              },
+              { 
+                step: "02", 
+                title: "Install the Listener App", 
+                desc: "Download our app on any Android phone. Login to your TapPay dashboard and link your shop profile." 
+              },
+              { 
+                step: "03", 
+                title: "Start Tapping", 
+                desc: "Paste stickers on your tables. When customers tap and pay via TNG eWallet, your phone announces it out loud!" 
+              }
+            ].map((v, i) => (
+              <div key={i} className="relative p-8 rounded-3xl bg-slate-50 border border-slate-100 group hover:bg-blue-50 hover:border-blue-100 transition-all">
+                <div className="text-5xl font-black text-slate-200 mb-6 group-hover:text-blue-200 transition-colors">{v.step}</div>
+                <h3 className="text-xl font-bold mb-4">{v.title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{v.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Founder Section */}
+      <section className="py-24 bg-slate-50">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="bg-white rounded-[3rem] p-12 md:p-16 border border-slate-200 shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16" />
+            <div className="relative z-10">
+              <h2 className="text-3xl font-black mb-8 italic">"NFC is the future of Malaysia's payment culture."</h2>
+              <div className="space-y-6 text-slate-600 leading-relaxed text-lg">
+                <p>
+                  Hi, I'm <span className="text-blue-600 font-bold">YK</span>. As a fellow Malaysian, I've always been fascinated by how NFC technology could simplify our lives. 
+                </p>
+                <p>
+                  QR codes served us well during the pandemic, but it's time to move to something even more seamless. I built TapPay to bring a faster, cooler, and more professional payment experience to every local merchant—from the neighborhood Mamak to the busiest cafes.
+                </p>
+                <p>
+                  Join me in building a truly contactless Malaysia. Let's start with TapPay.
+                </p>
+              </div>
+              <div className="mt-10 pt-10 border-t border-slate-100 flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">YK</div>
+                <div>
+                  <div className="font-black text-slate-900">YK</div>
+                  <div className="text-sm text-slate-500">Founder of TapPay Malaysia</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
