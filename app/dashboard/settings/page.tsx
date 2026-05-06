@@ -27,6 +27,7 @@ import {
   Check,
   Nfc,
   Edit2,
+  Lock,
 } from "lucide-react";
 
 type MenuItem = { name: string; price: number };
@@ -62,6 +63,7 @@ const PLANS = [
 export default function SettingsPage() {
   const [uid, setUid] = useState<string | null>(null);
   const [slug, setSlug] = useState<string | null>(null);
+  const [planTier, setPlanTier] = useState<"free" | "lite" | "basic" | "pro">("free");
   const [name, setName] = useState("");
   const [iconUrl, setIconUrl] = useState("");
   const [tngPaymentUrl, setTngPaymentUrl] = useState("");
@@ -93,7 +95,16 @@ export default function SettingsPage() {
           setSlug(d.slug || null);
           setTngPaymentUrl(d.tngPaymentUrl || d.paymentUrl || "");
           setIsActive(d.isActive ?? true);
-          setPlan(d.plan || "plan1");
+          setPlanTier(d.planTier || "free");
+          
+          const userTier = d.planTier || "free";
+          let currentPlan = d.plan || "plan1";
+          
+          // Auto-downgrade selected plan if their tier doesn't support it
+          if (currentPlan === "plan3" && userTier !== "pro") currentPlan = "plan1";
+          if (currentPlan === "plan2" && (userTier === "free" || userTier === "lite")) currentPlan = "plan1";
+          
+          setPlan(currentPlan);
           setPlan3Mode(d.plan3Mode || "summing_up");
           setMenuItems(d.menuItems || []);
         }
@@ -296,24 +307,48 @@ export default function SettingsPage() {
       <div className="glass-card rounded-3xl p-6 space-y-6">
         <h2 className="text-sm font-black text-slate-400 uppercase tracking-[0.15em]">Choose Your Plan</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {PLANS.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => setPlan(p.id)}
-              className={`p-5 rounded-3xl border-2 text-left transition-all ${
-                plan === p.id
-                  ? "bg-blue-50 border-blue-500 shadow-md shadow-blue-500/10"
-                  : "bg-slate-50/50 border-transparent hover:bg-slate-50"
-              }`}
-            >
-              <p className={`font-black text-sm tracking-tight ${plan === p.id ? "text-blue-600" : "text-slate-900"}`}>
-                {p.label}
-              </p>
-              <p className={`text-[10px] mt-1.5 leading-snug font-bold ${plan === p.id ? "text-blue-400" : "text-slate-400"}`}>
-                {p.desc}
-              </p>
-            </button>
-          ))}
+          {PLANS.map((p) => {
+            const isLocked = 
+              (p.id === "plan2" && (planTier === "free" || planTier === "lite")) ||
+              (p.id === "plan3" && planTier !== "pro");
+
+            return (
+              <button
+                key={p.id}
+                onClick={() => {
+                  if (isLocked) {
+                    alert("This plan requires a higher SaaS tier upgrade.");
+                    return;
+                  }
+                  setPlan(p.id);
+                }}
+                className={`relative p-5 rounded-3xl border-2 text-left transition-all overflow-hidden ${
+                  plan === p.id
+                    ? "bg-blue-50 border-blue-500 shadow-md shadow-blue-500/10"
+                    : isLocked
+                    ? "bg-slate-50 border-slate-200 opacity-60 cursor-not-allowed"
+                    : "bg-slate-50/50 border-transparent hover:bg-slate-50"
+                }`}
+              >
+                {isLocked && (
+                  <div className="absolute top-4 right-4 text-slate-400">
+                    <Lock size={16} />
+                  </div>
+                )}
+                <p className={`font-black text-sm tracking-tight ${plan === p.id ? "text-blue-600" : isLocked ? "text-slate-500" : "text-slate-900"}`}>
+                  {p.label}
+                </p>
+                <p className={`text-[10px] mt-1.5 leading-snug font-bold ${plan === p.id ? "text-blue-400" : "text-slate-400"}`}>
+                  {p.desc}
+                </p>
+                {isLocked && (
+                  <div className="mt-3 inline-flex items-center gap-1 text-[9px] font-black uppercase text-orange-500 bg-orange-50 px-2 py-1 rounded">
+                    Requires Upgrade
+                  </div>
+                )}
+              </button>
+            );
+          })}
         </div>
 
         {plan === "plan3" && (
