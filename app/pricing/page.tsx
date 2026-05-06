@@ -4,13 +4,13 @@ import { Zap, CheckCircle2, Star, Package, Smartphone, Tag, Mail, ArrowRight, Sp
 
 const Check = ({ c = "text-blue-500" }: { c?: string }) => <CheckCircle2 size={16} className={`${c} mt-0.5 shrink-0`} />;
 
-const liteKitFeatures = ["2x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Lifetime Lite Account"];
-const starterFeatures = ["5x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Cheaper price for SaaS Listening App", "Lifetime Starter Account"];
-const proFeatures = ["12x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Plan 2: Table Management & Amount Push In", "Plan 3: Call for Staff & Call for Bill", "Android Listener App (Auto Sync with email)", "Cheaper price for SaaS Listening App", "Lifetime Pro Account"];
+const liteKitFeatures = ["2x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Lite Account Badge"];
+const starterFeatures = ["5x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Cheaper price for the add-on: Listening App", "Starter Account Badge"];
+const proFeatures = ["12x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Plan 2: Table Management & Amount Push In", "Plan 3: Call for Staff & Call for Bill", "Android Listener App (Auto Sync with email)", "Cheaper price for the add-on: Listening App", "Pro Account Badge"];
 
 const liteMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log"];
-const basicMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log", "Cheaper price for SaaS Listening App"];
-const advMonthly = ["Everything in Basic", "Table Management & Amount Push In", "Call for Staff & Call for Bill", "Call for Bills Button", "Cheaper price for SaaS Listening App"];
+const basicMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log", "Cheaper price for the add-on: Listening App"];
+const advMonthly = ["Everything in Basic", "Table Management & Amount Push In", "Call for Staff & Call for Bill", "Call for Bills Button", "Cheaper price for the add-on: Listening App"];
 
 function PromoBox({ msg, sub, dark = false }: { msg: string; sub: string; dark?: boolean }) {
   return dark ? (
@@ -58,7 +58,7 @@ export default function PricingPage() {
       <section id="packs" className="py-16 px-6 max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-black text-slate-900 mb-3">Starter Kits</h2>
-          <p className="text-slate-500 font-medium">One-Time Hardware Badge + Monthly SaaS bundled.</p>
+          <p className="text-slate-500 font-medium">Badge acc + Monthly SAAS bundle</p>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
 
@@ -109,7 +109,7 @@ export default function PricingPage() {
             </div>
             <div className="mb-6">
               <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 95</span><span className="text-blue-200 mb-2">one-time</span></div>
-              <PromoBox dark msg="🎉 Includes Plan 1,2,3 SaaS + App" sub="1st month free + 1 bonus month. Then RM 35/month + RM 7/month App for Saas Only." />
+              <PromoBox dark msg="🎉 Includes Plan 1,2,3 SaaS + App" sub="1st month free + 1 bonus month. Then RM 32/month for SaaS with RM 7/month for the Add-on App." />
             </div>
             <ul className="space-y-3 flex-1 mb-8">
               {proFeatures.map(f => <li key={f} className="flex items-start gap-3 font-medium text-sm"><Check c="text-yellow-300" />{f}</li>)}
@@ -130,8 +130,8 @@ export default function PricingPage() {
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="bg-slate-50 rounded-3xl border border-slate-200 p-8 flex flex-col">
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Lite</p>
-              <h3 className="text-2xl font-black mb-1">Lite Plan</h3>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Plan 1</p>
+              <h3 className="text-2xl font-black mb-1">Lite</h3>
               <p className="text-slate-500 text-sm mb-6">Just getting started</p>
               <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black">RM 12</span><span className="text-slate-400 mb-1">/month</span></div>
               <ul className="space-y-3 flex-1 mb-8">
@@ -155,7 +155,7 @@ export default function PricingPage() {
               <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">Plan 1, 2 & 3</p>
               <h3 className="text-2xl font-black mb-1">Advanced</h3>
               <p className="text-slate-500 text-sm mb-6">Cafes & restaurants</p>
-              <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black text-blue-700">RM 35</span><span className="text-slate-400 mb-1">/month</span></div>
+              <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black text-blue-700">RM 32</span><span className="text-slate-400 mb-1">/month</span></div>
               <ul className="space-y-3 flex-1 mb-8">
                 {advMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check c="text-blue-600" />{f}</li>)}
               </ul>
