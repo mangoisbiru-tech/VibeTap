@@ -195,14 +195,7 @@ export default function DashboardPage() {
   }, []);
 
   const mergedDailyTaps: Record<string, number> = { ...(merchant?.dailyTaps || {}) };
-  historyEntries.forEach(entry => {
-    if (entry.createdAt?.toDate) {
-      const day = entry.createdAt.toDate().toISOString().slice(0, 10);
-      mergedDailyTaps[day] = Math.max(mergedDailyTaps[day] || 0, (mergedDailyTaps[day] || 0) + 0);
-    }
-  });
 
-  // NFC Taps computed values
   const tapRange = getRange(tapPeriod, tapCustomStart, tapCustomEnd);
   const tapDays = Object.entries(mergedDailyTaps).filter(([k]) => {
     const d = new Date(k + "T00:00:00"); return d >= tapRange.start && d <= tapRange.end;
@@ -210,9 +203,8 @@ export default function DashboardPage() {
   const tapCount = tapDays.reduce((s, [, v]) => s + v, 0);
   const todayKey = new Date().toISOString().slice(0, 10);
   const todayTaps = mergedDailyTaps[todayKey] || 0;
-  const allTimeTaps = Math.max(merchant?.tapCount || 0, historyEntries.length);
+  const allTimeTaps = merchant?.tapCount || 0;
 
-  // Revenue computed values
   const revRange = getRange(revPeriod, revCustomStart, revCustomEnd);
   const revEntries = historyEntries.filter(e => e.createdAt?.toDate && e.createdAt.toDate() >= revRange.start && e.createdAt.toDate() <= revRange.end);
   const revTotal = revEntries.filter(e => e.status === "paid").reduce((s, e) => s + e.amount, 0);
