@@ -34,26 +34,26 @@ function FilterBar({ period, onPeriod, customStart, customEnd, onCustomStart, on
   ];
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-1.5 p-1 bg-white/30 backdrop-blur-md rounded-2xl border border-white/40">
         {tabs.map(t => (
           <button key={t.key} onClick={() => onPeriod(t.key)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${period === t.key ? "bg-blue-600 text-white shadow-md shadow-blue-500/20" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}>
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${period === t.key ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30" : "text-slate-500 hover:bg-white/40"}`}>
             {t.label}
           </button>
         ))}
       </div>
       {period === "custom" && (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 bg-white/30 backdrop-blur-md px-2 py-1 rounded-2xl border border-white/40">
           <input type="date" value={customStart} onChange={e => onCustomStart(e.target.value)}
-            className="text-xs border border-slate-200 rounded-xl px-3 py-1.5 font-medium text-slate-700 focus:outline-none focus:border-blue-400" />
-          <span className="text-slate-400 text-xs font-bold">to</span>
+            className="text-xs bg-transparent rounded-xl px-2 py-1 font-medium text-slate-700 focus:outline-none" />
+          <span className="text-slate-400 text-[10px] font-bold">TO</span>
           <input type="date" value={customEnd} onChange={e => onCustomEnd(e.target.value)}
-            className="text-xs border border-slate-200 rounded-xl px-3 py-1.5 font-medium text-slate-700 focus:outline-none focus:border-blue-400" />
+            className="text-xs bg-transparent rounded-xl px-2 py-1 font-medium text-slate-700 focus:outline-none" />
         </div>
       )}
-      <button onClick={onClear}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-red-50 text-red-500 hover:bg-red-100 border border-red-100 transition-all ml-auto">
-        <X size={12} /> Clear
+      <button onClick={() => { console.log("Clearing filters..."); onClear(); }}
+        className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-red-500/10 text-red-600 hover:bg-red-500/20 active:scale-95 border border-red-500/20 backdrop-blur-sm transition-all ml-auto">
+        <X size={12} strokeWidth={3} /> Clear
       </button>
     </div>
   );
@@ -61,9 +61,9 @@ function FilterBar({ period, onPeriod, customStart, customEnd, onCustomStart, on
 
 function StatCard({ icon, label, value, sub, color }: { icon: React.ReactNode; label: string; value: string | number; sub?: string; color: string; }) {
   return (
-    <div className="glass-card rounded-[2.5rem] p-8 transition-all hover:translate-y-[-2px] hover:shadow-xl border-2 border-slate-100 hover:border-blue-500">
+    <div className="glass-card rounded-[2.5rem] p-8 transition-all hover:translate-y-[-2px] hover:shadow-2xl border-none">
       <div className="flex items-start justify-between mb-6">
-        <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg" style={{ background: color, color: "#fff" }}>{icon}</div>
+        <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-xl backdrop-blur-md" style={{ background: `${color}33`, color: color }}>{icon}</div>
       </div>
       <div className="text-4xl font-extrabold text-slate-900 tracking-tighter mb-1">{value}</div>
       <div className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em]">{label}</div>
