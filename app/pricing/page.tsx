@@ -260,7 +260,8 @@ export default function PricingPage() {
                 ["Table Mgmt & Amount Push", "—", "—", "✓"],
                 ["Call for Staff & Bill", "—", "—", "✓"],
                 ["Listener App Add-on", "+RM12/mo", "+RM10/mo", "+RM7/mo"],
-                ["Lifetime Account", "Lite", "Starter", "Pro"],
+                ["Badge Acc", "Lite", "Starter", "Pro"],
+                ["Monthly SaaS", "RM 12/mo", "RM 12/mo", "RM 32/mo"],
               ].map(([feature, ...cols], i) => (
                 <tr key={feature} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
                   <td className="px-5 py-3.5 text-slate-700 font-semibold rounded-l-xl">{feature}</td>
@@ -274,6 +275,9 @@ export default function PricingPage() {
             </tbody>
           </table>
         </div>
+        <p className="mt-4 text-center text-sm text-slate-500 font-medium italic">
+          * if want to upgrade badge, please contact us!
+        </p>
       </section>
 
       {/* CTA */}
