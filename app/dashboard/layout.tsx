@@ -119,7 +119,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] selection:bg-blue-100 selection:text-blue-900">
+    <div className="min-h-screen bg-slate-50 text-slate-900 selection:bg-blue-100 selection:text-blue-900 relative overflow-hidden">
+      {/* Background Decor */}
+      <div className="fixed top-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-400/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="fixed bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none" />
+      <div className="fixed top-[40%] left-[20%] w-[30%] h-[30%] bg-cyan-300/10 blur-[100px] rounded-full pointer-events-none" />
       {/* Sidebar — desktop */}
       <aside className="hidden md:flex fixed left-0 top-0 h-full w-60 flex-col glass-panel border-r border-slate-200/50 z-40">
         {/* Logo */}

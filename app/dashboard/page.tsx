@@ -34,26 +34,26 @@ function FilterBar({ period, onPeriod, customStart, customEnd, onCustomStart, on
   ];
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <div className="flex flex-wrap gap-1.5 p-1 bg-white/30 backdrop-blur-md rounded-2xl border border-white/40">
+      <div className="flex flex-wrap gap-1.5 p-1 bg-white/20 backdrop-blur-xl rounded-2xl border border-white/30">
         {tabs.map(t => (
           <button key={t.key} onClick={() => onPeriod(t.key)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${period === t.key ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30" : "text-slate-500 hover:bg-white/40"}`}>
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${period === t.key ? "bg-blue-600 text-white shadow-xl shadow-blue-500/40" : "text-slate-600 hover:bg-white/30"}`}>
             {t.label}
           </button>
         ))}
       </div>
       {period === "custom" && (
-        <div className="flex items-center gap-2 bg-white/30 backdrop-blur-md px-2 py-1 rounded-2xl border border-white/40">
+        <div className="flex items-center gap-2 bg-white/20 backdrop-blur-xl px-2 py-1 rounded-2xl border border-white/30">
           <input type="date" value={customStart} onChange={e => onCustomStart(e.target.value)}
-            className="text-xs bg-transparent rounded-xl px-2 py-1 font-medium text-slate-700 focus:outline-none" />
-          <span className="text-slate-400 text-[10px] font-bold">TO</span>
+            className="text-xs bg-transparent rounded-xl px-2 py-1 font-semibold text-slate-800 focus:outline-none" />
+          <span className="text-slate-400 text-[10px] font-black tracking-tighter">TO</span>
           <input type="date" value={customEnd} onChange={e => onCustomEnd(e.target.value)}
-            className="text-xs bg-transparent rounded-xl px-2 py-1 font-medium text-slate-700 focus:outline-none" />
+            className="text-xs bg-transparent rounded-xl px-2 py-1 font-semibold text-slate-800 focus:outline-none" />
         </div>
       )}
-      <button onClick={() => { console.log("Clearing filters..."); onClear(); }}
-        className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-red-500/10 text-red-600 hover:bg-red-500/20 active:scale-95 border border-red-500/20 backdrop-blur-sm transition-all ml-auto">
-        <X size={12} strokeWidth={3} /> Clear
+      <button onClick={onClear}
+        className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-white/10 text-red-500 hover:bg-red-500 hover:text-white active:scale-90 border border-white/20 backdrop-blur-md transition-all ml-auto group">
+        <X size={12} strokeWidth={3} className="group-hover:rotate-90 transition-transform" /> Clear
       </button>
     </div>
   );
