@@ -6,7 +6,7 @@ const Check = ({ c = "text-blue-500" }: { c?: string }) => <CheckCircle2 size={1
 
 const liteKitFeatures = ["2x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Lite Account Badge"];
 const starterFeatures = ["5x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Cheaper price for the add-on: Listening App", "Starter Account Badge"];
-const proFeatures = ["12x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Plan 2: Table Management & Amount Push In", "Plan 3: Call for Staff & Call for Bill", "Android Listener App (Auto Sync with email)", "Cheaper price for the add-on: Listening App", "Pro Account Badge"];
+const proFeatures = ["12x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Plan 2: Table Tracking & Instant Sound Alerts", "Plan 3: Call for Waiter & Bill Request", "Android Listener App (Connects with Phone)", "Cheaper price for the add-on: Listening App", "Pro Account Badge"];
 
 const liteMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log"];
 const basicMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log", "Cheaper price for the add-on: Listening App"];
@@ -84,7 +84,7 @@ export default function PricingPage() {
                 <CheckCircle2 size={18} className="text-yellow-400 mt-0.5 shrink-0" /> "Just tap your phone here." (TNG opens in 0.5s)
               </div>
               <div className="flex items-start gap-3 text-blue-50 text-sm font-medium">
-                <CheckCircle2 size={18} className="text-yellow-400 mt-0.5 shrink-0" /> Amount is pre-filled. Zero human error.
+                <CheckCircle2 size={18} className="text-yellow-400 mt-0.5 shrink-0" /> Instant sound confirmation on your phone.
               </div>
               <div className="flex items-start gap-3 text-blue-50 text-sm font-medium">
                 <CheckCircle2 size={18} className="text-yellow-400 mt-0.5 shrink-0" /> Sound alerts announce "Received RM 14!" instantly.
@@ -105,7 +105,7 @@ export default function PricingPage() {
           <div className="grid md:grid-cols-3 gap-12">
             {[
               { icon: <Zap className="text-yellow-400" />, title: "3x Faster Checkout", desc: "Reduce peak-hour queues by eliminating the 'open app -> scan -> wait' friction. Tap and pay instantly." },
-              { icon: <ShieldCheck className="text-blue-400" />, title: "Stop Payment Fraud", desc: "Customers can't fake screenshots or type wrong amounts when you use our auto-filled NFC links." },
+              { icon: <ShieldCheck className="text-blue-400" />, title: "Instant Verification", desc: "Your phone announces the payment amount out loud. No more squinting at the customer's phone screen." },
               { icon: <Store className="text-green-400" />, title: "Premium Brand Image", desc: "A sleek NFC sticker looks 10x more professional than a faded, crumpled paper QR code on your counter." }
             ].map(v => (
               <div key={v.title} className="flex flex-col items-center text-center">
@@ -321,8 +321,8 @@ export default function PricingPage() {
               {[
                 ["NFC Stickers", "2x", "5x", "12x"],
                 ["Payment Inbox", "✓", "✓", "✓"],
-                ["Table Mgmt & Amount Push", "—", "—", "✓"],
-                ["Call for Staff & Bill", "—", "—", "✓"],
+                ["Table Tracking & Sound Alerts", "—", "—", "✓"],
+                ["Call for Waiter & Bill Request", "—", "—", "✓"],
                 ["Listener App Add-on", "+RM12/mo", "+RM10/mo", "+RM7/mo"],
                 ["Included Plan", "Plan 1", "Plan 1", "Plan 1, 2, 3"],
                 ["Badge Acc", "Lite", "Starter", "Pro"],

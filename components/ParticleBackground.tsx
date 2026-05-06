@@ -68,7 +68,7 @@ export default function ParticleBackground() {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-slate-50/50">
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
       {/* Curved Flow Lines - Weaving around content */}
       
       {/* Path 1: Top Curve (dips down between elements) */}

@@ -61,9 +61,9 @@ export default function SolutionsPage() {
             <h2 className="text-4xl font-black">QR Codes are killing your peak-hour sales.</h2>
             <div className="space-y-6">
               {[
-                { title: "The 'Blurry' Problem", desc: "Customers struggle to scan in low light or with old cameras. Result: 15-second delay per customer." },
-                { title: "The 'Typing' Error", desc: "Manual amount entry leads to mistakes. Customers 'accidentally' pay RM1.50 instead of RM15." },
-                { title: "The 'Ads' Friction", desc: "Most e-wallets show ads before the scan button. TapPay skips the noise." }
+                { title: "The 'Typing' Error", desc: "Customers might enter the wrong amount, but your Listener App announces the payment out loud instantly. You catch errors before they leave." },
+                { title: "The 'Verification' Lag", desc: "Waiting for customers to show their screen is awkward. TapPay gives you a voice confirmation so you can keep serving." },
+                { title: "The 'Ads' Friction", desc: "Most e-wallets show ads before the scan button. TapPay skips the noise and opens the payment screen directly." }
               ].map((item, i) => (
                 <div key={i} className="flex gap-4 p-6 rounded-3xl bg-slate-50 border border-slate-100">
                   <div className="w-10 h-10 rounded-full bg-red-100 text-red-500 flex items-center justify-center shrink-0"><X size={20} /></div>
@@ -85,8 +85,8 @@ export default function SolutionsPage() {
               <ul className="space-y-8">
                 {[
                   { icon: <Nfc />, title: "Instant NFC Deep-linking", desc: "Customer taps sticker. TNG opens in 0.5s. No ads. No scanning." },
-                  { icon: <BarChart3 />, title: "Auto-Filled Amounts", desc: "You set the amount on your dashboard. Customer just clicks 'Pay'." },
-                  { icon: <Smartphone />, title: "Voice Alerts", desc: "Your Android phone announces the payment amount out loud instantly." }
+                  { icon: <Smartphone />, title: "Instant Audio Alerts", desc: "Your Android phone announces the payment amount out loud the moment they pay." },
+                  { icon: <ShieldCheck />, title: "Real-time Verification", desc: "Check your Payment Inbox instantly to confirm the success of any transaction." }
                 ].map((v, i) => (
                   <li key={i} className="flex gap-5">
                     <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100">{v.icon}</div>
