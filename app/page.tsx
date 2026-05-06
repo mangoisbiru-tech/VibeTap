@@ -75,7 +75,7 @@ function InteractiveSticker() {
           <div className="w-16 h-16 bg-blue-100 rounded-full text-blue-600 flex items-center justify-center mb-4 shadow-inner">
             <CheckCircle2 size={32} />
           </div>
-          <p className="font-black text-slate-900 text-3xl">RM 8.50</p>
+          <p className="font-black text-slate-900 text-3xl">RM 14.50</p>
           <p className="text-slate-500 text-sm mt-1 font-bold">Payment Successful</p>
           <div className="mt-6 w-full h-12 bg-slate-100 rounded-xl animate-pulse" />
           <div className="mt-3 w-3/4 h-8 bg-slate-100 rounded-xl animate-pulse" />
@@ -199,7 +199,7 @@ export default function LandingPage() {
               </div>
               <div>
                 <div className="font-black text-slate-900 text-lg leading-none">Payment Received</div>
-                <div className="text-blue-600 font-bold text-sm mt-0.5">Touch 'n Go · RM 8.50</div>
+                <div className="text-blue-600 font-bold text-sm mt-0.5">Touch 'n Go · RM 14.50</div>
               </div>
             </div>
           </div>
