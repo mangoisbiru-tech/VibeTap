@@ -172,8 +172,8 @@ export default function SolutionsPage() {
               },
               { 
                 step: "02", 
-                title: "Install the Listener App", 
-                desc: "Download our app on any Android phone. Login to your TapPay dashboard and link your shop profile." 
+                title: "Setup Your App (Optional)", 
+                desc: "If you purchased the Listener Add-on, download our app on any Android phone to receive instant sound alerts for every payment." 
               },
               { 
                 step: "03", 
@@ -200,7 +200,7 @@ export default function SolutionsPage() {
               <h2 className="text-3xl font-black mb-8 italic">"NFC is the future of Malaysia's payment culture."</h2>
               <div className="space-y-6 text-slate-600 leading-relaxed text-lg">
                 <p>
-                  Hi, I'm <span className="text-blue-600 font-bold">YK</span>. As a fellow Malaysian, I've always been fascinated by how NFC technology could simplify our lives. 
+                  Hi, I'm <span className="text-blue-600 font-bold">Wai Kei (YK)</span>. As a fellow Malaysian, I've always been fascinated by how NFC technology could simplify our lives. 
                 </p>
                 <p>
                   QR codes served us well during the pandemic, but it's time to move to something even more seamless. I built TapPay to bring a faster, cooler, and more professional payment experience to every local merchant—from the neighborhood Mamak to the busiest cafes.
@@ -212,7 +212,7 @@ export default function SolutionsPage() {
               <div className="mt-10 pt-10 border-t border-slate-100 flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">YK</div>
                 <div>
-                  <div className="font-black text-slate-900">YK</div>
+                  <div className="font-black text-slate-900">Wai Kei (YK)</div>
                   <div className="text-sm text-slate-500">Founder of TapPay Malaysia</div>
                 </div>
               </div>
