@@ -22,21 +22,22 @@ export default function SolutionsPage() {
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans overflow-x-hidden">
 
       {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-white/100 border-b border-slate-200 backdrop-blur-none">
+      <nav className="sticky top-0 z-50 bg-white border-b border-slate-100 shadow-sm">
         <div className="flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
-        <Link href="/" className="flex items-center gap-3">
-          <img src="/TapPay_Logo.png" alt="TapPay" className="w-10 h-10 object-contain" />
-          <span className="text-2xl font-bold tracking-tight text-slate-900">
-            Tap<span className="text-blue-600">Pay</span>
-          </span>
-        </Link>
-        <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-slate-600">
-          <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
-          <Link href="/pricing" className="hover:text-blue-600 transition-colors">Pricing</Link>
-        </div>
-        <Link href="/signup" className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-blue-500/20">
-          Get Started
-        </Link>
+          <Link href="/" className="flex items-center gap-3">
+            <img src="/TapPay_Logo.png" alt="TapPay" className="w-10 h-10 object-contain" />
+            <span className="text-2xl font-bold tracking-tight text-slate-900">
+              Tap<span className="text-blue-600">Pay</span>
+            </span>
+          </Link>
+          <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-slate-600">
+            <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+            <Link href="/solutions" className="hover:text-blue-600 transition-colors">Our Value</Link>
+            <Link href="/pricing" className="hover:text-blue-600 transition-colors">Pricing</Link>
+          </div>
+          <Link href="/signup" className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-blue-500/20">
+            Get Started
+          </Link>
         </div>
       </nav>
 

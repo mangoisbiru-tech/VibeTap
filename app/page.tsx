@@ -95,23 +95,23 @@ export default function LandingPage() {
       <ParticleBackground />
 
       {/* Nav */}
-      <nav className="relative z-50 flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
-        <div className="flex items-center gap-3">
-          <img src="/TapPay_Logo.png" alt="TapPay Logo" className="w-10 h-10 object-contain" />
-          <span className="text-2xl font-bold tracking-tight text-slate-900">
-            Tap<span className="text-blue-600">Pay</span>
-          </span>
-        </div>
-        <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-slate-600">
-          <Link href="/solutions" className="hover:text-blue-600 transition-colors">Our Value</Link>
-          <a href="#how" className="hover:text-blue-600 transition-colors">How It Works</a>
-          <a href="#features" className="hover:text-blue-600 transition-colors">Features</a>
-          <Link href="/pricing" className="hover:text-blue-600 transition-colors">Pricing</Link>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link href="/login" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors px-4 py-2">
-            Login
+      <nav className="sticky top-0 z-50 bg-white border-b border-slate-100">
+        <div className="flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
+          <Link href="/" className="flex items-center gap-3">
+            <img src="/TapPay_Logo.png" alt="TapPay Logo" className="w-10 h-10 object-contain" />
+            <span className="text-2xl font-bold tracking-tight text-slate-900">
+              Tap<span className="text-blue-600">Pay</span>
+            </span>
           </Link>
+          <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-slate-600">
+            <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+            <Link href="/solutions" className="hover:text-blue-600 transition-colors">Our Value</Link>
+            <Link href="/pricing" className="hover:text-blue-600 transition-colors">Pricing</Link>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link href="/login" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors px-4 py-2">
+              Login
+            </Link>
           <Link
             href="/demo"
             className="text-sm bg-blue-500 hover:bg-blue-600 text-white px-6 py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 hover:-translate-y-0.5"
