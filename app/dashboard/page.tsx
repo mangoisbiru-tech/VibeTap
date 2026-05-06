@@ -62,9 +62,9 @@ function StatCard({
           {icon}
         </div>
       </div>
-      <div className="text-4xl font-black text-slate-950 tracking-tighter mb-1">{value}</div>
-      <div className="text-[10px] font-black text-slate-950 uppercase tracking-[0.2em]">{label}</div>
-      {sub && <div className="text-[10px] text-slate-500 mt-2 font-bold uppercase tracking-widest">{sub}</div>}
+      <div className="text-4xl font-extrabold text-slate-900 tracking-tighter mb-1">{value}</div>
+      <div className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em]">{label}</div>
+      {sub && <div className="text-[10px] text-slate-400 mt-2 font-semibold uppercase tracking-widest">{sub}</div>}
     </div>
   );
 }
@@ -252,9 +252,9 @@ export default function DashboardPage() {
       <div className="relative">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-black text-slate-950 tracking-tight">Overview</h1>
-            <p className="text-slate-950 text-sm mt-1 font-bold">
-              Welcome back, <span className="text-blue-600">{merchant.name}</span>
+            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Overview</h1>
+            <p className="text-slate-500 text-sm mt-1 font-medium">
+              Welcome back, <span className="text-blue-600 font-bold">{merchant.name}</span>
             </p>
           </div>
           <div>
@@ -275,7 +275,7 @@ export default function DashboardPage() {
 
       {/* Tap stats */}
       <div className="space-y-4">
-        <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-black">NFC Taps</p>
+        <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-bold">NFC Taps</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatCard
             icon={<MousePointerClick size={20} />}
@@ -301,7 +301,7 @@ export default function DashboardPage() {
 
       {/* Revenue stats */}
       <div className="space-y-4">
-        <p className="text-[10px] text-slate-950 uppercase tracking-[0.3em] font-black">Revenue Report</p>
+        <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-bold">Revenue Report</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           <StatCard
             icon={<DollarSign size={20} />}

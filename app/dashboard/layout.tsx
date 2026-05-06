@@ -141,8 +141,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-black text-slate-950 truncate">{merchantName}</p>
-              <p className="text-[10px] font-black text-slate-950 truncate uppercase tracking-widest">{user?.email}</p>
+              <p className="text-sm font-bold text-slate-900 truncate">{merchantName}</p>
+              <p className="text-[10px] font-semibold text-slate-500 truncate uppercase tracking-widest">{user?.email}</p>
             </div>
           </div>
         </div>
@@ -155,10 +155,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-4 py-4 transition-all text-sm font-black uppercase tracking-widest group ${
+                className={`flex items-center gap-3 px-4 py-4 transition-all text-sm font-bold uppercase tracking-widest group ${
                   isActive
                     ? "bg-blue-50 text-blue-600 border-l-4 border-blue-600"
-                    : "text-slate-950 hover:bg-white hover:shadow-md rounded-xl border-l-4 border-transparent"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-white hover:shadow-md rounded-xl border-l-4 border-transparent"
                 }`}
               >
                 <span className={`${isActive ? "text-blue-600" : "group-hover:text-blue-600"} transition-colors flex-shrink-0`}>
@@ -179,7 +179,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="px-3 py-6 border-t border-slate-200/50">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-4 rounded-xl text-red-600 hover:bg-red-50 transition-all text-xs font-black uppercase tracking-[0.2em] w-full"
+            className="flex items-center gap-3 px-4 py-4 rounded-xl text-red-600 hover:bg-red-50 transition-all text-xs font-bold uppercase tracking-[0.2em] w-full"
           >
             <LogOut size={18} />
             Sign Out
