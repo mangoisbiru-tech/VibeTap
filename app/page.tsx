@@ -16,7 +16,8 @@ import {
   ShieldCheck,
   Smartphone,
   UserCheck,
-  Nfc
+  Nfc,
+  Lock
 } from "lucide-react";
 
 function InteractiveSticker() {
@@ -86,6 +87,8 @@ function InteractiveSticker() {
 }
 
 export default function LandingPage() {
+  const [activePlanTab, setActivePlanTab] = useState(1);
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans overflow-x-hidden selection:bg-blue-200">
       
@@ -353,6 +356,146 @@ export default function LandingPage() {
                  Visual & Audio Alert
                </div>
              </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Ecosystem Plans Tabbed Interface */}
+      <section className="relative z-10 py-24 bg-slate-900 text-white border-y border-slate-800">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/20 text-blue-300 text-sm font-bold mb-6">
+              <Store size={16} /> Scalable Solutions
+            </div>
+            <h2 className="font-[family-name:var(--font-sora)] text-3xl md:text-5xl font-bold mb-6">
+              The TapPay Ecosystem
+            </h2>
+            <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+              See exactly what you get. Choose the plan that fits your business scale.
+            </p>
+          </div>
+
+          <div className="flex flex-col lg:flex-row gap-8 items-stretch">
+            {/* Tabs Sidebar */}
+            <div className="flex flex-row lg:flex-col gap-4 w-full lg:w-1/3 overflow-x-auto pb-4 lg:pb-0 snap-x hide-scrollbar">
+              <button 
+                onClick={() => setActivePlanTab(1)}
+                className={`snap-center flex-shrink-0 w-[280px] lg:w-full text-left p-6 rounded-3xl transition-all border ${activePlanTab === 1 ? 'bg-blue-600 border-blue-500 shadow-xl shadow-blue-900/50' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'}`}
+              >
+                <div className="text-xs font-bold uppercase tracking-widest text-blue-300 mb-2">Plan 1</div>
+                <h3 className="text-xl font-bold text-white mb-2">Real-Time Inbox</h3>
+                <p className="text-sm text-blue-100/70 leading-relaxed">The foundation. Know instantly when you get paid via phone or web dashboard.</p>
+              </button>
+              <button 
+                onClick={() => setActivePlanTab(2)}
+                className={`snap-center flex-shrink-0 w-[280px] lg:w-full text-left p-6 rounded-3xl transition-all border ${activePlanTab === 2 ? 'bg-blue-600 border-blue-500 shadow-xl shadow-blue-900/50' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'}`}
+              >
+                <div className="text-xs font-bold uppercase tracking-widest text-blue-300 mb-2">Plan 2</div>
+                <h3 className="text-xl font-bold text-white mb-2">Table Management</h3>
+                <p className="text-sm text-blue-100/70 leading-relaxed">Amount push-in. Cashier pushes the exact bill to the customer's phone.</p>
+              </button>
+              <button 
+                onClick={() => setActivePlanTab(3)}
+                className={`snap-center flex-shrink-0 w-[280px] lg:w-full text-left p-6 rounded-3xl transition-all border ${activePlanTab === 3 ? 'bg-blue-600 border-blue-500 shadow-xl shadow-blue-900/50' : 'bg-slate-800 border-slate-700 hover:bg-slate-700'}`}
+              >
+                <div className="text-xs font-bold uppercase tracking-widest text-blue-300 mb-2">Plan 3</div>
+                <h3 className="text-xl font-bold text-white mb-2">Full Automation</h3>
+                <p className="text-sm text-blue-100/70 leading-relaxed">Customers can call a waiter or ask for the bill directly from the menu.</p>
+              </button>
+            </div>
+
+            {/* Content Area */}
+            <div className="w-full lg:w-2/3 bg-slate-800 border border-slate-700 rounded-[2.5rem] p-6 md:p-12 min-h-[450px] flex items-center justify-center relative overflow-hidden">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-blue-500/20 blur-[100px] rounded-full pointer-events-none" />
+              
+              {activePlanTab === 1 && (
+                <div className="relative z-10 w-full max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
+                  <div className="bg-white rounded-[2rem] p-6 shadow-2xl">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+                      <div className="font-black text-slate-900 text-lg">Today's Sales</div>
+                      <div className="text-blue-600 font-black text-lg">RM 1,240.00</div>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="bg-green-50 border border-green-100 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-green-500" />
+                        <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 shrink-0"><CheckCircle2 size={24} /></div>
+                        <div className="flex-1">
+                          <div className="text-sm font-bold text-slate-900 mb-0.5">Payment Received</div>
+                          <div className="text-xs text-slate-500 font-medium">Just now • Touch 'n Go</div>
+                        </div>
+                        <div className="font-black text-green-700 text-lg">RM 14.50</div>
+                      </div>
+                      <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex items-center gap-4 opacity-50 grayscale transition-all">
+                        <div className="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center text-slate-500 shrink-0"><CheckCircle2 size={24} /></div>
+                        <div className="flex-1">
+                          <div className="text-sm font-bold text-slate-900 mb-0.5">Payment Received</div>
+                          <div className="text-xs text-slate-500 font-medium">5 mins ago • Touch 'n Go</div>
+                        </div>
+                        <div className="font-black text-slate-700 text-lg">RM 8.00</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activePlanTab === 2 && (
+                <div className="relative z-10 w-full max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
+                  <div className="bg-white rounded-[2rem] p-8 shadow-2xl text-center border-t-8 border-blue-600">
+                    <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-50 text-blue-600 rounded-full mb-6 ring-8 ring-blue-50/50">
+                      <Smartphone size={36} />
+                    </div>
+                    <h3 className="text-2xl font-black text-slate-900 mb-3">Customer Scans Table 5</h3>
+                    <p className="text-slate-500 text-sm mb-8 font-medium leading-relaxed">
+                      The cashier pushes the exact bill amount to the customer's phone instantly. No manual typing.
+                    </p>
+                    <div className="bg-slate-50 border border-slate-100 rounded-[1.5rem] p-6 shadow-inner">
+                      <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Total to Pay</div>
+                      <div className="text-5xl font-black text-blue-600 mb-6">RM 45.00</div>
+                      <div className="w-full bg-slate-900/5 text-slate-400 font-bold py-4 rounded-xl border border-slate-200 cursor-not-allowed flex items-center justify-center gap-2">
+                        <Lock size={18} /> Pay with Touch 'n Go
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activePlanTab === 3 && (
+                <div className="relative z-10 w-full max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
+                  <div className="bg-white rounded-[2rem] p-6 shadow-2xl">
+                    <div className="flex justify-between items-center mb-8 border-b border-slate-100 pb-4">
+                      <div className="font-black text-slate-900 text-xl">Table 4</div>
+                      <div className="text-xs font-bold bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded-full flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" /> Needs Bill
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 text-center opacity-50 grayscale transition-all">
+                        <Bell size={28} className="text-slate-400" />
+                        <span className="font-bold text-slate-700">Call Waiter</span>
+                      </div>
+                      <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 text-center shadow-lg shadow-blue-100/50">
+                        <Zap size={28} className="text-blue-600" />
+                        <span className="font-bold text-blue-700">Bill Please</span>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-8 bg-slate-900 rounded-2xl p-5 text-white flex items-center justify-between shadow-xl">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-red-500/20 p-2 rounded-full">
+                          <Bell size={18} className="text-red-400" />
+                        </div>
+                        <div>
+                          <div className="font-bold text-sm">Cashier Alert</div>
+                          <div className="text-xs text-slate-400">Table 4 requested bill</div>
+                        </div>
+                      </div>
+                      <span className="bg-red-500 w-3 h-3 rounded-full animate-ping" />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>
