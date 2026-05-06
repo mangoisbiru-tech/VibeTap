@@ -2,9 +2,10 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, onSnapshot, collection, query, where, Timestamp } from "firebase/firestore";
+import { doc, onSnapshot, collection, query, where, Timestamp, updateDoc, writeBatch } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/client";
-import { TrendingUp, Loader2, MousePointerClick, Calendar, DollarSign, BarChart3, X } from "lucide-react";
+import { TrendingUp, Loader2, MousePointerClick, Calendar, DollarSign, BarChart3, X, AlertTriangle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface MerchantData {
   name: string; slug: string; paymentUrl: string; tapCount: number;
@@ -131,8 +132,34 @@ function TapChart({ dailyTaps, period, customStart, customEnd }: { dailyTaps: Re
 }
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [merchant, setMerchant] = useState<MerchantData | null>(null);
   const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
+  const [isResetting, setIsResetting] = useState(false);
+
+  const handleResetTaps = async () => {
+    if (!merchant || !auth.currentUser) return;
+    if (!confirm("Are you sure you want to PERMANENTLY clear all-time NFC taps and daily history? This cannot be undone.")) return;
+
+    setIsResetting(true);
+    try {
+      const merchantRef = doc(db, "merchants", auth.currentUser.uid);
+      await updateDoc(merchantRef, {
+        tapCount: 0,
+        dailyTaps: {}
+      });
+      // Also set history entries locally to empty to reflect immediately
+      // (Though Firebase listener will catch the merchant doc change, 
+      // billHistory is separate, we won't delete those as they are 'Revenue',
+      // only the 'NFC Taps' counter which is the merchant's manual count)
+      alert("NFC Tap counters reset successfully.");
+    } catch (e) {
+      console.error(e);
+      alert("Failed to reset stats.");
+    } finally {
+      setIsResetting(false);
+    }
+  };
 
   // Separate filter states for each section
   const [tapPeriod, setTapPeriod] = useState<Period>("weekly");
@@ -226,8 +253,16 @@ export default function DashboardPage() {
 
       {/* NFC Taps */}
       <div className="space-y-4">
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-bold">NFC Taps</p>
+          <button 
+            onClick={handleResetTaps}
+            disabled={isResetting}
+            className="text-[10px] font-black text-red-500 hover:text-red-600 flex items-center gap-1 uppercase tracking-widest transition-all disabled:opacity-50"
+          >
+            {isResetting ? <Loader2 size={10} className="animate-spin" /> : <AlertTriangle size={10} />}
+            Reset All-Time Stats
+          </button>
         </div>
         <FilterBar period={tapPeriod} onPeriod={setTapPeriod} customStart={tapCustomStart} customEnd={tapCustomEnd}
           onCustomStart={setTapCustomStart} onCustomEnd={setTapCustomEnd}
