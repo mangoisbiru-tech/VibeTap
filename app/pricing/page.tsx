@@ -43,14 +43,78 @@ export default function PricingPage() {
         <Link href="/signup" className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold transition-all">Get Started</Link>
       </nav>
 
-      <section className="relative py-10 px-6 text-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-50 to-slate-50 pointer-events-none" />
-        <div className="relative z-10 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-sm font-semibold mb-8">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" /> Simple, transparent pricing
+      <section className="relative py-20 px-6 text-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-white pointer-events-none" />
+        <div className="relative z-10 max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-sm font-bold mb-8 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" /> Stop losing time to QR scanning
           </div>
-          <h1 className="text-5xl md:text-6xl font-black leading-tight mb-6">Pick Your Plan.<br /><span className="text-blue-600">Start Collecting.</span></h1>
-          <p className="text-xl text-slate-600 max-w-xl mx-auto font-medium">From a single stall to a full cafe — no hidden fees, no complicated contracts.</p>
+          <h1 className="text-5xl md:text-7xl font-[family-name:var(--font-sora)] font-extrabold leading-[1.1] tracking-tight mb-8">
+            Simple Pricing.<br />
+            <span className="text-blue-600">Infinite ROI.</span>
+          </h1>
+          <p className="text-xl text-slate-600 max-w-2xl mx-auto font-medium leading-relaxed">
+            The average merchant loses <span className="text-red-500 font-bold">15+ hours a month</span> waiting for customers to scan QRs. TapPay pays for itself in just 1 week of faster service.
+          </p>
+        </div>
+      </section>
+
+      {/* VALUE ANCHORS / COMPARISON */}
+      <section className="pb-16 px-6 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+            <h3 className="text-red-500 font-black text-sm uppercase tracking-widest mb-6">The Old Way (Paper QR)</h3>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3 text-slate-500 text-sm font-medium italic">
+                <X size={18} className="text-red-300 mt-0.5 shrink-0" /> "Can you scan this? It's a bit blur..."
+              </div>
+              <div className="flex items-start gap-3 text-slate-500 text-sm font-medium italic">
+                <X size={18} className="text-red-300 mt-0.5 shrink-0" /> "Wait, the app is loading... 5 seconds... 10 seconds..."
+              </div>
+              <div className="flex items-start gap-3 text-slate-500 text-sm font-medium italic">
+                <X size={18} className="text-red-300 mt-0.5 shrink-0" /> "Oops, I typed RM 1.40 instead of RM 14.00."
+              </div>
+              <p className="pt-4 text-slate-900 font-bold border-t border-slate-100">Result: Long queues & revenue loss.</p>
+            </div>
+          </div>
+          <div className="bg-blue-600 rounded-3xl p-8 shadow-2xl shadow-blue-600/20 text-white">
+            <h3 className="text-blue-200 font-black text-sm uppercase tracking-widest mb-6">The TapPay Way (NFC)</h3>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3 text-blue-50 text-sm font-medium">
+                <CheckCircle2 size={18} className="text-yellow-400 mt-0.5 shrink-0" /> "Just tap your phone here." (TNG opens in 0.5s)
+              </div>
+              <div className="flex items-start gap-3 text-blue-50 text-sm font-medium">
+                <CheckCircle2 size={18} className="text-yellow-400 mt-0.5 shrink-0" /> Amount is pre-filled. Zero human error.
+              </div>
+              <div className="flex items-start gap-3 text-blue-50 text-sm font-medium">
+                <CheckCircle2 size={18} className="text-yellow-400 mt-0.5 shrink-0" /> Sound alerts announce "Received RM 14!" instantly.
+              </div>
+              <p className="pt-4 text-white font-bold border-t border-blue-500/50">Result: Faster service & happy customers.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* WHY UPGRADE GRID */}
+      <section className="py-20 px-6 bg-slate-900 text-white border-y border-slate-800">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-black mb-4">Why Merchants Upgrade</h2>
+            <p className="text-slate-400 max-w-xl mx-auto">Investing in TapPay isn't a cost—it's an upgrade to your shop's efficiency.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-12">
+            {[
+              { icon: <Zap className="text-yellow-400" />, title: "3x Faster Checkout", desc: "Reduce peak-hour queues by eliminating the 'open app -> scan -> wait' friction. Tap and pay instantly." },
+              { icon: <ShieldCheck className="text-blue-400" />, title: "Stop Payment Fraud", desc: "Customers can't fake screenshots or type wrong amounts when you use our auto-filled NFC links." },
+              { icon: <Store className="text-green-400" />, title: "Premium Brand Image", desc: "A sleek NFC sticker looks 10x more professional than a faded, crumpled paper QR code on your counter." }
+            ].map(v => (
+              <div key={v.title} className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6">{v.icon}</div>
+                <h3 className="text-xl font-bold mb-3">{v.title}</h3>
+                <p className="text-slate-400 text-sm leading-relaxed">{v.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
