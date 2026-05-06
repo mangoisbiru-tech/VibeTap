@@ -119,6 +119,7 @@ export default function LandingPage() {
             Try Free Demo
           </Link>
         </div>
+        </div>
       </nav>
 
       {/* Hero */}
