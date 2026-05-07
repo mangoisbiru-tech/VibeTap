@@ -249,7 +249,7 @@ export default function DemoPage() {
                     <ShieldCheck size={200} />
                   </div>
                   <div className="relative z-10 max-w-xl">
-                    <h3 className="text-3xl font-black tracking-tight mb-4 leading-tight">Welcome to the God Mode Demo.</h3>
+                    <h3 className="text-3xl font-black tracking-tight mb-4 leading-tight">Welcome to the Interactive Demo.</h3>
                     <p className="text-slate-400 font-medium leading-relaxed mb-8">
                       Experience the full power of TapPay without spending a single sen. We've unlocked all premium features for this demo store.
                     </p>
@@ -333,6 +333,11 @@ export default function DemoPage() {
                           <p className="font-black text-slate-950 text-xl tracking-tight leading-none">RM {pay.amount.toFixed(2)}</p>
                           <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">{pay.content} • {pay.time}</p>
                         </div>
+                        {selectedPayment === pay.id && plan !== 'plan1' && (
+                          <div className="absolute -right-2 top-1/2 -translate-y-1/2 bg-blue-600 text-white px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest animate-bounce shadow-lg flex items-center gap-1">
+                            Drag to Table <ArrowRight size={8} />
+                          </div>
+                        )}
                       </button>
                     ))}
                   </div>
