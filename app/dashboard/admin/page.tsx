@@ -107,14 +107,14 @@ export default function AdminDashboardPage() {
     }
   }
 
-  async function toggleListenerApp(merchantId: string, currentStatus: boolean) {
+  async function setListenerStatus(merchantId: string, newStatus: boolean) {
     setUpdatingId(merchantId);
     try {
       await updateDoc(doc(db, "merchants", merchantId), {
-        isListenerActive: !currentStatus,
+        isListenerActive: newStatus,
       });
       setMerchants((prev) =>
-        prev.map((m) => (m.id === merchantId ? { ...m, isListenerActive: !currentStatus } : m))
+        prev.map((m) => (m.id === merchantId ? { ...m, isListenerActive: newStatus } : m))
       );
     } catch (err) {
       alert("Failed to update Listening App status");
@@ -248,7 +248,7 @@ export default function AdminDashboardPage() {
                     <div className="relative inline-block">
                       <select
                         value={(merchant.isListenerActive ?? true) ? "on" : "off"}
-                        onChange={(e) => toggleListenerApp(merchant.id, e.target.value === "on")}
+                        onChange={(e) => setListenerStatus(merchant.id, e.target.value === "on")}
                         disabled={updatingId === merchant.id}
                         className={`appearance-none border font-bold rounded-xl pl-4 pr-10 py-2 focus:outline-none focus:ring-2 disabled:opacity-50 cursor-pointer text-sm transition-all ${
                           (merchant.isListenerActive ?? true)
