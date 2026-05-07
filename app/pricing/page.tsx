@@ -26,6 +26,8 @@ function PromoBox({ msg, sub, dark = false }: { msg: string; sub: string; dark?:
   );
 }
 
+const WHATSAPP_NUMBER = "601112345678"; // Placeholder - please update this!
+
 export default function PricingPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans overflow-x-hidden">
@@ -158,8 +160,8 @@ export default function PricingPage() {
             <ul className="space-y-3 flex-1 mb-8">
               {starterFeatures.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
             </ul>
-            <Link href="/signup" className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-700 text-white py-3.5 rounded-2xl font-bold transition-all">
-              Get Starter Pack <ArrowRight size={17} />
+            <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'm%20interested%20in%20the%20Solo%20Stall%20Starter%20Pack.`} className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-700 text-white py-3.5 rounded-2xl font-bold transition-all">
+              Contact to Buy <ArrowRight size={17} />
             </Link>
           </div>
 
@@ -179,8 +181,8 @@ export default function PricingPage() {
             <ul className="space-y-3 flex-1 mb-8">
               {proFeatures.map(f => <li key={f} className="flex items-start gap-3 font-medium text-sm"><Check c="text-yellow-300" />{f}</li>)}
             </ul>
-            <Link href="/signup" className="w-full flex items-center justify-center gap-2 bg-white text-blue-700 hover:bg-blue-50 py-3.5 rounded-2xl font-bold transition-all">
-              Get Pro Pack <ArrowRight size={17} />
+            <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'm%20interested%20in%20the%20Pro%20Pack%20for%20my%20business.`} className="w-full flex items-center justify-center gap-2 bg-white text-blue-700 hover:bg-blue-50 py-3.5 rounded-2xl font-bold transition-all">
+              Contact to Buy <ArrowRight size={17} />
             </Link>
           </div>
         </div>
@@ -202,7 +204,7 @@ export default function PricingPage() {
               <ul className="space-y-3 flex-1 mb-8">
                 {liteMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
               </ul>
-              <Link href="/signup" className="w-full text-center bg-slate-900 hover:bg-slate-700 text-white py-3 rounded-2xl font-bold text-sm">Subscribe Lite</Link>
+              <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'd%20like%20to%20subscribe%20to%20the%20Lite%20SaaS%20plan.`} className="w-full text-center bg-slate-900 hover:bg-slate-700 text-white py-3 rounded-2xl font-bold text-sm">Contact to Subscribe</Link>
             </div>
 
             <div className="bg-slate-50 rounded-3xl border border-slate-200 p-8 flex flex-col">
@@ -213,7 +215,7 @@ export default function PricingPage() {
               <ul className="space-y-3 flex-1 mb-8">
                 {basicMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
               </ul>
-              <Link href="/signup" className="w-full text-center bg-slate-900 hover:bg-slate-700 text-white py-3 rounded-2xl font-bold text-sm">Subscribe Basic</Link>
+              <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'd%20like%20to%20subscribe%20to%20the%20Basic%20SaaS%20plan.`} className="w-full text-center bg-slate-900 hover:bg-slate-700 text-white py-3 rounded-2xl font-bold text-sm">Contact to Subscribe</Link>
             </div>
 
             <div className="bg-blue-50 rounded-3xl border border-blue-200 p-8 flex flex-col">
@@ -224,7 +226,7 @@ export default function PricingPage() {
               <ul className="space-y-3 flex-1 mb-8">
                 {advMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check c="text-blue-600" />{f}</li>)}
               </ul>
-              <Link href="/signup" className="w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl font-bold text-sm">Subscribe Advanced</Link>
+              <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'd%20like%20to%20subscribe%20to%20the%20Advanced%20SaaS%20plan.`} className="w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl font-bold text-sm">Contact to Subscribe</Link>
             </div>
           </div>
         </div>
