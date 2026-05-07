@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "@/lib/firebase/client";
 import { Zap, Eye, EyeOff, Loader2 } from "lucide-react";
 
@@ -29,6 +29,22 @@ export default function LoginPage() {
       } else {
         setError("Login failed. Please try again.");
       }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleResetPassword() {
+    if (!email) {
+      setError("Please enter your email address first.");
+      return;
+    }
+    setLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, email);
+      alert("Password reset email sent! Please check your inbox.");
+    } catch (err: any) {
+      setError(err.message || "Failed to send reset email.");
     } finally {
       setLoading(false);
     }
@@ -87,6 +103,15 @@ export default function LoginPage() {
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-blue-500 transition-colors"
                 >
                   {showPw ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+              <div className="flex justify-end px-1">
+                <button
+                  type="button"
+                  onClick={handleResetPassword}
+                  className="text-[10px] font-black text-blue-600 hover:text-blue-700 uppercase tracking-widest transition-colors"
+                >
+                  Forgot Password?
                 </button>
               </div>
             </div>
