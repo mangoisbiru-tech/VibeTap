@@ -59,6 +59,7 @@ const MOCK_PAYMENTS = [
 export default function DemoPage() {
   const [activeTab, setActiveTab] = useState<"overview" | "cashier" | "history" | "nfc" | "settings">("overview");
   const [plan, setPlan] = useState<"plan1" | "plan2" | "plan3">("plan3");
+  const [plan3Mode, setPlan3Mode] = useState<"summing_up" | "fixed">("summing_up");
   const [amount, setAmount] = useState("0");
   const [loading, setLoading] = useState(false);
   const [showLock, setShowLock] = useState<string | null>(null);
@@ -368,19 +369,30 @@ export default function DemoPage() {
                         <div className="flex-1 min-w-0">
                           <p className="font-black text-slate-950 text-lg truncate tracking-tight">Table 4</p>
                         </div>
-                        <button
-                          onClick={() => {
-                            if (amountRM === 0) return;
-                            simulateAction(() => {
-                              setStickers(prev => prev.map(s => s.id === 's4' ? {...s, pushedBill: { amount: amountRM, pushedAt: new Date() }} : s));
-                              setAmount("0");
-                            });
-                          }}
-                          disabled={amountRM === 0}
-                          className="bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all"
-                        >
-                          Push RM {amountRM.toFixed(2)}
-                        </button>
+                        <div className="flex flex-col gap-1">
+                          {plan === "plan3" && plan3Mode === "summing_up" ? (
+                            <button
+                              onClick={() => {
+                                if (amountRM === 0) return;
+                                simulateAction(() => {
+                                  setStickers(prev => prev.map(s => s.id === 's4' ? {...s, pushedBill: { amount: amountRM, pushedAt: new Date() }} : s));
+                                  setAmount("0");
+                                });
+                              }}
+                              disabled={amountRM === 0}
+                              className="bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all"
+                            >
+                              Push RM {amountRM.toFixed(2)}
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => simulateAction(() => triggerLock("This request is now marked as 'Done'. The customer has been notified that you are on your way."))}
+                              className="bg-slate-950 hover:bg-black text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all"
+                            >
+                              Done
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )}
@@ -596,6 +608,43 @@ export default function DemoPage() {
                       />
                     </div>
                   </div>
+
+                  {plan === 'plan3' && (
+                    <div className="space-y-4 animate-in slide-in-from-top-4 duration-300">
+                      <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black px-1">Plan 3 Customer Experience</p>
+                      <div className="bg-orange-50/50 border-4 border-orange-100 rounded-[2.5rem] p-8 space-y-6">
+                        <button 
+                          onClick={() => setPlan3Mode("summing_up")}
+                          className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all border-4 ${
+                            plan3Mode === "summing_up" ? "bg-white border-orange-500 shadow-lg" : "bg-transparent border-transparent grayscale opacity-50"
+                          }`}
+                        >
+                          <div className={`w-8 h-8 rounded-full border-4 flex items-center justify-center shrink-0 ${plan3Mode === "summing_up" ? "border-orange-500 bg-orange-500" : "border-slate-200"}`}>
+                            {plan3Mode === "summing_up" && <Check size={14} className="text-white" />}
+                          </div>
+                          <div className="text-left">
+                            <p className="font-black text-slate-950 text-sm">Boss is summing up... <span className="text-[9px] text-orange-600 ml-1">(Recommended)</span></p>
+                            <p className="text-[10px] text-slate-500 font-bold">Customer waits while you push the exact bill.</p>
+                          </div>
+                        </button>
+
+                        <button 
+                          onClick={() => setPlan3Mode("fixed")}
+                          className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all border-4 ${
+                            plan3Mode === "fixed" ? "bg-white border-orange-500 shadow-lg" : "bg-transparent border-transparent grayscale opacity-50"
+                          }`}
+                        >
+                          <div className={`w-8 h-8 rounded-full border-4 flex items-center justify-center shrink-0 ${plan3Mode === "fixed" ? "border-orange-500 bg-orange-500" : "border-slate-200"}`}>
+                            {plan3Mode === "fixed" && <Check size={14} className="text-white" />}
+                          </div>
+                          <div className="text-left">
+                            <p className="font-black text-slate-950 text-sm">Boss is coming</p>
+                            <p className="text-[10px] text-slate-500 font-bold">Customer is just told "Boss is coming".</p>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="pt-6 border-t-4 border-slate-50">
                     <button 
