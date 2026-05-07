@@ -345,13 +345,13 @@ export default function PricingPage() {
             <tbody>
               {[
                 ["NFC Stickers", "0x (BYO)", "2x", "5x", "8x"],
-                ["Payment Inbox", "✓", "✓", "✓", "✓"],
+                ["Payment Inbox", "—", "✓", "✓", "✓"],
                 ["Table Tracking & Sound Alerts", "—", "—", "—", "✓"],
                 ["Call for Waiter & Bill Request", "—", "—", "—", "✓"],
                 ["Listener App Add-on", "+RM14/mo", "+RM12/mo", "+RM10/mo", "+RM7/mo"],
-                ["Included Plan", "Plan 1, 2, 3", "Plan 1", "Plan 1", "Plan 1, 2, 3"],
+                ["Included Plan", "—", "Plan 1", "Plan 1", "Plan 1, 2, 3"],
                 ["Badge Acc", "Buffet", "Lite", "Starter", "Pro"],
-                ["Monthly SaaS", "RM 57/mo", "RM 12/mo", "RM 12/mo", "RM 32/mo"],
+                ["Monthly SaaS", "—", "RM 12/mo", "RM 12/mo", "RM 32/mo"],
               ].map(([feature, ...cols], i) => (
                 <tr key={feature} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
                   <td className="px-5 py-3.5 text-slate-700 font-semibold rounded-l-xl">{feature}</td>
