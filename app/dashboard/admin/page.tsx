@@ -311,6 +311,5 @@ export default function AdminDashboardPage() {
           </table>
         </div>
       </div>
-    </div>
   );
 }
