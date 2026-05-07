@@ -69,25 +69,36 @@ export default function LiveSticker({
   }, [sticker.pushedBill?.amount, activePlan, plan3Mode, previousAmount]);
 
   if (activePlan === "plan1") {
-    const url = merchant.tngPaymentUrl || merchant.paymentUrl;
-    if (url) {
-      return (
-        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
-          <div className="w-full max-w-sm bg-white border-4 border-slate-950 rounded-3xl p-8 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)]">
-            <h1 className="text-2xl font-black text-slate-950 mb-6">Payment Ready</h1>
-            <a 
-              href={url} 
-              className="w-full bg-slate-950 text-white font-black py-5 rounded-2xl flex items-center justify-center gap-3 text-lg transition-all active:translate-y-1 active:shadow-none shadow-[0px_6px_0px_0px_rgba(30,41,59,1)]"
-            >
-              OPEN TNG EWALLET
-            </a>
-            <p className="text-slate-500 text-xs mt-6 font-bold uppercase tracking-widest">
-              Tap above to continue
-            </p>
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-full max-w-sm bg-white border-4 border-slate-950 rounded-3xl p-8 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)]">
+          <h1 className="text-2xl font-black text-slate-950 mb-2">plan 1 is not in this mode ya</h1>
+          <p className="text-slate-500 text-xs font-bold uppercase tracking-widest leading-relaxed mb-8">
+            This mode is for Plans 2 & 3
+          </p>
+          
+          <div className="space-y-4">
+            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Plan 1 is Direct TNG only</p>
+            {merchant.tngPaymentUrl ? (
+              <a 
+                href={merchant.tngPaymentUrl} 
+                className="w-full bg-slate-100 text-slate-400 font-black py-5 rounded-2xl flex items-center justify-center gap-3 text-lg border-2 border-slate-200"
+              >
+                OPEN TNG APP
+              </a>
+            ) : (
+              <div className="w-full bg-slate-50 text-slate-300 font-black py-5 rounded-2xl border-2 border-dashed border-slate-200">
+                NO URL SET
+              </div>
+            )}
           </div>
+          
+          <p className="text-slate-400 text-[9px] mt-8 font-medium italic">
+            Please type the amount manually in your TNG App.
+          </p>
         </div>
-      );
-    }
+      </div>
+    );
   }
 
   const amount = sticker.pushedBill?.amount as number | undefined;

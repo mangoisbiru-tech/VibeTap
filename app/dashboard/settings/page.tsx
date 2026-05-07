@@ -48,8 +48,8 @@ const PLANS = [
   },
   {
     id: "plan2",
-    label: "Plan 2 — Show Bill",
-    desc: "You push the bill from Cashier. Customer sees RM amount, pays with TNG.",
+    label: "Plan 2 — Bill now",
+    desc: "You push the bill from Cashier on the spot. Customer sees RM amount & pays.",
     color: "blue",
   },
   {
