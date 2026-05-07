@@ -20,7 +20,9 @@ import {
   Bell,
   Smartphone,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Trash2,
+  Table
 } from "lucide-react";
 import ParticleBackground from "@/components/ParticleBackground";
 import Link from "next/link";
@@ -37,12 +39,19 @@ const INITIAL_STICKERS: Sticker[] = [
   { id: "s2", tableName: "Table 2", pushedBill: { amount: 15.5, pushedAt: new Date() } },
   { id: "s3", tableName: "Table 3", pushedBill: null },
   { id: "s4", tableName: "Table 4", pushedBill: null },
+  { id: "s5", tableName: "Table 5", pushedBill: null },
+  { id: "s6", tableName: "Table 6", pushedBill: null },
 ];
 
 const INITIAL_HISTORY = [
   { id: "h1", tableName: "Table 2", amount: 45.00, status: "paid", time: "10:30 AM" },
   { id: "h2", tableName: "Table 1", amount: 12.50, status: "paid", time: "10:15 AM" },
   { id: "h3", tableName: "Table 5", amount: 0, status: "cleared", time: "09:45 AM" },
+];
+
+const MOCK_PAYMENTS = [
+  { id: "p1", amount: 12.50, time: "10:15 AM", content: "TNG eWallet" },
+  { id: "p2", amount: 30.00, time: "09:50 AM", content: "TNG eWallet" },
 ];
 
 // ─── COMPONENTS ───────────────────────────────────────────────────────────────
@@ -54,7 +63,7 @@ export default function DemoPage() {
   const [loading, setLoading] = useState(false);
   const [showLock, setShowLock] = useState<string | null>(null);
   const [stickers, setStickers] = useState<Sticker[]>(INITIAL_STICKERS);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
 
   // Cashier Logic
   const amountRM = parseInt(amount) / 100;
@@ -81,8 +90,6 @@ export default function DemoPage() {
       setLoading(false);
     }, 600);
   };
-
-  // ─── RENDERERS ─────────────────────────────────────────────────────────────
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans selection:bg-blue-100 selection:text-blue-900 relative overflow-hidden">
@@ -183,7 +190,7 @@ export default function DemoPage() {
         <main className="flex-1 overflow-y-auto p-6 md:p-12 relative">
           
           {/* Header Info */}
-          <div className="max-w-6xl mx-auto mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+          <div className="max-w-[1600px] mx-auto mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <h2 className="text-4xl md:text-5xl font-black text-slate-950 tracking-tight capitalize">
@@ -218,7 +225,7 @@ export default function DemoPage() {
             </div>
           </div>
 
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-[1600px] mx-auto">
             {/* ── OVERVIEW TAB ─────────────────────────────────────── */}
             {activeTab === "overview" && (
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -255,128 +262,213 @@ export default function DemoPage() {
 
             {/* ── CASHIER TAB ──────────────────────────────────────── */}
             {activeTab === "cashier" && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="space-y-10">
-                  <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)]">
-                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-4">Total Amount to Collect</p>
-                    <div className="flex items-start gap-3">
-                      <span className="text-3xl font-black text-slate-950 mt-4">RM</span>
-                      <span className="text-8xl md:text-9xl font-black text-slate-950 tracking-tighter tabular-nums leading-none">
-                        {amountRM.toFixed(2)}
-                      </span>
+              <div className={`grid grid-cols-1 ${plan === "plan1" ? "max-w-2xl mx-auto" : "md:grid-cols-2 xl:grid-cols-3"} gap-8 xl:gap-12 items-start animate-in fade-in slide-in-from-bottom-4 duration-500`}>
+                
+                {/* COLUMN 1: Calculator (Hidden in Plan 1) */}
+                {plan !== "plan1" && (
+                  <div className="space-y-8">
+                    <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-6 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)] min-h-[160px] flex flex-col justify-center">
+                      <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-2">Total Amount</p>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-xl font-black text-slate-950">RM</span>
+                        <span className="text-6xl font-black text-slate-950 tracking-tighter tabular-nums leading-tight">
+                          {amountRM.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3">
+                      {["1","2","3","4","5","6","7","8","9","0","00"].map((digit) => (
+                        <button
+                          key={digit}
+                          onClick={() => pressDigit(digit)}
+                          className="h-16 rounded-2xl bg-white border-4 border-slate-950 hover:bg-slate-50 text-slate-950 font-black text-3xl transition-all active:scale-90 shadow-sm"
+                        >
+                          {digit}
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => setAmount(amount.length <= 1 ? "0" : amount.slice(0, -1))}
+                        className="h-16 rounded-2xl bg-amber-50 border-4 border-slate-950 hover:bg-amber-100 text-slate-950 font-black text-2xl transition-all active:scale-90 shadow-sm flex items-center justify-center"
+                      >
+                        ⌫
+                      </button>
+                      <button
+                        onClick={() => setAmount("0")}
+                        className="col-span-3 h-14 rounded-xl bg-white border-4 border-red-600 hover:bg-red-50 text-red-600 font-black text-sm uppercase tracking-widest transition-all active:scale-95 shadow-sm"
+                      >
+                        Clear Amount
+                      </button>
                     </div>
                   </div>
+                )}
 
-                  <div className="grid grid-cols-3 gap-4">
-                    {["1","2","3","4","5","6","7","8","9","0","00"].map((digit) => (
-                      <button
-                        key={digit}
-                        onClick={() => pressDigit(digit)}
-                        className="h-20 rounded-3xl bg-white border-4 border-slate-950 hover:bg-slate-50 text-slate-950 font-black text-4xl transition-all active:scale-90 shadow-sm"
-                      >
-                        {digit}
-                      </button>
-                    ))}
-                    <button
-                      onClick={() => setAmount(amount.length <= 1 ? "0" : amount.slice(0, -1))}
-                      className="h-20 rounded-3xl bg-amber-50 border-4 border-slate-950 hover:bg-amber-100 text-slate-950 font-black text-3xl transition-all active:scale-90 shadow-sm flex items-center justify-center"
-                    >
-                      ⌫
-                    </button>
-                  </div>
-                  <button
-                    onClick={() => setAmount("0")}
-                    className="w-full h-16 rounded-2xl bg-white border-4 border-red-600 hover:bg-red-50 text-red-600 font-black text-xl uppercase tracking-widest transition-all active:scale-95 shadow-sm"
-                  >
-                    Clear Amount
-                  </button>
-                </div>
-
+                {/* COLUMN 2: Inbox/Requests */}
                 <div className="space-y-8">
                   <div className="flex items-center justify-between px-2">
-                    <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Live Table Grid</p>
-                    {plan === 'plan1' && (
-                      <span className="text-[9px] font-black text-orange-500 uppercase flex items-center gap-1">
-                        <Lock size={10} /> Upgrade to Plan 2/3 for Table Tracking
-                      </span>
-                    )}
+                    <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">
+                      {plan === "plan1" ? "Today's Log" : "Inbox"}
+                    </p>
+                    <span className="bg-green-500 text-white text-[10px] font-black px-3 py-1 rounded-full animate-pulse">
+                      2 New
+                    </span>
                   </div>
 
-                  {plan === 'plan1' ? (
-                    <div className="space-y-6">
-                      <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-10 text-center flex flex-col items-center gap-6 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)]">
-                        <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center border-4 border-blue-100">
-                          <Smartphone size={40} />
+                  <div className="space-y-3">
+                    {MOCK_PAYMENTS.map((pay) => (
+                      <button 
+                        key={pay.id} 
+                        onClick={() => setSelectedPayment(selectedPayment === pay.id ? null : pay.id)}
+                        className={`w-full bg-white border-4 rounded-3xl p-4 flex items-center gap-4 transition-all hover:scale-[1.02] active:scale-95 ${
+                          selectedPayment === pay.id ? 'border-green-500 ring-4 ring-green-100 shadow-xl' : 'border-slate-950 shadow-lg'
+                        }`}
+                      >
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
+                          selectedPayment === pay.id ? 'bg-green-500 text-white' : 'bg-slate-950 text-white'
+                        }`}>
+                          <Bell size={24} />
                         </div>
-                        <div>
-                          <p className="font-black text-slate-950 text-xl tracking-tight">Direct Merchant Payout</p>
-                          <p className="text-slate-500 font-bold text-sm mt-2 leading-relaxed">
-                            In Plan 1, the NFC sticker goes directly to your TNG checkout.
-                          </p>
+                        <div className="flex-1 text-left">
+                          <p className="font-black text-slate-950 text-xl tracking-tight leading-none">RM {pay.amount.toFixed(2)}</p>
+                          <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">{pay.content} • {pay.time}</p>
                         </div>
-                        <button 
+                      </button>
+                    ))}
+                  </div>
+
+                  {plan === "plan1" && (
+                    <div className="pt-4 border-t-4 border-slate-100 space-y-4">
+                      <button
+                        onClick={() => triggerLock("Selecting a payment from the log will clear it. In Plan 1, this is used for manual reconciliation.")}
+                        className={`w-full py-6 rounded-[2rem] border-4 border-dashed flex flex-col items-center justify-center gap-2 transition-all active:scale-95 ${
+                          selectedPayment ? "bg-red-50 border-red-500 text-red-500 animate-pulse" : "bg-slate-50 border-slate-200 text-slate-300"
+                        }`}
+                      >
+                        <Trash2 size={24} />
+                        <p className="font-black text-[10px] uppercase tracking-widest">Delete Entry</p>
+                      </button>
+                      <div className="bg-blue-50 border-4 border-blue-100 rounded-[2rem] p-6 text-center">
+                         <p className="text-blue-600 font-black text-sm uppercase tracking-tight">Lite Plan Mode</p>
+                         <p className="text-[10px] text-blue-500 font-bold mt-1">Direct pay only. No table assignment.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Requests (Plan 2/3 Only) */}
+                  {plan !== "plan1" && (
+                    <div className="space-y-6 pt-4">
+                      <div className="flex items-center justify-between px-2">
+                        <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Table Requests</p>
+                        <span className="bg-orange-500 text-white text-[10px] font-black px-3 py-1 rounded-full animate-bounce">1 New</span>
+                      </div>
+                      <div className="bg-white border-4 border-slate-950 rounded-3xl p-4 flex items-center gap-4 shadow-lg">
+                        <div className="w-12 h-12 rounded-xl bg-orange-500 text-white flex items-center justify-center shrink-0">
+                          <Bell size={24} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-black text-slate-950 text-lg truncate tracking-tight">Table 4</p>
+                        </div>
+                        <button
                           onClick={() => {
                             if (amountRM === 0) return;
-                            simulateAction(() => triggerLock("This would redirect the customer to your TNG Checkout page. In Plan 1, you cannot track specific tables."));
+                            simulateAction(() => {
+                              setStickers(prev => prev.map(s => s.id === 's4' ? {...s, pushedBill: { amount: amountRM, pushedAt: new Date() }} : s));
+                              setAmount("0");
+                            });
                           }}
-                          className="w-full bg-slate-950 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-blue-600 transition-all flex items-center justify-center gap-3"
+                          disabled={amountRM === 0}
+                          className="bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all"
                         >
-                          <Zap size={20} className="fill-white" /> Open TNG Checkout
+                          Push RM {amountRM.toFixed(2)}
                         </button>
-                        <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 w-full">
-                          <p className="text-[9px] font-black text-amber-700 uppercase tracking-widest flex items-center justify-center gap-2">
-                             <Lock size={12} /> Plan 1 Limitation
-                          </p>
-                          <p className="text-[10px] text-amber-600 font-bold mt-1">Table tracking is disabled. Customers pay a general amount.</p>
-                        </div>
                       </div>
-                      
-                      <button onClick={() => setPlan('plan3')} className="w-full py-4 text-blue-600 font-black text-xs uppercase tracking-widest hover:underline flex items-center justify-center gap-2">
-                        Try Plan 3 for Table Tracking <ArrowRight size={14} />
-                      </button>
                     </div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  )}
+                </div>
+
+                {/* COLUMN 3: Tables (Hidden in Plan 1) */}
+                {plan !== "plan1" && (
+                  <div className="space-y-8">
+                    <div className="flex items-center justify-between px-2">
+                      <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Tables</p>
+                    </div>
+                    
+                    <div className="grid grid-cols-3 gap-3">
                       {stickers.map((s) => (
-                        <div key={s.id} className="bg-white border-4 border-slate-950 rounded-[2rem] p-6 shadow-[4px_4px_0px_0px_rgba(2,6,23,1)] flex flex-col justify-between gap-4 group hover:-translate-y-1 transition-all">
-                          <div className="flex items-center gap-3">
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${s.pushedBill ? 'bg-green-100 text-green-600' : 'bg-slate-950 text-white'}`}>
-                              <UtensilsCrossed size={18} />
-                            </div>
-                            <div>
-                              <p className="font-black text-slate-950">{s.tableName}</p>
-                              <p className={`text-[9px] font-black uppercase tracking-widest mt-0.5 ${s.pushedBill ? 'text-green-600' : 'text-slate-400'}`}>
-                                {s.pushedBill ? `RM ${s.pushedBill.amount.toFixed(2)} Active` : "Ready"}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => {
-                                if (amountRM === 0) return;
+                        <div key={s.id} className="relative">
+                          <button
+                            onClick={() => {
+                              if (selectedPayment) {
+                                simulateAction(() => {
+                                  setStickers(prev => prev.map(st => st.id === s.id ? {...st, pushedBill: null} : st));
+                                  setSelectedPayment(null);
+                                });
+                              } else if (amountRM > 0) {
                                 simulateAction(() => {
                                   setStickers(prev => prev.map(st => st.id === s.id ? {...st, pushedBill: { amount: amountRM, pushedAt: new Date() }} : st));
                                   setAmount("0");
                                 });
-                              }}
-                              className="flex-1 bg-slate-950 text-white py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-600 transition-all active:scale-95"
-                            >
-                              Push Bill
-                            </button>
-                            {s.pushedBill && (
-                              <button 
-                                onClick={() => setStickers(prev => prev.map(st => st.id === s.id ? {...st, pushedBill: null} : st))}
-                                className="px-3 border-2 border-slate-950 rounded-xl font-black text-slate-400 hover:text-red-500 hover:border-red-500 transition-all"
-                              >
-                                <X size={14} />
-                              </button>
+                              }
+                            }}
+                            className={`w-full aspect-square rounded-2xl border-4 border-slate-950 flex flex-col items-center justify-center gap-1 transition-all active:scale-95 shadow-md ${
+                              s.pushedBill ? "bg-blue-50 border-blue-600 shadow-blue-900/10" : "bg-white"
+                            }`}
+                          >
+                            <p className="font-black text-slate-950 text-xs truncate w-full text-center tracking-tight leading-tight px-1">{s.tableName}</p>
+                            {s.pushedBill ? (
+                              <p className="text-[10px] font-black text-blue-600 uppercase tracking-tighter">RM {s.pushedBill.amount.toFixed(0)}</p>
+                            ) : (
+                              <p className="text-[8px] font-black text-slate-200 uppercase tracking-widest">Assign</p>
                             )}
-                          </div>
+                          </button>
+                          {s.pushedBill && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setStickers(prev => prev.map(st => st.id === s.id ? {...st, pushedBill: null} : st));
+                              }}
+                              className="absolute -top-1 -right-1 w-7 h-7 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white hover:bg-red-700 transition-all z-10"
+                            >
+                              <span className="text-base font-black">×</span>
+                            </button>
+                          )}
                         </div>
                       ))}
+
+                      <button
+                        onClick={() => {
+                          if (selectedPayment) {
+                            simulateAction(() => setSelectedPayment(null));
+                          }
+                        }}
+                        className={`w-full aspect-square rounded-2xl border-4 border-dashed flex flex-col items-center justify-center gap-2 transition-all active:scale-95 shadow-md ${
+                          selectedPayment ? "bg-red-50 border-red-500 text-red-500 animate-pulse" : "bg-slate-50 border-slate-200 text-slate-300"
+                        }`}
+                      >
+                        <Trash2 size={24} />
+                        <p className="font-black text-[10px] uppercase tracking-widest">Dustbin</p>
+                      </button>
                     </div>
-                  )}
-                </div>
+
+                    {/* Quick RM Section */}
+                    <div className="space-y-4 pt-4 border-t-4 border-slate-100">
+                      <div className="flex items-center justify-between px-2">
+                        <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Quick RM</p>
+                      </div>
+                      <div className="border-4 border-slate-950 bg-white overflow-hidden shadow-[4px_4px_0px_0px_rgba(2,6,23,1)]">
+                        {[10, 20, 50].map((val, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => setAmount((val * 100).toString())}
+                            className={`w-full py-4 text-center hover:bg-slate-50 active:bg-slate-100 transition-colors flex items-center justify-center gap-4 ${idx !== 0 ? 'border-t-2 border-slate-950' : ''}`}
+                          >
+                            <span className="text-2xl font-black text-slate-950">{val.toFixed(2)}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -418,9 +510,6 @@ export default function DemoPage() {
                     ))}
                   </div>
                 </div>
-                <p className="text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                  History cleared automatically in demo sessions
-                </p>
               </div>
             )}
 
@@ -508,23 +597,6 @@ export default function DemoPage() {
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black px-1">Payment Setup</p>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">TNG Merchant URL</label>
-                      <div className="relative">
-                        <input 
-                          type="text" 
-                          readOnly
-                          value="https://payment.tngdigital.com.my/sc/demo" 
-                          className="w-full bg-slate-100 border-4 border-slate-950 rounded-2xl px-6 py-4 text-slate-400 font-mono text-[10px] focus:outline-none"
-                        />
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-white px-3 py-1 rounded-lg border-2 border-slate-950 text-[8px] font-black uppercase text-slate-400">Locked</div>
-                      </div>
-                      <p className="text-[9px] text-slate-400 font-bold ml-1">This is your unique Touch 'n Go checkout link from the TNG app.</p>
-                    </div>
-                  </div>
-
                   <div className="pt-6 border-t-4 border-slate-50">
                     <button 
                       onClick={() => triggerLock("Settings are read-only in demo mode. Create an account to save your store profile.")}
@@ -533,24 +605,6 @@ export default function DemoPage() {
                       Save Configuration
                     </button>
                   </div>
-                </div>
-
-                <div className="bg-orange-50 border-4 border-orange-200 rounded-[2.5rem] p-10 space-y-6">
-                   <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-orange-200 text-orange-600 rounded-2xl flex items-center justify-center">
-                        <AlertCircle size={24} />
-                      </div>
-                      <div>
-                        <h4 className="text-xl font-black text-orange-600">Danger Zone</h4>
-                        <p className="text-orange-600/70 text-xs font-bold">Permanently delete your entire digital store.</p>
-                      </div>
-                   </div>
-                   <button 
-                    onClick={() => triggerLock("Account deletion is disabled for demo safety.")}
-                    className="w-full bg-white border-4 border-orange-200 text-orange-500 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-orange-100 transition-all"
-                   >
-                     Reset All Store Data
-                   </button>
                 </div>
               </div>
             )}
