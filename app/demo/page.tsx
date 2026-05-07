@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Zap,
   Check,
@@ -10,69 +10,54 @@ import {
   UtensilsCrossed,
   Nfc,
   Info,
+  History,
+  Activity,
+  ScanSearch,
+  Lock,
+  ArrowRight,
+  ShieldCheck,
+  X,
+  Bell,
+  Smartphone,
+  CheckCircle2,
+  AlertCircle
 } from "lucide-react";
 import ParticleBackground from "@/components/ParticleBackground";
+import Link from "next/link";
 
-// ─── TYPES ────────────────────────────────────────────────────────────────────
-interface MerchantData {
-  name: string;
-  plan: "plan1" | "plan2" | "plan3";
-  fixedAmount: number | null;
-  tngPaymentUrl: string;
-}
-
-interface BillRequest {
-  id: string;
-  stickerId: string;
-  tableName: string;
-  wantsReceipt: boolean;
-  createdAt: Date;
-  status: string;
-}
-
+// ─── TYPES & MOCK DATA ────────────────────────────────────────────────────────
 interface Sticker {
   id: string;
   tableName: string;
   pushedBill: { amount: number; pushedAt: Date } | null;
 }
 
-// ─── INITIAL MOCK DATA ────────────────────────────────────────────────────────
-const INITIAL_MERCHANT: MerchantData = {
-  name: "Demo Kopitiam",
-  plan: "plan3",
-  fixedAmount: null,
-  tngPaymentUrl: "https://payment.tngdigital.com.my/sc/demo",
-};
-
 const INITIAL_STICKERS: Sticker[] = [
   { id: "s1", tableName: "Table 1", pushedBill: null },
   { id: "s2", tableName: "Table 2", pushedBill: { amount: 15.5, pushedAt: new Date() } },
   { id: "s3", tableName: "Table 3", pushedBill: null },
+  { id: "s4", tableName: "Table 4", pushedBill: null },
 ];
 
-const INITIAL_BILL_REQUESTS: BillRequest[] = [
-  {
-    id: "br1",
-    stickerId: "s1",
-    tableName: "Table 1",
-    wantsReceipt: true,
-    createdAt: new Date(Date.now() - 120000),
-    status: "pending",
-  },
+const INITIAL_HISTORY = [
+  { id: "h1", tableName: "Table 2", amount: 45.00, status: "paid", time: "10:30 AM" },
+  { id: "h2", tableName: "Table 1", amount: 12.50, status: "paid", time: "10:15 AM" },
+  { id: "h3", tableName: "Table 5", amount: 0, status: "cleared", time: "09:45 AM" },
 ];
+
+// ─── COMPONENTS ───────────────────────────────────────────────────────────────
 
 export default function DemoPage() {
-  const [activeTab, setActiveTab] = useState<"cashier" | "settings">("cashier");
+  const [activeTab, setActiveTab] = useState<"overview" | "cashier" | "history" | "nfc" | "settings">("overview");
+  const [plan, setPlan] = useState<"plan1" | "plan2" | "plan3">("plan3");
   const [amount, setAmount] = useState("0");
   const [loading, setLoading] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [merchant, setMerchant] = useState<MerchantData>(INITIAL_MERCHANT);
+  const [showLock, setShowLock] = useState<string | null>(null);
   const [stickers, setStickers] = useState<Sticker[]>(INITIAL_STICKERS);
-  const [billRequests, setBillRequests] = useState<BillRequest[]>(INITIAL_BILL_REQUESTS);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const rawCents = parseInt(amount);
-  const amountRM = rawCents / 100;
+  // Cashier Logic
+  const amountRM = parseInt(amount) / 100;
 
   function pressDigit(digit: string) {
     if (amount === "0") {
@@ -84,149 +69,202 @@ export default function DemoPage() {
     }
   }
 
-  function pressBackspace() {
-    if (amount === "0") return;
-    setAmount(amount.length <= 1 ? "0" : amount.slice(0, -1));
-  }
-
-  function pressClear() {
-    setAmount("0");
-  }
+  const triggerLock = (msg: string) => {
+    setShowLock(msg);
+    setTimeout(() => setShowLock(null), 3000);
+  };
 
   const simulateAction = (callback: () => void) => {
     setLoading(true);
     setTimeout(() => {
       callback();
       setLoading(false);
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
     }, 600);
   };
 
-  function handleSetAmount() {
-    simulateAction(() => {
-      setMerchant((prev) => ({ ...prev, fixedAmount: amountRM }));
-    });
-  }
-
-  function handleClearAmount() {
-    simulateAction(() => {
-      setMerchant((prev) => ({ ...prev, fixedAmount: null }));
-      setAmount("0");
-    });
-  }
-
-  function handleAssignToSticker(stickerId: string) {
-    if (rawCents === 0) return;
-    simulateAction(() => {
-      setStickers((prev) =>
-        prev.map((s) =>
-          s.id === stickerId ? { ...s, pushedBill: { amount: amountRM, pushedAt: new Date() } } : s
-        )
-      );
-      setAmount("0");
-    });
-  }
-
-  function handleClearStickerBill(stickerId: string) {
-    simulateAction(() => {
-      setStickers((prev) =>
-        prev.map((s) => (s.id === stickerId ? { ...s, pushedBill: null } : s))
-      );
-    });
-  }
-
-  function handlePushAndDone(req: BillRequest) {
-    simulateAction(() => {
-      setMerchant((prev) => ({ ...prev, fixedAmount: amountRM }));
-      setBillRequests((prev) => prev.filter((r) => r.id !== req.id));
-      setStickers((prev) =>
-        prev.map((s) =>
-          s.id === req.stickerId ? { ...s, pushedBill: { amount: amountRM, pushedAt: new Date() } } : s
-        )
-      );
-      setAmount("0");
-    });
-  }
-
-  function handleDoneRequest(reqId: string) {
-    simulateAction(() => {
-      setBillRequests((prev) => prev.filter((r) => r.id !== reqId));
-    });
-  }
+  // ─── RENDERERS ─────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-slate-50 relative overflow-x-hidden">
+    <div className="min-h-screen bg-slate-50 font-sans selection:bg-blue-100 selection:text-blue-900 relative overflow-hidden">
       <ParticleBackground />
 
-      {/* Demo Banner */}
-      <div className="bg-slate-950 text-white py-2 px-4 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] sticky top-0 z-50 shadow-xl">
-        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-        Interactive Demo Mode — No real data is saved
-      </div>
-
-      {/* Header */}
-      <header className="border-b-4 border-slate-950 bg-white sticky top-[34px] z-40 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <img src="/TapPay_Logo.png" alt="TapPay" className="w-10 h-10 object-contain" />
-          <div>
-            <h1 className="text-xl font-black text-slate-950 tracking-tight leading-none">TapPay</h1>
-            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">{merchant.name}</p>
+      {/* Lock Overlay */}
+      {showLock && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
+          <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" />
+          <div className="relative bg-white border-4 border-slate-950 rounded-[2.5rem] p-10 shadow-[12px_12px_0px_0px_rgba(2,6,23,1)] max-w-sm w-full text-center space-y-6 animate-in zoom-in-95 duration-300">
+            <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl mx-auto flex items-center justify-center border-4 border-blue-100">
+              <Lock size={40} />
+            </div>
+            <div>
+              <h3 className="text-2xl font-black text-slate-950">Premium Feature</h3>
+              <p className="text-slate-500 font-bold mt-2 leading-relaxed">{showLock}</p>
+            </div>
+            <Link href="/signup" className="block w-full bg-slate-950 text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:-translate-y-1 transition-all active:translate-y-0 shadow-lg">
+              Get Started Now
+            </Link>
+            <button onClick={() => setShowLock(null)} className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-600">
+              Continue Exploring Demo
+            </button>
           </div>
         </div>
+      )}
 
-        <div className="flex bg-slate-100 p-1.5 rounded-[1.5rem] border-2 border-slate-950 shadow-[4px_4px_0px_0px_rgba(2,6,23,1)]">
-          <button
-            onClick={() => setActiveTab("cashier")}
-            className={`flex items-center gap-2 px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-              activeTab === "cashier" ? "bg-slate-950 text-white shadow-lg" : "text-slate-500 hover:text-slate-950"
-            }`}
-          >
-            <Calculator size={14} /> Cashier
-          </button>
-          <button
-            onClick={() => setActiveTab("settings")}
-            className={`flex items-center gap-2 px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-              activeTab === "settings" ? "bg-slate-950 text-white shadow-lg" : "text-slate-500 hover:text-slate-950"
-            }`}
-          >
-            <Settings size={14} /> Settings
-          </button>
+      {/* Demo Banner */}
+      <div className="bg-slate-950 text-white py-2 px-4 flex items-center justify-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] sticky top-0 z-50">
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+          Interactive Demo Mode
         </div>
+        <div className="h-4 w-px bg-white/20" />
+        <Link href="/" className="hover:text-blue-400 transition-colors">Exit Demo</Link>
+      </div>
 
-        <div className="hidden md:flex items-center gap-4">
-          <a href="/" className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-slate-950 transition-all">
-            Exit Demo
-          </a>
-          <button className="bg-slate-950 text-white px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(30,41,59,1)] hover:-translate-y-[2px] active:translate-y-0 transition-all">
-            Get Started
-          </button>
-        </div>
-      </header>
+      <div className="flex h-[calc(100vh-34px)]">
+        {/* Sidebar */}
+        <aside className="w-20 md:w-64 bg-white border-r-4 border-slate-950 flex flex-col z-40">
+          <div className="p-6 border-b-4 border-slate-950 hidden md:block">
+            <div className="flex items-center gap-3">
+              <img src="/TapPay_Logo.png" alt="Logo" className="w-10 h-10 object-contain" />
+              <div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">TapPay</p>
+                <p className="font-black text-slate-950 truncate">Demo Store</p>
+              </div>
+            </div>
+          </div>
 
-      <main className="p-8 md:p-12">
-        {activeTab === "cashier" ? (
-          <div className="max-w-6xl mx-auto pb-20">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+          <nav className="flex-1 p-4 space-y-2 mt-4">
+            {[
+              { id: "overview", icon: <Activity size={20} />, label: "Overview" },
+              { id: "cashier", icon: <Calculator size={20} />, label: "Cashier", badge: "Live" },
+              { id: "history", icon: <History size={20} />, label: "History" },
+              { id: "nfc", icon: <Nfc size={20} />, label: "NFC Writer" },
+              { id: "settings", icon: <Settings size={20} />, label: "Settings" },
+            ].map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id as any)}
+                className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all group ${
+                  activeTab === item.id 
+                    ? "bg-slate-950 text-white shadow-xl" 
+                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-950"
+                }`}
+              >
+                <div className="shrink-0">{item.icon}</div>
+                <span className="hidden md:block font-black text-sm uppercase tracking-widest">{item.label}</span>
+                {item.badge && activeTab !== item.id && (
+                  <span className="hidden md:block ml-auto text-[8px] bg-blue-500 text-white px-2 py-0.5 rounded-full animate-pulse">
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            ))}
+          </nav>
 
-              {/* Left: Cashier Panel */}
-              <div className="space-y-10 lg:pt-4">
-                <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)]">
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-4">Total Amount to Collect</p>
-                  <div className="flex items-start gap-3">
-                    <span className="text-3xl font-black text-slate-950 mt-4">RM</span>
-                    <span className="text-8xl md:text-9xl font-black text-slate-950 tracking-tighter tabular-nums leading-none">
-                      {amountRM.toFixed(2)}
-                    </span>
-                  </div>
-                  {merchant.fixedAmount && (
-                    <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest animate-pulse">
-                      <Zap size={12} className="fill-white" /> Active Tap Enabled
+          <div className="p-4 border-t-4 border-slate-950">
+            <div className="bg-blue-50 rounded-2xl p-4 hidden md:block">
+              <p className="text-[9px] font-black text-blue-600 uppercase tracking-widest mb-1">Current Plan</p>
+              <div className="flex items-center justify-between">
+                <span className="font-black text-slate-950 text-sm">Plan {plan.slice(-1)} Premium</span>
+                <div className="w-2 h-2 rounded-full bg-green-500" />
+              </div>
+            </div>
+            <button 
+              onClick={() => triggerLock("User authentication is disabled in demo.")}
+              className="w-full flex items-center gap-4 p-4 rounded-2xl text-slate-500 hover:text-red-500 transition-all mt-2"
+            >
+              <Lock size={20} />
+              <span className="hidden md:block font-black text-xs uppercase tracking-widest">Logout</span>
+            </button>
+          </div>
+        </aside>
+
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto p-6 md:p-12 relative">
+          
+          {/* Header Info */}
+          <div className="max-w-6xl mx-auto mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <h2 className="text-4xl md:text-5xl font-black text-slate-950 tracking-tight capitalize">
+                  {activeTab}
+                </h2>
+                {activeTab === 'cashier' && <span className="bg-green-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest animate-pulse">Live</span>}
+              </div>
+              <p className="text-slate-500 font-bold uppercase tracking-[0.2em] text-xs">
+                {activeTab === 'overview' ? "Your business at a glance" : 
+                 activeTab === 'cashier' ? "Real-time table settlement" :
+                 activeTab === 'history' ? "Transaction logs" :
+                 activeTab === 'nfc' ? "Program physical stickers" : "Dashboard configuration"}
+              </p>
+            </div>
+
+            {activeTab === 'settings' && (
+              <div className="flex gap-4">
+                {(['plan1', 'plan2', 'plan3'] as const).map(p => (
+                  <button 
+                    key={p}
+                    onClick={() => setPlan(p)}
+                    className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                      plan === p ? "bg-blue-600 text-white" : "bg-white border-2 border-slate-200 text-slate-400"
+                    }`}
+                  >
+                    Demo Plan {p.slice(-1)}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="max-w-6xl mx-auto">
+            {/* ── OVERVIEW TAB ─────────────────────────────────────── */}
+            {activeTab === "overview" && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {[
+                    { label: "Today's Revenue", value: "RM 157.50", icon: <Activity className="text-green-600" />, color: "text-green-600" },
+                    { label: "Active Taps", value: "42", icon: <Nfc className="text-blue-600" />, color: "text-blue-600" },
+                    { label: "Requests Handled", value: "18", icon: <Bell className="text-orange-500" />, color: "text-orange-500" },
+                  ].map((stat, i) => (
+                    <div key={i} className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)] flex flex-col items-center text-center">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center mb-4">{stat.icon}</div>
+                      <p className="text-[40px] font-black text-slate-950 tracking-tighter leading-none mb-2">{stat.value}</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</p>
                     </div>
-                  )}
+                  ))}
                 </div>
 
-                <div className="space-y-6">
+                <div className="bg-slate-950 rounded-[3rem] p-10 text-white relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
+                    <ShieldCheck size={200} />
+                  </div>
+                  <div className="relative z-10 max-w-xl">
+                    <h3 className="text-3xl font-black tracking-tight mb-4 leading-tight">Welcome to the God Mode Demo.</h3>
+                    <p className="text-slate-400 font-medium leading-relaxed mb-8">
+                      Experience the full power of TapPay without spending a single sen. We've unlocked all premium features for this demo store.
+                    </p>
+                    <button onClick={() => setActiveTab("cashier")} className="inline-flex items-center gap-3 bg-white text-slate-950 px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-blue-50 transition-all active:scale-95">
+                      Open Cashier Mode <ArrowRight size={18} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ── CASHIER TAB ──────────────────────────────────────── */}
+            {activeTab === "cashier" && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="space-y-10">
+                  <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)]">
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-4">Total Amount to Collect</p>
+                    <div className="flex items-start gap-3">
+                      <span className="text-3xl font-black text-slate-950 mt-4">RM</span>
+                      <span className="text-8xl md:text-9xl font-black text-slate-950 tracking-tighter tabular-nums leading-none">
+                        {amountRM.toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-3 gap-4">
                     {["1","2","3","4","5","6","7","8","9","0","00"].map((digit) => (
                       <button
@@ -238,249 +276,268 @@ export default function DemoPage() {
                       </button>
                     ))}
                     <button
-                      onClick={pressBackspace}
+                      onClick={() => setAmount(amount.length <= 1 ? "0" : amount.slice(0, -1))}
                       className="h-20 rounded-3xl bg-amber-50 border-4 border-slate-950 hover:bg-amber-100 text-slate-950 font-black text-3xl transition-all active:scale-90 shadow-sm flex items-center justify-center"
                     >
                       ⌫
                     </button>
-                    <button
-                      onClick={pressClear}
-                      className="col-span-3 h-16 rounded-2xl bg-white border-4 border-red-600 hover:bg-red-50 text-red-600 font-black text-xl uppercase tracking-widest transition-all active:scale-95 shadow-sm"
-                    >
-                      Clear Amount
-                    </button>
                   </div>
-
-                  <div className="flex gap-4">
-                    <button
-                      onClick={handleClearAmount}
-                      disabled={loading || !merchant.fixedAmount}
-                      className="flex-1 bg-slate-100 hover:bg-slate-200 disabled:opacity-30 text-slate-950 py-5 rounded-3xl font-black text-xs uppercase tracking-widest transition-all active:scale-95"
-                    >
-                      Reset
-                    </button>
-                    <button
-                      onClick={handleSetAmount}
-                      disabled={loading || rawCents === 0}
-                      className="flex-[2] bg-slate-950 hover:bg-black disabled:opacity-30 text-white py-5 rounded-3xl font-black text-lg uppercase tracking-widest transition-all shadow-xl shadow-slate-900/20 active:scale-95 flex items-center justify-center gap-3"
-                    >
-                      {loading ? <Loader2 className="animate-spin" /> : saved ? <Check /> : <Zap className="fill-white" />}
-                      {saved ? "Activated" : "Activate Tap"}
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => setAmount("0")}
+                    className="w-full h-16 rounded-2xl bg-white border-4 border-red-600 hover:bg-red-50 text-red-600 font-black text-xl uppercase tracking-widest transition-all active:scale-95 shadow-sm"
+                  >
+                    Clear Amount
+                  </button>
                 </div>
-              </div>
 
-              {/* Right: Requests & Tables */}
-              <div className="space-y-12 lg:pt-4">
-                <div className="space-y-6">
+                <div className="space-y-8">
                   <div className="flex items-center justify-between px-2">
-                    <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Incoming Requests</p>
-                    {billRequests.length > 0 && (
-                      <span className="bg-orange-500 text-white text-[10px] font-black px-3 py-1 rounded-full animate-bounce">
-                        {billRequests.length} New
+                    <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Live Table Grid</p>
+                    {plan === 'plan1' && (
+                      <span className="text-[9px] font-black text-orange-500 uppercase flex items-center gap-1">
+                        <Lock size={10} /> Upgrade to Plan 2/3 for Table Tracking
                       </span>
                     )}
                   </div>
 
-                  {billRequests.length === 0 ? (
-                    <div className="bg-white border-4 border-slate-950 rounded-[2rem] p-8 text-center shadow-[4px_4px_0px_0px_rgba(2,6,23,1)]">
-                      <p className="text-slate-300 font-black text-sm uppercase tracking-widest">No requests yet</p>
-                      <p className="text-slate-400 text-[10px] mt-2">Customers tap your sticker to send a bill request</p>
+                  {plan === 'plan1' ? (
+                    <div className="bg-slate-100 border-4 border-dashed border-slate-300 rounded-[2.5rem] p-12 text-center flex flex-col items-center gap-4 opacity-70">
+                      <Lock size={32} className="text-slate-400" />
+                      <p className="font-black text-slate-400 uppercase text-xs tracking-widest">Plan 1: Direct Payout Only</p>
+                      <p className="text-[10px] text-slate-400 font-medium">Table tracking and remote pushing requires Plan 2 or 3.</p>
+                      <button onClick={() => setPlan('plan3')} className="mt-2 text-blue-600 font-black text-[10px] uppercase tracking-widest hover:underline">Switch to Plan 3 to Demo</button>
                     </div>
                   ) : (
-                    <div className="space-y-4">
-                      {billRequests.map((req) => (
-                        <div key={req.id} className="bg-orange-50 border-4 border-slate-950 rounded-[2rem] p-6 shadow-[4px_4px_0px_0px_rgba(2,6,23,1)] space-y-4">
-                          <div className="flex items-center justify-between">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {stickers.map((s) => (
+                        <div key={s.id} className="bg-white border-4 border-slate-950 rounded-[2rem] p-6 shadow-[4px_4px_0px_0px_rgba(2,6,23,1)] flex flex-col justify-between gap-4 group hover:-translate-y-1 transition-all">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${s.pushedBill ? 'bg-green-100 text-green-600' : 'bg-slate-950 text-white'}`}>
+                              <UtensilsCrossed size={18} />
+                            </div>
                             <div>
-                              <p className="font-black text-slate-950">{req.tableName}</p>
-                              <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">
-                                {req.wantsReceipt ? "Wants receipt" : "No receipt needed"}
+                              <p className="font-black text-slate-950">{s.tableName}</p>
+                              <p className={`text-[9px] font-black uppercase tracking-widest mt-0.5 ${s.pushedBill ? 'text-green-600' : 'text-slate-400'}`}>
+                                {s.pushedBill ? `RM ${s.pushedBill.amount.toFixed(2)} Active` : "Ready"}
                               </p>
                             </div>
-                            <span className="bg-orange-500 text-white text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest">
-                              Pending
-                            </span>
                           </div>
-                          <div className="flex gap-3">
+                          <div className="flex gap-2">
                             <button
-                              onClick={() => handlePushAndDone(req)}
-                              disabled={loading || rawCents === 0}
-                              className="flex-1 bg-slate-950 disabled:opacity-30 text-white py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95"
+                              onClick={() => {
+                                if (amountRM === 0) return;
+                                simulateAction(() => {
+                                  setStickers(prev => prev.map(st => st.id === s.id ? {...st, pushedBill: { amount: amountRM, pushedAt: new Date() }} : st));
+                                  setAmount("0");
+                                });
+                              }}
+                              className="flex-1 bg-slate-950 text-white py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-600 transition-all active:scale-95"
                             >
-                              {loading ? <Loader2 size={14} className="animate-spin mx-auto" /> : `Push RM ${amountRM.toFixed(2)}`}
+                              Push Bill
                             </button>
-                            <button
-                              onClick={() => handleDoneRequest(req.id)}
-                              className="px-4 py-3 border-4 border-slate-950 rounded-2xl font-black text-[10px] uppercase tracking-widest text-slate-500 hover:bg-slate-100 transition-all"
-                            >
-                              Done
-                            </button>
+                            {s.pushedBill && (
+                              <button 
+                                onClick={() => setStickers(prev => prev.map(st => st.id === s.id ? {...st, pushedBill: null} : st))}
+                                className="px-3 border-2 border-slate-950 rounded-xl font-black text-slate-400 hover:text-red-500 hover:border-red-500 transition-all"
+                              >
+                                <X size={14} />
+                              </button>
+                            )}
                           </div>
                         </div>
                       ))}
                     </div>
                   )}
                 </div>
+              </div>
+            )}
+
+            {/* ── HISTORY TAB ──────────────────────────────────────── */}
+            {activeTab === "history" && (
+              <div className="max-w-2xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="grid grid-cols-3 gap-6">
+                  <div className="bg-white border-4 border-slate-950 rounded-3xl p-6 text-center">
+                    <p className="text-2xl font-black text-green-600 leading-none">RM 57.50</p>
+                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-2">Revenue</p>
+                  </div>
+                  <div className="bg-white border-4 border-slate-950 rounded-3xl p-6 text-center">
+                    <p className="text-2xl font-black text-slate-950 leading-none">3</p>
+                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-2">Taps</p>
+                  </div>
+                  <div className="bg-white border-4 border-slate-950 rounded-3xl p-6 text-center">
+                    <p className="text-2xl font-black text-blue-600 leading-none">100%</p>
+                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-2">Success</p>
+                  </div>
+                </div>
+
+                <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] overflow-hidden">
+                  <div className="divide-y-4 divide-slate-950">
+                    {INITIAL_HISTORY.map(h => (
+                      <div key={h.id} className="p-6 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                        <div className="flex items-center gap-4">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${h.status === 'paid' ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-400'}`}>
+                            {h.status === 'paid' ? <CheckCircle2 size={18} /> : <X size={18} />}
+                          </div>
+                          <div>
+                            <p className="font-black text-slate-950 uppercase text-lg leading-tight">{h.tableName}</p>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{h.status} via Tap • {h.time}</p>
+                          </div>
+                        </div>
+                        <p className={`text-xl font-black ${h.status === 'paid' ? 'text-green-600' : 'text-slate-300'}`}>
+                          RM {h.amount.toFixed(2)}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  History cleared automatically in demo sessions
+                </p>
+              </div>
+            )}
+
+            {/* ── NFC WRITER TAB ───────────────────────────────────── */}
+            {activeTab === "nfc" && (
+              <div className="max-w-4xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="bg-blue-50 border-4 border-slate-950 rounded-[2.5rem] p-10 space-y-6">
+                    <div className="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-lg">
+                      <ScanSearch size={32} />
+                    </div>
+                    <h3 className="text-2xl font-black text-slate-950 tracking-tight">Scanner Mode</h3>
+                    <p className="text-slate-600 font-bold text-sm leading-relaxed">
+                      Wanna see what's inside a sticker? Tap any physical NFC tag to reveal its stored data and serial number.
+                    </p>
+                    <button 
+                      onClick={() => triggerLock("Web NFC requires an Android device with Chrome. Sign in to start scanning your real stickers.")}
+                      className="w-full bg-slate-950 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:-translate-y-1 transition-all"
+                    >
+                      Scan Physical Tag
+                    </button>
+                  </div>
+
+                  <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-10 space-y-6">
+                    <div className="w-16 h-16 bg-slate-950 text-white rounded-2xl flex items-center justify-center shadow-lg">
+                      <UtensilsCrossed size={32} />
+                    </div>
+                    <h3 className="text-2xl font-black text-slate-950 tracking-tight">Eraser Tool</h3>
+                    <p className="text-slate-600 font-bold text-sm leading-relaxed">
+                      Made a mistake? Use this tool to wipe a sticker clean and make it ready for a new URL.
+                    </p>
+                    <button 
+                      onClick={() => triggerLock("Eraser tool is a Plan 1+ feature. Upgrade to enable hardware control.")}
+                      className="w-full border-4 border-slate-950 text-slate-950 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-all"
+                    >
+                      Wipe Sticker
+                    </button>
+                  </div>
+                </div>
 
                 <div className="space-y-6">
-                  <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black px-2">Tables</p>
-                  <div className="space-y-4">
-                    {stickers.map((s) => (
-                      <div key={s.id} className="bg-white border-4 border-slate-950 rounded-[2rem] p-6 shadow-[4px_4px_0px_0px_rgba(2,6,23,1)] flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-slate-950 text-white flex items-center justify-center shrink-0">
-                          <UtensilsCrossed size={22} />
+                  <div className="flex items-center justify-between px-2">
+                    <h3 className="text-xl font-black text-slate-950">Program Tables</h3>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Android + Chrome Required</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {stickers.map(s => (
+                      <div key={s.id} className="bg-white border-4 border-slate-950 rounded-[2rem] p-8 shadow-[4px_4px_0px_0px_rgba(2,6,23,1)] space-y-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-slate-950">
+                            <Nfc size={20} />
+                          </div>
+                          <h4 className="font-black text-slate-950 text-lg">{s.tableName}</h4>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-black text-slate-950 truncate">{s.tableName}</p>
-                          {s.pushedBill ? (
-                            <p className="text-[10px] text-green-600 font-black uppercase tracking-widest mt-1">
-                              RM {s.pushedBill.amount.toFixed(2)} pushed
-                            </p>
-                          ) : (
-                            <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">Waiting</p>
-                          )}
+                        <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-4">
+                          <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Target URL</p>
+                          <p className="font-mono text-[10px] text-blue-600 truncate font-bold">tappay.my/s/{s.id}</p>
                         </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleAssignToSticker(s.id)}
-                            disabled={loading || rawCents === 0}
-                            className="text-[10px] font-black uppercase text-white bg-slate-950 px-4 py-2 rounded-xl disabled:opacity-30 transition-all active:scale-95"
-                          >
-                            Push
-                          </button>
-                          {s.pushedBill && (
-                            <button
-                              onClick={() => handleClearStickerBill(s.id)}
-                              className="text-[10px] font-black uppercase text-red-500 border-4 border-red-500 px-3 py-2 rounded-xl hover:bg-red-50 transition-all active:scale-95"
-                            >
-                              ×
-                            </button>
-                          )}
-                        </div>
+                        <button 
+                          onClick={() => triggerLock("Web NFC API is only accessible on secure mobile browsers. Login on your phone to program this sticker.")}
+                          className="w-full bg-slate-950 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-600 transition-all flex items-center justify-center gap-2"
+                        >
+                          <Nfc size={16} /> Write to {s.tableName}
+                        </button>
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
+            )}
 
-            </div>
-          </div>
-        ) : (
-          <div className="max-w-2xl mx-auto space-y-12 pb-20">
-            <div className="space-y-10">
-              <div>
-                <h2 className="text-3xl font-black text-slate-900 tracking-tight">Settings</h2>
-                <p className="text-slate-500 text-sm mt-1 font-medium">Configure your demo store and experience the dashboard setup.</p>
-              </div>
-
-              {/* NFC URLs */}
-              <div className="bg-blue-50 border-4 border-slate-950 rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)] space-y-4">
-                <h3 className="text-[10px] font-black text-blue-600 uppercase tracking-[0.15em] flex items-center gap-2">
-                  <Nfc size={18} /> NFC Sticker URLs
-                </h3>
-                <p className="text-[11px] text-slate-500 font-bold leading-relaxed">
-                  Copy these URLs into your NFC stickers using the <span className="text-blue-600">NFC Writer</span>.
-                </p>
-                <div className="space-y-3">
-                  {stickers.map((s) => (
-                    <div key={s.id} className="flex items-center gap-3 bg-white border-4 border-slate-950 rounded-2xl p-4">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">{s.tableName}</p>
-                        <p className="font-mono text-[10px] text-slate-500 truncate">tappay.my/s/{s.id}</p>
-                      </div>
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(`tappay.my/s/${s.id}`);
-                          setCopiedId(s.id);
-                          setTimeout(() => setCopiedId(null), 2000);
-                        }}
-                        className="text-[10px] font-black uppercase text-blue-600 bg-blue-50 px-4 py-2 rounded-xl border-4 border-blue-600 transition-all active:scale-95"
-                      >
-                        {copiedId === s.id ? "Copied!" : "Copy Link"}
-                      </button>
+            {/* ── SETTINGS TAB ─────────────────────────────────────── */}
+            {activeTab === "settings" && (
+              <div className="max-w-2xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-10 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)] space-y-8">
+                  <div className="space-y-4">
+                    <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black px-1">Store Branding</p>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Business Name</label>
+                      <input 
+                        type="text" 
+                        defaultValue="Demo Kopitiam" 
+                        className="w-full bg-slate-50 border-4 border-slate-950 rounded-2xl px-6 py-4 text-slate-950 font-black focus:outline-none focus:bg-white transition-all"
+                      />
                     </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Plan Selector */}
-              <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)] space-y-6">
-                <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Choose Your Plan</p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {(["plan1", "plan2", "plan3"] as const).map((p) => (
-                    <button
-                      key={p}
-                      onClick={() => setMerchant((prev) => ({ ...prev, plan: p }))}
-                      className={`p-5 rounded-3xl border-4 transition-all ${
-                        merchant.plan === p
-                          ? "bg-blue-50 border-blue-600"
-                          : "bg-slate-50 border-transparent hover:bg-slate-100"
-                      }`}
-                    >
-                      <p className={`font-black text-sm ${merchant.plan === p ? "text-blue-600" : "text-slate-900"}`}>
-                        Plan {p.slice(-1)}
-                      </p>
-                      <p className={`text-[9px] mt-1.5 font-bold ${merchant.plan === p ? "text-blue-400" : "text-slate-400"}`}>
-                        {p === "plan1" ? "Direct TNG" : p === "plan2" ? "Show Bill" : "Bill Please"}
-                      </p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Business Info */}
-              <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)] space-y-6">
-                <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Business Info</p>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Store Name</label>
-                  <input
-                    type="text"
-                    value={merchant.name}
-                    onChange={(e) => setMerchant((prev) => ({ ...prev, name: e.target.value }))}
-                    className="w-full bg-slate-50 border-4 border-slate-950 rounded-2xl px-5 py-4 text-slate-950 font-black focus:outline-none focus:bg-white transition-all"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">TNG Payment URL</label>
-                  <input
-                    type="text"
-                    value={merchant.tngPaymentUrl}
-                    className="w-full bg-slate-100 border-4 border-slate-950 rounded-2xl px-5 py-4 text-slate-400 font-mono text-xs focus:outline-none"
-                    readOnly
-                  />
-                </div>
-                <div className="flex items-center justify-between pt-4 border-t-4 border-slate-50">
-                  <div>
-                    <p className="font-black text-sm text-slate-950">Store Active</p>
-                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-wider mt-0.5">Control public availability</p>
                   </div>
-                  <button className="w-14 h-8 bg-green-500 rounded-full relative p-1">
-                    <div className="w-6 h-6 bg-white rounded-full shadow-sm translate-x-6" />
-                  </button>
+
+                  <div className="space-y-4">
+                    <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black px-1">Payment Setup</p>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">TNG Merchant URL</label>
+                      <div className="relative">
+                        <input 
+                          type="text" 
+                          readOnly
+                          value="https://payment.tngdigital.com.my/sc/demo" 
+                          className="w-full bg-slate-100 border-4 border-slate-950 rounded-2xl px-6 py-4 text-slate-400 font-mono text-[10px] focus:outline-none"
+                        />
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-white px-3 py-1 rounded-lg border-2 border-slate-950 text-[8px] font-black uppercase text-slate-400">Locked</div>
+                      </div>
+                      <p className="text-[9px] text-slate-400 font-bold ml-1">This is your unique Touch 'n Go checkout link from the TNG app.</p>
+                    </div>
+                  </div>
+
+                  <div className="pt-6 border-t-4 border-slate-50">
+                    <button 
+                      onClick={() => triggerLock("Settings are read-only in demo mode. Create an account to save your store profile.")}
+                      className="w-full bg-slate-950 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:-translate-y-1 transition-all shadow-xl"
+                    >
+                      Save Configuration
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-orange-50 border-4 border-orange-200 rounded-[2.5rem] p-10 space-y-6">
+                   <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-orange-200 text-orange-600 rounded-2xl flex items-center justify-center">
+                        <AlertCircle size={24} />
+                      </div>
+                      <div>
+                        <h4 className="text-xl font-black text-orange-600">Danger Zone</h4>
+                        <p className="text-orange-600/70 text-xs font-bold">Permanently delete your entire digital store.</p>
+                      </div>
+                   </div>
+                   <button 
+                    onClick={() => triggerLock("Account deletion is disabled for demo safety.")}
+                    className="w-full bg-white border-4 border-orange-200 text-orange-500 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-orange-100 transition-all"
+                   >
+                     Reset All Store Data
+                   </button>
                 </div>
               </div>
-
-              {/* Save Button */}
-              <button
-                onClick={() => simulateAction(() => {})}
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-400 text-white py-6 rounded-[2rem] font-black text-xl uppercase tracking-widest shadow-[8px_8px_0px_0px_rgba(30,41,59,1)] hover:-translate-y-1 active:translate-y-0 disabled:opacity-40 transition-all flex items-center justify-center gap-4"
-              >
-                {loading ? <Loader2 size={24} className="animate-spin" /> : saved ? <Check size={24} /> : "Update Store Settings"}
-                {saved && "Demo Saved"}
-              </button>
-            </div>
+            )}
           </div>
-        )}
-      </main>
+        </main>
+      </div>
 
-      {/* Floating Info Button */}
-      <div className="fixed bottom-8 right-8 z-50">
-        <button className="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl border-4 border-slate-950 animate-bounce">
-          <Info size={28} />
-        </button>
+      {/* Floating Call to Action */}
+      <div className="fixed bottom-8 right-8 z-50 flex items-center gap-4">
+        <div className="hidden lg:block bg-slate-950 text-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-2xl border-4 border-white/10 animate-in slide-in-from-right-10 duration-700">
+           Ready to start for real?
+        </div>
+        <Link href="/signup" className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl border-4 border-slate-950 hover:scale-110 transition-transform group">
+          <Zap size={32} className="fill-white group-hover:scale-110 transition-transform" />
+        </Link>
       </div>
     </div>
   );
