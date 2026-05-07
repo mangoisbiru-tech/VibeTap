@@ -2,7 +2,32 @@
 import Link from "next/link";
 import { Zap, CheckCircle2, Star, Package, Smartphone, Tag, Mail, ArrowRight, Sparkles, Wifi, UtensilsCrossed, Bell, Lightbulb, ShieldCheck, X, Store } from "lucide-react";
 
+import { useState } from "react";
+
 const Check = ({ c = "text-blue-500" }: { c?: string }) => <CheckCircle2 size={16} className={`${c} mt-0.5 shrink-0`} />;
+
+const KITS = [
+  { id: "buffet", name: "Buffet Pack", price: 0, sub: "BYO Setup" },
+  { id: "lite", name: "Lite Pack", price: 25, sub: "Entry Level" },
+  { id: "starter", name: "Starter Pack", price: 35, sub: "Solo Stall" },
+  { id: "pro", name: "Pro Pack", price: 75, sub: "Cafe & Restaurant" },
+];
+
+const PLANS = [
+  { id: "lite", name: "Lite", price: 12 },
+  { id: "starter", name: "Starter", price: 12 },
+  { id: "pro", name: "Pro", price: 32 },
+];
+
+const ADDONS = [
+  { id: "app-buffet", name: "Listener App (Buffet)", price: 14 },
+  { id: "app-lite", name: "Listener App (Lite)", price: 12 },
+  { id: "app-starter", name: "Listener App (Starter)", price: 10 },
+  { id: "app-pro", name: "Listener App (Pro)", price: 7 },
+  { id: "nfc", name: "NFC Sticker", price: 4.99 },
+];
+
+const WHATSAPP_NUMBER = "601112345678";
 
 const buffetFeatures = ["0x Physical NFC Stickers (BYO)", "Buffet Account Badge"];
 const liteKitFeatures = ["2x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Lite Account Badge"];
@@ -27,9 +52,21 @@ function PromoBox({ msg, sub, dark = false }: { msg: string; sub: string; dark?:
   );
 }
 
-const WHATSAPP_NUMBER = "601112345678"; // Placeholder - please update this!
-
 export default function PricingPage() {
+  const [selectedKit, setSelectedKit] = useState<string | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+
+  const toggleAddon = (id: string) => {
+    setSelectedAddons(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  };
+
+  const currentKit = KITS.find(k => k.id === selectedKit);
+  const currentPlan = PLANS.find(p => p.id === selectedPlan);
+  const activeAddons = ADDONS.filter(a => selectedAddons.includes(a.id));
+
+  const oneTimeTotal = (currentKit?.price || 0) + activeAddons.filter(a => a.id === 'nfc').reduce((sum, a) => sum + a.price, 0);
+  const monthlyTotal = (currentPlan?.price || 0) + activeAddons.filter(a => a.id !== 'nfc').reduce((sum, a) => sum + a.price, 0);
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans overflow-x-hidden">
       <nav className="sticky top-0 z-50 bg-white border-b border-slate-100 shadow-sm">
@@ -131,7 +168,10 @@ export default function PricingPage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
 
           {/* BUFFET PACK */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-8 flex flex-col">
+          <div 
+            onClick={() => setSelectedKit(selectedKit === 'buffet' ? null : 'buffet')}
+            className={`cursor-pointer rounded-3xl border-4 transition-all p-8 flex flex-col ${selectedKit === 'buffet' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-white border-slate-200 shadow-md hover:border-blue-200'}`}
+          >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center"><UtensilsCrossed size={22} /></div>
               <div><p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Buffet Pack</p><h3 className="text-xl font-black">BYO Setup</h3></div>
@@ -143,13 +183,16 @@ export default function PricingPage() {
             <ul className="space-y-3 flex-1 mb-8">
               {buffetFeatures.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
             </ul>
-            <Link href="/signup" className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white py-3.5 rounded-2xl font-bold transition-all">
-              Start with Buffet <ArrowRight size={17} />
-            </Link>
+            <button className={`w-full py-3.5 rounded-2xl font-bold transition-all ${selectedKit === 'buffet' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-white hover:bg-slate-700'}`}>
+              {selectedKit === 'buffet' ? 'Selected' : 'Select'}
+            </button>
           </div>
 
           {/* LITE KIT */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-8 flex flex-col">
+          <div 
+            onClick={() => setSelectedKit(selectedKit === 'lite' ? null : 'lite')}
+            className={`cursor-pointer rounded-3xl border-4 transition-all p-8 flex flex-col ${selectedKit === 'lite' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-white border-slate-200 shadow-md hover:border-blue-200'}`}
+          >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center"><Tag size={22} /></div>
               <div><p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Lite Pack</p><h3 className="text-xl font-black">Entry Level</h3></div>
@@ -161,13 +204,16 @@ export default function PricingPage() {
             <ul className="space-y-3 flex-1 mb-8">
               {liteKitFeatures.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
             </ul>
-            <Link href="/signup" className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white py-3.5 rounded-2xl font-bold transition-all">
-              Get Lite Pack <ArrowRight size={17} />
-            </Link>
+            <button className={`w-full py-3.5 rounded-2xl font-bold transition-all ${selectedKit === 'lite' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-white hover:bg-slate-700'}`}>
+              {selectedKit === 'lite' ? 'Selected' : 'Select'}
+            </button>
           </div>
 
           {/* STARTER PACK */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-8 flex flex-col">
+          <div 
+            onClick={() => setSelectedKit(selectedKit === 'starter' ? null : 'starter')}
+            className={`cursor-pointer rounded-3xl border-4 transition-all p-8 flex flex-col ${selectedKit === 'starter' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-white border-slate-200 shadow-md hover:border-blue-200'}`}
+          >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-600 flex items-center justify-center"><Package size={22} /></div>
               <div><p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Starter Pack</p><h3 className="text-xl font-black">Solo Stall</h3></div>
@@ -179,13 +225,16 @@ export default function PricingPage() {
             <ul className="space-y-3 flex-1 mb-8">
               {starterFeatures.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
             </ul>
-            <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'm%20interested%20in%20the%20Solo%20Stall%20Starter%20Pack.`} className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-700 text-white py-3.5 rounded-2xl font-bold transition-all">
-              Contact to Buy <ArrowRight size={17} />
-            </Link>
+            <button className={`w-full py-3.5 rounded-2xl font-bold transition-all ${selectedKit === 'starter' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-white hover:bg-slate-700'}`}>
+              {selectedKit === 'starter' ? 'Selected' : 'Select'}
+            </button>
           </div>
 
           {/* PRO PACK */}
-          <div className="relative bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl shadow-2xl shadow-blue-600/30 p-8 flex flex-col text-white overflow-hidden">
+          <div 
+            onClick={() => setSelectedKit(selectedKit === 'pro' ? null : 'pro')}
+            className={`relative cursor-pointer rounded-3xl border-4 transition-all p-8 flex flex-col overflow-hidden ${selectedKit === 'pro' ? 'bg-blue-600 border-yellow-400 shadow-2xl text-white' : 'bg-gradient-to-br from-blue-600 to-blue-700 border-transparent shadow-2xl text-white'}`}
+          >
             <div className="absolute -top-1 -right-1">
               <div className="flex items-center gap-1 bg-yellow-400 text-yellow-900 text-xs font-black px-3 py-1.5 rounded-bl-2xl rounded-tr-3xl"><Star size={12} fill="currentColor" /> Most Popular</div>
             </div>
@@ -198,11 +247,11 @@ export default function PricingPage() {
               <PromoBox dark msg="🎉 Includes Plan 1,2,3 SaaS" sub="1st month free + 1 bonus month. Then RM 32/month for SaaS with RM 7/month for the Add-on App." />
             </div>
             <ul className="space-y-3 flex-1 mb-8">
-              {proFeatures.map(f => <li key={f} className="flex items-start gap-3 font-medium text-sm"><Check c="text-yellow-300" />{f}</li>)}
+              {proFeatures.map(f => <li key={f} className="flex items-start gap-3 font-medium text-sm"><Check c={selectedKit === 'pro' ? "text-yellow-300" : "text-yellow-300"} />{f}</li>)}
             </ul>
-            <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'm%20interested%20in%20the%20Pro%20Pack%20for%20my%20business.`} className="w-full flex items-center justify-center gap-2 bg-white text-blue-700 hover:bg-blue-50 py-3.5 rounded-2xl font-bold transition-all">
-              Contact to Buy <ArrowRight size={17} />
-            </Link>
+            <button className={`w-full py-3.5 rounded-2xl font-bold transition-all ${selectedKit === 'pro' ? 'bg-yellow-400 text-yellow-900' : 'bg-white text-blue-700 hover:bg-blue-50'}`}>
+              {selectedKit === 'pro' ? 'Selected' : 'Select'}
+            </button>
           </div>
         </div>
       </section>
@@ -215,7 +264,10 @@ export default function PricingPage() {
             <p className="text-slate-500 font-medium">Already have accounts verified and stickers?</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="bg-slate-50 rounded-3xl border border-slate-200 p-8 flex flex-col">
+            <div 
+              onClick={() => setSelectedPlan(selectedPlan === 'lite' ? null : 'lite')}
+              className={`cursor-pointer rounded-3xl border-4 transition-all p-8 flex flex-col ${selectedPlan === 'lite' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-slate-50 border-slate-200'}`}
+            >
               <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Plan 1</p>
               <h3 className="text-2xl font-black mb-1">Lite</h3>
               <p className="text-slate-500 text-sm mb-6">Just getting started</p>
@@ -223,10 +275,15 @@ export default function PricingPage() {
               <ul className="space-y-3 flex-1 mb-8">
                 {liteMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
               </ul>
-              <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'd%20like%20to%20subscribe%20to%20the%20Lite%20SaaS%20plan.`} className="w-full text-center bg-slate-900 hover:bg-slate-700 text-white py-3 rounded-2xl font-bold text-sm">Contact to Subscribe</Link>
+              <button className={`w-full py-3 rounded-2xl font-bold text-sm transition-all ${selectedPlan === 'lite' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-white hover:bg-slate-700'}`}>
+                {selectedPlan === 'lite' ? 'Selected' : 'Select'}
+              </button>
             </div>
 
-            <div className="bg-slate-50 rounded-3xl border border-slate-200 p-8 flex flex-col">
+            <div 
+              onClick={() => setSelectedPlan(selectedPlan === 'starter' ? null : 'starter')}
+              className={`cursor-pointer rounded-3xl border-4 transition-all p-8 flex flex-col ${selectedPlan === 'starter' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-slate-50 border-slate-200'}`}
+            >
               <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Plan 1</p>
               <h3 className="text-2xl font-black mb-1">Starter</h3>
               <p className="text-slate-500 text-sm mb-6">Solo stall owner</p>
@@ -234,10 +291,15 @@ export default function PricingPage() {
               <ul className="space-y-3 flex-1 mb-8">
                 {starterMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
               </ul>
-              <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'd%20like%20to%20subscribe%20to%20the%20Starter%20SaaS%20plan.`} className="w-full text-center bg-slate-900 hover:bg-slate-700 text-white py-3 rounded-2xl font-bold text-sm">Contact to Subscribe</Link>
+              <button className={`w-full py-3 rounded-2xl font-bold text-sm transition-all ${selectedPlan === 'starter' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-white hover:bg-slate-700'}`}>
+                {selectedPlan === 'starter' ? 'Selected' : 'Select'}
+              </button>
             </div>
 
-            <div className="bg-blue-50 rounded-3xl border border-blue-200 p-8 flex flex-col">
+            <div 
+              onClick={() => setSelectedPlan(selectedPlan === 'pro' ? null : 'pro')}
+              className={`cursor-pointer rounded-3xl border-4 transition-all p-8 flex flex-col ${selectedPlan === 'pro' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-blue-50 border-blue-200'}`}
+            >
               <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">Plan 1, 2 & 3</p>
               <h3 className="text-2xl font-black mb-1">Pro</h3>
               <p className="text-slate-500 text-sm mb-6">Cafes & restaurants</p>
@@ -245,7 +307,9 @@ export default function PricingPage() {
               <ul className="space-y-3 flex-1 mb-8">
                 {proMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check c="text-blue-600" />{f}</li>)}
               </ul>
-              <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'd%20like%20to%20subscribe%20to%20the%20Pro%20SaaS%20plan.`} className="w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl font-bold text-sm">Contact to Subscribe</Link>
+              <button className={`w-full py-3 rounded-2xl font-bold text-sm transition-all ${selectedPlan === 'pro' ? 'bg-blue-600 text-white' : 'bg-blue-600 text-white hover:bg-blue-700'}`}>
+                {selectedPlan === 'pro' ? 'Selected' : 'Select'}
+              </button>
             </div>
           </div>
         </div>
@@ -259,28 +323,96 @@ export default function PricingPage() {
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
           {[
-            { icon: <Smartphone size={22} />, label: "Listener App", sub: "For Buffet Users", price: "RM 14", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
-            { icon: <Smartphone size={22} />, label: "Listener App", sub: "For Lite Pack users", price: "RM 12", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
-            { icon: <Bell size={22} />, label: "Listener App", sub: "For Starter Pack users", price: "RM 10", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-blue-100 text-blue-600", priceCls: "text-slate-900" },
-            { icon: <Bell size={22} />, label: "Listener App", sub: "For Pro Pack users", price: "RM 7", unit: "/month", desc: "Same full Listener App — discounted for Pro Pack subscribers.", bg: "bg-blue-50 border-blue-200", iconBg: "bg-blue-200 text-blue-700", priceCls: "text-blue-700" },
-            { icon: <Tag size={22} />, label: "NFC Sticker", sub: "Standard (plain)", price: "RM 4.99", unit: "/piece", desc: "Replacement or extra stickers. Minimum order may apply.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
-          ].map(({ icon, label, sub, price, unit, desc, bg, iconBg, priceCls }) => (
-            <div key={sub} className={`${bg} rounded-3xl border shadow-sm p-6 flex flex-col gap-4`}>
+            { id: "app-buffet", icon: <Smartphone size={22} />, label: "Listener App", sub: "For Buffet Users", price: "RM 14", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
+            { id: "app-lite", icon: <Smartphone size={22} />, label: "Listener App", sub: "For Lite Pack users", price: "RM 12", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
+            { id: "app-starter", icon: <Bell size={22} />, label: "Listener App", sub: "For Starter Pack users", price: "RM 10", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-blue-100 text-blue-600", priceCls: "text-slate-900" },
+            { id: "app-pro", icon: <Bell size={22} />, label: "Listener App", sub: "For Pro Pack users", price: "RM 7", unit: "/month", desc: "Same full Listener App — discounted for Pro Pack subscribers.", bg: "bg-blue-50 border-blue-200", iconBg: "bg-blue-200 text-blue-700", priceCls: "text-blue-700" },
+            { id: "nfc", icon: <Tag size={22} />, label: "NFC Sticker", sub: "Standard (plain)", price: "RM 4.99", unit: "/piece", desc: "Replacement or extra stickers. Minimum order may apply.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
+          ].map(({ id, icon, label, sub, price, unit, desc, bg, iconBg, priceCls }) => (
+            <div 
+              key={id} 
+              onClick={() => {
+                if (id.startsWith('app-')) {
+                  // Mutually exclusive listener app selection
+                  if (selectedAddons.includes(id)) {
+                    setSelectedAddons(selectedAddons.filter(a => a !== id));
+                  } else {
+                    setSelectedAddons([...selectedAddons.filter(a => !a.startsWith('app-')), id]);
+                  }
+                } else {
+                  toggleAddon(id);
+                }
+              }}
+              className={`cursor-pointer rounded-3xl border-4 transition-all p-6 flex flex-col gap-4 ${selectedAddons.includes(id) ? 'bg-blue-50/50 border-blue-500 shadow-xl' : `${bg} border-transparent hover:border-blue-200`}`}
+            >
               <div className={`w-11 h-11 rounded-2xl flex items-center justify-center ${iconBg}`}>{icon}</div>
               <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Add-on</p>
-                <h3 className="font-black text-slate-900 text-lg">{label}</h3>
-                <p className="text-xs font-medium mt-1 text-slate-500">{sub}</p>
+                <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{label}</p>
+                <p className="text-sm font-bold text-slate-600">{sub}</p>
               </div>
-              <div className="mt-auto">
-                <span className={`text-3xl font-black ${priceCls}`}>{price}</span>
-                <span className="text-slate-400 text-sm">{unit}</span>
-                <p className="text-xs text-slate-500 mt-2 leading-relaxed">{desc}</p>
+              <div className="flex items-end gap-1">
+                <span className={`text-2xl font-black ${priceCls}`}>{price}</span>
+                <span className="text-slate-400 text-xs mb-1">{unit}</span>
+              </div>
+              <p className="text-xs text-slate-500 leading-relaxed flex-1">{desc}</p>
+              <div className={`text-[10px] font-bold px-2 py-1 rounded-md self-start ${selectedAddons.includes(id) ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                {selectedAddons.includes(id) ? 'SELECTED' : 'ADD TO PLAN'}
               </div>
             </div>
           ))}
         </div>
       </section>
+
+      {/* SELECTION SUMMARY */}
+      {(selectedKit || selectedPlan || selectedAddons.length > 0) && (
+        <div className="sticky bottom-0 z-[60] bg-white border-t border-slate-200 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] p-6 animate-in slide-in-from-bottom duration-500">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="flex flex-wrap items-center gap-10">
+              <div className="space-y-1">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Selection Summary</p>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-blue-500" />
+                    <span className="text-sm font-bold text-slate-900">{currentKit?.name || 'No Kit'}</span>
+                  </div>
+                  <span className="text-slate-300">|</span>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-green-500" />
+                    <span className="text-sm font-bold text-slate-900">{currentPlan?.name || 'No Plan'} Plan</span>
+                  </div>
+                  {activeAddons.length > 0 && (
+                    <>
+                      <span className="text-slate-300">|</span>
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-yellow-500" />
+                        <span className="text-sm font-bold text-slate-900">{activeAddons.length} Add-ons</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-12">
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">One-Time Hardware</p>
+                  <p className="text-2xl font-black text-slate-900">RM {oneTimeTotal.toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Monthly Subscription</p>
+                  <p className="text-2xl font-black text-blue-600">RM {monthlyTotal.toFixed(2)}<span className="text-xs text-slate-400 ml-1">/mo</span></p>
+                </div>
+              </div>
+            </div>
+
+            <Link 
+              href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'd%20like%20to%20get:%0A-%20${currentKit?.name || 'No Kit'}%0A-%20${currentPlan?.name || 'No'}%20Plan%0A-${activeAddons.length > 0 ? activeAddons.map(a => `%0A-%20${a.name}`).join('') : ''}%0A%0AOne-time:%20RM%20${oneTimeTotal.toFixed(2)}%0AMonthly:%20RM%20${monthlyTotal.toFixed(2)}`}
+              className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-600/20 flex items-center justify-center gap-3"
+            >
+              Confirm Selection <ArrowRight size={20} />
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* EXTRA SERVICES */}
       <section className="py-16 px-6 bg-white border-t border-slate-100">

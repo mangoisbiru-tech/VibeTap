@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/client";
-import { ShieldAlert, Loader2, CheckCircle2, Trash2, Power, Edit3, PowerOff } from "lucide-react";
+import { ShieldAlert, Loader2, CheckCircle2, Trash2, Power, Edit3, PowerOff, Smartphone } from "lucide-react";
 
 type Merchant = {
   id: string;
@@ -13,6 +13,7 @@ type Merchant = {
   planTier: "free" | "lite" | "basic" | "pro";
   createdAt: any;
   isActive: boolean;
+  isListenerActive?: boolean;
 };
 
 export default function AdminDashboardPage() {
@@ -56,6 +57,7 @@ export default function AdminDashboardPage() {
           planTier: data.planTier || "free",
           createdAt: data.createdAt,
           isActive: data.isActive ?? true,
+          isListenerActive: data.isListenerActive ?? true,
         });
       });
       // Sort by newest first
@@ -100,6 +102,22 @@ export default function AdminDashboardPage() {
       );
     } catch (err) {
       alert("Failed to update status");
+    } finally {
+      setUpdatingId(null);
+    }
+  }
+
+  async function toggleListenerApp(merchantId: string, currentStatus: boolean) {
+    setUpdatingId(merchantId);
+    try {
+      await updateDoc(doc(db, "merchants", merchantId), {
+        isListenerActive: !currentStatus,
+      });
+      setMerchants((prev) =>
+        prev.map((m) => (m.id === merchantId ? { ...m, isListenerActive: !currentStatus } : m))
+      );
+    } catch (err) {
+      alert("Failed to update Listening App status");
     } finally {
       setUpdatingId(null);
     }
@@ -165,12 +183,12 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+      <div className="bg-white rounded-[2rem] shadow-md border border-slate-100 overflow-x-auto">
+        <table className="w-full text-left border-collapse min-w-[1000px]">
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100 text-xs font-black uppercase tracking-widest text-slate-400">
                 <th className="px-6 py-4">Merchant</th>
+                <th className="px-6 py-4">Listening App</th>
                 <th className="px-6 py-4">Email</th>
                 <th className="px-6 py-4">Joined</th>
                 <th className="px-6 py-4">Status</th>
@@ -184,6 +202,27 @@ export default function AdminDashboardPage() {
                   <td className="px-6 py-4">
                     <div className="font-bold text-slate-900">{merchant.name}</div>
                     <div className="text-xs text-slate-400 font-mono mt-0.5">{merchant.id}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() => toggleListenerApp(merchant.id, merchant.isListenerActive ?? true)}
+                      disabled={updatingId === merchant.id}
+                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-black transition-all shadow-sm border ${
+                        (merchant.isListenerActive ?? true)
+                          ? "bg-blue-600 text-white border-blue-400 hover:bg-blue-700 hover:scale-105 active:scale-95"
+                          : "bg-slate-100 text-slate-400 border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+                      }`}
+                    >
+                      {(merchant.isListenerActive ?? true) ? (
+                        <>
+                          <Smartphone size={18} className="animate-pulse" /> APP: ON
+                        </>
+                      ) : (
+                        <>
+                          <PowerOff size={18} /> APP: OFF
+                        </>
+                      )}
+                    </button>
                   </td>
                   <td className="px-6 py-4 font-medium text-slate-600">
                     {merchant.email}
@@ -262,7 +301,7 @@ export default function AdminDashboardPage() {
               ))}
               {merchants.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-400 font-medium">
+                  <td colSpan={7} className="px-6 py-12 text-center text-slate-400 font-medium">
                     No merchants found.
                   </td>
                 </tr>
