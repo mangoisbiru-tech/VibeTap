@@ -290,7 +290,7 @@ export default function PricingPage() {
                 <p className="text-slate-400 text-sm">Pricing depends on what you need. Drop us an email and we'll figure it out together.</p>
               </div>
               <div className="shrink-0">
-                <a href="mailto:tappaymy@hotmail.com" className="flex items-center gap-3 bg-blue-600 hover:bg-blue-500 text-white px-7 py-4 rounded-2xl font-bold transition-all">
+                <a href="mailto:tappaymy@outlook.com" className="flex items-center gap-3 bg-blue-600 hover:bg-blue-500 text-white px-7 py-4 rounded-2xl font-bold transition-all">
                   <Mail size={20} /> Contact Us
                 </a>
               </div>
@@ -354,10 +354,10 @@ export default function PricingPage() {
           <h2 className="text-3xl font-black text-slate-900 mb-4">Ready to go cashless the smart way?</h2>
           <p className="text-slate-500 font-medium mb-8">Start with any kit and upgrade anytime.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="mailto:tappaymy@hotmail.com" className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-blue-600/20">
+            <a href="mailto:tappaymy@outlook.com" className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-blue-600/20">
               Contact Us for Payment <ArrowRight size={20} />
             </a>
-            <a href="mailto:tappaymy@hotmail.com" className="flex items-center justify-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 px-8 py-4 rounded-2xl font-bold text-lg transition-all">
+            <a href="mailto:tappaymy@outlook.com" className="flex items-center justify-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 px-8 py-4 rounded-2xl font-bold text-lg transition-all">
               <Mail size={20} /> Ask a Question
             </a>
           </div>

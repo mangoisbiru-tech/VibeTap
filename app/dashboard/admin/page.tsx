@@ -29,7 +29,7 @@ export default function AdminDashboardPage() {
         return;
       }
 
-      if (user.email !== "tappaymy@hotmail.com") {
+      if (user.email !== "tappaymy@outlook.com") {
         router.push("/dashboard");
         return;
       }

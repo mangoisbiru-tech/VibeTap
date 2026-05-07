@@ -527,9 +527,9 @@ export default function LandingPage() {
             * Product images are for illustration purposes only. Actual products may vary slightly.
           </p>
           
-          <a href="mailto:tappaymy@hotmail.com" className="inline-flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-lg hover:shadow-blue-500/30">
+          <a href="mailto:tappaymy@outlook.com" className="inline-flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-lg hover:shadow-blue-500/30">
             <Mail size={20} />
-            Email Us: tappaymy@hotmail.com
+            Email Us: tappaymy@outlook.com
           </a>
         </div>
       </section>

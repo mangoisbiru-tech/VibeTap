@@ -114,7 +114,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { href: "/dashboard/settings", icon: <Settings size={18} />, label: "Settings" },
   ];
 
-  if (user?.email === "tappaymy@hotmail.com") {
+  if (user?.email === "tappaymy@outlook.com") {
     navItems.push({ href: "/dashboard/admin", icon: <ShieldCheck size={18} />, label: "Admin Dashboard" });
   }
 
