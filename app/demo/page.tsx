@@ -64,7 +64,9 @@ export default function DemoPage() {
   const [loading, setLoading] = useState(false);
   const [showLock, setShowLock] = useState<string | null>(null);
   const [stickers, setStickers] = useState<Sticker[]>(INITIAL_STICKERS);
+  const [payments, setPayments] = useState(MOCK_PAYMENTS);
   const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
+  const [mismatchError, setMismatchError] = useState<string | null>(null);
 
   // Cashier Logic
   const amountRM = parseInt(amount) / 100;
@@ -316,11 +318,14 @@ export default function DemoPage() {
                   </div>
 
                   <div className="space-y-3">
-                    {MOCK_PAYMENTS.map((pay) => (
+                    {payments.map((pay) => (
                       <button 
                         key={pay.id} 
-                        onClick={() => setSelectedPayment(selectedPayment === pay.id ? null : pay.id)}
-                        className={`w-full bg-white border-4 rounded-3xl p-4 flex items-center gap-4 transition-all hover:scale-[1.02] active:scale-95 ${
+                        onClick={() => {
+                          setSelectedPayment(selectedPayment === pay.id ? null : pay.id);
+                          setMismatchError(null);
+                        }}
+                        className={`w-full bg-white border-4 rounded-3xl p-4 flex items-center gap-4 transition-all hover:scale-[1.02] active:scale-95 relative ${
                           selectedPayment === pay.id ? 'border-green-500 ring-4 ring-green-100 shadow-xl' : 'border-slate-950 shadow-lg'
                         }`}
                       >
@@ -416,10 +421,21 @@ export default function DemoPage() {
                           <button
                             onClick={() => {
                               if (selectedPayment) {
-                                simulateAction(() => {
-                                  setStickers(prev => prev.map(st => st.id === s.id ? {...st, pushedBill: null} : st));
-                                  setSelectedPayment(null);
-                                });
+                                const pay = payments.find(p => p.id === selectedPayment);
+                                if (!pay) return;
+                                
+                                // Matching Logic
+                                if (s.pushedBill && pay.amount === s.pushedBill.amount) {
+                                  simulateAction(() => {
+                                    setStickers(prev => prev.map(st => st.id === s.id ? {...st, pushedBill: null} : st));
+                                    setPayments(prev => prev.filter(p => p.id !== pay.id));
+                                    setSelectedPayment(null);
+                                    setMismatchError(null);
+                                  });
+                                } else {
+                                  setMismatchError(s.id);
+                                  setTimeout(() => setMismatchError(null), 1500);
+                                }
                               } else if (amountRM > 0) {
                                 simulateAction(() => {
                                   setStickers(prev => prev.map(st => st.id === s.id ? {...st, pushedBill: { amount: amountRM, pushedAt: new Date() }} : st));
@@ -427,13 +443,19 @@ export default function DemoPage() {
                                 });
                               }
                             }}
-                            className={`w-full aspect-square rounded-2xl border-4 border-slate-950 flex flex-col items-center justify-center gap-1 transition-all active:scale-95 shadow-md ${
-                              s.pushedBill ? "bg-blue-50 border-blue-600 shadow-blue-900/10" : "bg-white"
+                            className={`w-full aspect-square rounded-2xl border-4 flex flex-col items-center justify-center gap-1 transition-all active:scale-95 shadow-md relative overflow-hidden ${
+                              mismatchError === s.id ? "bg-red-50 border-red-600 animate-shake" :
+                              s.pushedBill ? "bg-blue-50 border-blue-600 shadow-blue-900/10" : "bg-white border-slate-950"
                             }`}
                           >
+                            {mismatchError === s.id && (
+                              <div className="absolute inset-0 bg-red-600/90 flex items-center justify-center text-white p-2">
+                                <p className="font-black text-[8px] uppercase tracking-widest text-center leading-none">Amount Mismatch!</p>
+                              </div>
+                            )}
                             <p className="font-black text-slate-950 text-xs truncate w-full text-center tracking-tight leading-tight px-1">{s.tableName}</p>
                             {s.pushedBill ? (
-                              <p className="text-[10px] font-black text-blue-600 uppercase tracking-tighter">RM {s.pushedBill.amount.toFixed(0)}</p>
+                              <p className="text-[10px] font-black text-blue-600 uppercase tracking-tighter">RM {s.pushedBill.amount.toFixed(2)}</p>
                             ) : (
                               <p className="text-[8px] font-black text-slate-200 uppercase tracking-widest">Assign</p>
                             )}
@@ -464,6 +486,24 @@ export default function DemoPage() {
                       >
                         <Trash2 size={24} />
                         <p className="font-black text-[10px] uppercase tracking-widest">Dustbin</p>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setStickers(INITIAL_STICKERS);
+                          setAmount("0");
+                          setSelectedPayment(null);
+                          setMismatchError(null);
+                          const newAmts = [Math.floor(Math.random() * 50) + 10, Math.floor(Math.random() * 20) + 5];
+                          setPayments([
+                            { id: "p1", amount: newAmts[0] + 0.5, time: "Just now", content: "TNG eWallet" },
+                            { id: "p2", amount: newAmts[1] + 0.9, time: "Just now", content: "TNG eWallet" },
+                          ]);
+                        }}
+                        className="w-full aspect-square rounded-2xl border-4 border-slate-950 bg-slate-950 text-white flex flex-col items-center justify-center gap-2 transition-all active:scale-95 shadow-md"
+                      >
+                        <Activity size={24} />
+                        <p className="font-black text-[10px] uppercase tracking-widest text-center">Reset Demo</p>
                       </button>
                     </div>
 
