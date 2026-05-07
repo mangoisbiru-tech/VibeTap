@@ -199,21 +199,23 @@ export default function DemoPage() {
               </p>
             </div>
 
-            {activeTab === 'settings' && (
-              <div className="flex gap-4">
-                {(['plan1', 'plan2', 'plan3'] as const).map(p => (
-                  <button 
-                    key={p}
-                    onClick={() => setPlan(p)}
-                    className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                      plan === p ? "bg-blue-600 text-white" : "bg-white border-2 border-slate-200 text-slate-400"
-                    }`}
-                  >
-                    Demo Plan {p.slice(-1)}
-                  </button>
-                ))}
-              </div>
-            )}
+            <div className="flex flex-wrap gap-3 items-center">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2 hidden md:block">Demo Mode:</p>
+              {(['plan1', 'plan2', 'plan3'] as const).map(p => (
+                <button 
+                  key={p}
+                  onClick={() => setPlan(p)}
+                  className={`px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.1em] transition-all flex items-center gap-2 border-4 ${
+                    plan === p 
+                      ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/20 -translate-y-0.5" 
+                      : "bg-white border-slate-950 text-slate-950 hover:bg-slate-50"
+                  }`}
+                >
+                  {plan === p && <Check size={12} />}
+                  {p === 'plan1' ? "Lite (P1)" : p === 'plan2' ? "Pro (P2)" : "Enterprise (P3)"}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="max-w-6xl mx-auto">
@@ -301,11 +303,37 @@ export default function DemoPage() {
                   </div>
 
                   {plan === 'plan1' ? (
-                    <div className="bg-slate-100 border-4 border-dashed border-slate-300 rounded-[2.5rem] p-12 text-center flex flex-col items-center gap-4 opacity-70">
-                      <Lock size={32} className="text-slate-400" />
-                      <p className="font-black text-slate-400 uppercase text-xs tracking-widest">Plan 1: Direct Payout Only</p>
-                      <p className="text-[10px] text-slate-400 font-medium">Table tracking and remote pushing requires Plan 2 or 3.</p>
-                      <button onClick={() => setPlan('plan3')} className="mt-2 text-blue-600 font-black text-[10px] uppercase tracking-widest hover:underline">Switch to Plan 3 to Demo</button>
+                    <div className="space-y-6">
+                      <div className="bg-white border-4 border-slate-950 rounded-[2.5rem] p-10 text-center flex flex-col items-center gap-6 shadow-[8px_8px_0px_0px_rgba(2,6,23,1)]">
+                        <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center border-4 border-blue-100">
+                          <Smartphone size={40} />
+                        </div>
+                        <div>
+                          <p className="font-black text-slate-950 text-xl tracking-tight">Direct Merchant Payout</p>
+                          <p className="text-slate-500 font-bold text-sm mt-2 leading-relaxed">
+                            In Plan 1, the NFC sticker goes directly to your TNG checkout.
+                          </p>
+                        </div>
+                        <button 
+                          onClick={() => {
+                            if (amountRM === 0) return;
+                            simulateAction(() => triggerLock("This would redirect the customer to your TNG Checkout page. In Plan 1, you cannot track specific tables."));
+                          }}
+                          className="w-full bg-slate-950 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-blue-600 transition-all flex items-center justify-center gap-3"
+                        >
+                          <Zap size={20} className="fill-white" /> Open TNG Checkout
+                        </button>
+                        <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 w-full">
+                          <p className="text-[9px] font-black text-amber-700 uppercase tracking-widest flex items-center justify-center gap-2">
+                             <Lock size={12} /> Plan 1 Limitation
+                          </p>
+                          <p className="text-[10px] text-amber-600 font-bold mt-1">Table tracking is disabled. Customers pay a general amount.</p>
+                        </div>
+                      </div>
+                      
+                      <button onClick={() => setPlan('plan3')} className="w-full py-4 text-blue-600 font-black text-xs uppercase tracking-widest hover:underline flex items-center justify-center gap-2">
+                        Try Plan 3 for Table Tracking <ArrowRight size={14} />
+                      </button>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
