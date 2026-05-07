@@ -34,7 +34,7 @@ type MenuItem = { name: string; price: number };
 type Sticker = {
   id: string;
   tableName: string;
-  plan: "plan1" | "plan2" | "plan3";
+  plan?: "plan1" | "plan2" | "plan3";
   fixedAmount?: number;
 };
 
@@ -121,6 +121,7 @@ export default function SettingsPage() {
           snap.docs.map((d) => ({
             id: d.id,
             tableName: d.data().tableName,
+            plan: d.data().plan,
             fixedAmount: d.data().fixedAmount,
           }))
         );
