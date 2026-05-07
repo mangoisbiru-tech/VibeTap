@@ -37,7 +37,7 @@ type Sticker = {
   plan: "plan1" | "plan2" | "plan3";
 };
 
-const SITE_URL = "https://vibe-tap-kpk2-one.vercel.app";
+const SITE_URL = "https://tappay-malaysia-nfc.vercel.app";
 
 const PLANS = [
   {

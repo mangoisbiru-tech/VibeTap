@@ -449,7 +449,7 @@ export default function DemoPage() {
                         </div>
                         <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-4">
                           <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Target URL</p>
-                          <p className="font-mono text-[10px] text-blue-600 truncate font-bold">tappay.my/s/{s.id}</p>
+                          <p className="font-mono text-[10px] text-blue-600 truncate font-bold">tappay-malaysia-nfc.vercel.app/s/{s.id}</p>
                         </div>
                         <button 
                           onClick={() => triggerLock("Web NFC API is only accessible on secure mobile browsers. Login on your phone to program this sticker.")}

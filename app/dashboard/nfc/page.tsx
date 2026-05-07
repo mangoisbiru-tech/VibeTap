@@ -6,7 +6,7 @@ import { doc, onSnapshot, collection, query, where } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/client";
 import { Nfc, ScanSearch, Settings, AlertCircle, CheckCircle2, Smartphone, Ban, Lock } from "lucide-react";
 
-const SITE_URL = "https://vibe-tap-kpk2-one.vercel.app";
+const SITE_URL = "https://tappay-malaysia-nfc.vercel.app";
 
 type Sticker = {
   id: string;
