@@ -35,6 +35,7 @@ type Sticker = {
   id: string;
   tableName: string;
   plan: "plan1" | "plan2" | "plan3";
+  fixedAmount?: number;
 };
 
 const SITE_URL = "https://tappay-malaysia-nfc.vercel.app";
@@ -120,7 +121,7 @@ export default function SettingsPage() {
           snap.docs.map((d) => ({
             id: d.id,
             tableName: d.data().tableName,
-            plan: d.data().plan,
+            fixedAmount: d.data().fixedAmount,
           }))
         );
       });
@@ -195,6 +196,7 @@ export default function SettingsPage() {
         tableName: newTableName.trim(),
         plan,
         pushedBill: null,
+        fixedAmount: 0,
         createdAt: serverTimestamp(),
       });
       setNewTableName("");
@@ -495,8 +497,36 @@ export default function SettingsPage() {
                   />
                 ) : (
                   <>
-                    <p className="font-black text-slate-900">{s.tableName}</p>
-                    <p className="font-mono text-[10px] text-slate-400 truncate mt-0.5 uppercase tracking-tight">ID: {s.id}</p>
+                    <p className="font-black text-slate-900 flex items-center gap-2">
+                      {s.tableName}
+                      {s.fixedAmount && s.fixedAmount > 0 ? (
+                        <span className="bg-blue-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-tighter shadow-sm">
+                          Fixed RM {s.fixedAmount.toFixed(2)}
+                        </span>
+                      ) : (
+                        <span className="bg-slate-200 text-slate-500 text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-tighter">
+                          Dynamic
+                        </span>
+                      )}
+                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="font-mono text-[9px] text-slate-400 uppercase tracking-tight">ID: {s.id}</p>
+                      <div className="w-1 h-1 bg-slate-200 rounded-full" />
+                      <div className="flex items-center gap-1">
+                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Auto-Match RM:</span>
+                        <input 
+                          type="number"
+                          step="0.01"
+                          defaultValue={s.fixedAmount || ""}
+                          onBlur={(e) => {
+                            const val = parseFloat(e.target.value);
+                            setDoc(doc(db, "stickers", s.id), { fixedAmount: isNaN(val) ? 0 : val }, { merge: true });
+                          }}
+                          className="w-16 bg-white border border-slate-200 rounded px-1 py-0.5 font-black text-[10px] text-blue-600 focus:outline-none focus:border-blue-500 transition-all"
+                          placeholder="0.00"
+                        />
+                      </div>
+                    </div>
                   </>
                 )}
               </div>

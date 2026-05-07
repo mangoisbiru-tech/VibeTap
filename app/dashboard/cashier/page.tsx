@@ -43,6 +43,7 @@ interface Sticker {
   id: string;
   tableName: string;
   pushedBill?: { amount: number; pushedAt: any };
+  fixedAmount?: number;
 }
 
 interface ReceivedPayment {
@@ -115,6 +116,43 @@ export default function CashierPage() {
     });
     return () => unsub();
   }, []);
+
+  // AUTO-MATCH FOR FIXED TABLES (PLAN 2)
+  useEffect(() => {
+    if (receivedPayments.length === 0 || stickers.length === 0 || !merchantId) return;
+    
+    receivedPayments.forEach(async (pay) => {
+      if (pay.status !== "pending") return;
+
+      // Find any sticker with a fixed amount that matches this payment
+      const fixedSticker = stickers.find(s => s.fixedAmount && s.fixedAmount > 0 && s.fixedAmount === pay.amount);
+      
+      if (fixedSticker) {
+        console.log(`Auto-matching payment RM ${pay.amount} to ${fixedSticker.tableName}`);
+        try {
+          // 1. Mark payment as assigned
+          await updateDoc(doc(db, "receivedPayments", pay.id), {
+            status: "assigned",
+            assignedTo: fixedSticker.id,
+            assignedAt: serverTimestamp(),
+            autoMatched: true
+          });
+          
+          // 2. Add to history
+          await setDoc(doc(db, "billHistory", pay.id), {
+            merchantId: merchantId,
+            tableName: fixedSticker.tableName,
+            amount: pay.amount,
+            status: "paid",
+            createdAt: serverTimestamp(),
+            isFixed: true
+          });
+        } catch (e) {
+          console.error("Auto-match failed:", e);
+        }
+      }
+    });
+  }, [receivedPayments, stickers, merchantId]);
 
   const rawCents = parseInt(amount);
   const amountRM = rawCents / 100;

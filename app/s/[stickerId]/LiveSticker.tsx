@@ -101,7 +101,7 @@ export default function LiveSticker({
     );
   }
 
-  const amount = sticker.pushedBill?.amount as number | undefined;
+  const amount = sticker.fixedAmount || (sticker.pushedBill?.amount as number | undefined);
 
   if (activePlan === "plan2") {
     if (!amount || amount <= 0) {
