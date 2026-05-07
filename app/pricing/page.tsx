@@ -4,13 +4,14 @@ import { Zap, CheckCircle2, Star, Package, Smartphone, Tag, Mail, ArrowRight, Sp
 
 const Check = ({ c = "text-blue-500" }: { c?: string }) => <CheckCircle2 size={16} className={`${c} mt-0.5 shrink-0`} />;
 
+const buffetFeatures = ["0x Physical NFC Stickers (BYO)", "Plan 1: Real-time Payment Inbox", "Plan 2 & 3 Access (Monthly SaaS required)", "Buffet Account Badge"];
 const liteKitFeatures = ["2x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Lite Account Badge"];
 const starterFeatures = ["5x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Cheaper price for the add-on: Listening App", "Starter Account Badge"];
-const proFeatures = ["12x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Plan 2: Table Tracking & Instant Sound Alerts", "Plan 3: Call for Waiter & Bill Request", "Android Listener App (Connects with Phone)", "Cheaper price for the add-on: Listening App", "Pro Account Badge"];
+const proFeatures = ["8x Physical NFC Stickers (Premium)", "Plan 1: Real-time Payment Inbox", "Plan 2: Table Tracking & Instant Sound Alerts", "Plan 3: Call for Waiter & Bill Request", "Cheaper price for the add-on: Listening App", "Pro Account Badge"];
 
 const liteMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log"];
-const basicMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log", "Cheaper price for the add-on: Listening App"];
-const advMonthly = ["Everything in Basic", "Table Management & Amount Push In", "Call for Staff & Call for Bill", "Call for Bills Button", "Cheaper price for the add-on: Listening App"];
+const starterMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log", "Cheaper price for the add-on: Listening App"];
+const proMonthly = ["Everything in Starter", "Table Management & Amount Push In", "Call for Staff & Call for Bill", "Call for Bills Button", "Cheaper price for the add-on: Listening App"];
 
 function PromoBox({ msg, sub, dark = false }: { msg: string; sub: string; dark?: boolean }) {
   return dark ? (
@@ -122,12 +123,30 @@ export default function PricingPage() {
       </section>
 
       {/* STARTER KITS */}
-      <section id="packs" className="py-16 px-6 max-w-7xl mx-auto">
+      <section id="packs" className="py-16 px-6 max-w-[90rem] mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-black text-slate-900 mb-3">Starter Kits</h2>
           <p className="text-slate-500 font-medium">Badge acc + Monthly SAAS bundle</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+          {/* BUFFET PACK */}
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-8 flex flex-col">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center"><UtensilsCrossed size={22} /></div>
+              <div><p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Buffet Pack</p><h3 className="text-xl font-black">BYO Setup</h3></div>
+            </div>
+            <div className="mb-6">
+              <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 0</span><span className="text-slate-400 mb-2">one-time</span></div>
+              <PromoBox msg="🎉 Bring your own hardware" sub="Buy cheap NFC stickers online, configure them yourself, and connect to our software." />
+            </div>
+            <ul className="space-y-3 flex-1 mb-8">
+              {buffetFeatures.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
+            </ul>
+            <Link href="/signup" className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white py-3.5 rounded-2xl font-bold transition-all">
+              Start with Buffet <ArrowRight size={17} />
+            </Link>
+          </div>
 
           {/* LITE KIT */}
           <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-8 flex flex-col">
@@ -175,8 +194,8 @@ export default function PricingPage() {
               <div><p className="text-xs font-bold text-blue-200 uppercase tracking-widest">Pro Pack</p><h3 className="text-xl font-black">Cafe & Restaurant</h3></div>
             </div>
             <div className="mb-6">
-              <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 95</span><span className="text-blue-200 mb-2">one-time</span></div>
-              <PromoBox dark msg="🎉 Includes Plan 1,2,3 SaaS + App" sub="1st month free + 1 bonus month. Then RM 32/month for SaaS with RM 7/month for the Add-on App." />
+              <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 75</span><span className="text-blue-200 mb-2">one-time</span></div>
+              <PromoBox dark msg="🎉 Includes Plan 1,2,3 SaaS" sub="1st month free + 1 bonus month. Then RM 32/month for SaaS with RM 7/month for the Add-on App." />
             </div>
             <ul className="space-y-3 flex-1 mb-8">
               {proFeatures.map(f => <li key={f} className="flex items-start gap-3 font-medium text-sm"><Check c="text-yellow-300" />{f}</li>)}
@@ -209,37 +228,38 @@ export default function PricingPage() {
 
             <div className="bg-slate-50 rounded-3xl border border-slate-200 p-8 flex flex-col">
               <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Plan 1</p>
-              <h3 className="text-2xl font-black mb-1">Basic</h3>
+              <h3 className="text-2xl font-black mb-1">Starter</h3>
               <p className="text-slate-500 text-sm mb-6">Solo stall owner</p>
               <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black">RM 12</span><span className="text-slate-400 mb-1">/month</span></div>
               <ul className="space-y-3 flex-1 mb-8">
-                {basicMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
+                {starterMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
               </ul>
-              <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'd%20like%20to%20subscribe%20to%20the%20Basic%20SaaS%20plan.`} className="w-full text-center bg-slate-900 hover:bg-slate-700 text-white py-3 rounded-2xl font-bold text-sm">Contact to Subscribe</Link>
+              <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'd%20like%20to%20subscribe%20to%20the%20Starter%20SaaS%20plan.`} className="w-full text-center bg-slate-900 hover:bg-slate-700 text-white py-3 rounded-2xl font-bold text-sm">Contact to Subscribe</Link>
             </div>
 
             <div className="bg-blue-50 rounded-3xl border border-blue-200 p-8 flex flex-col">
               <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">Plan 1, 2 & 3</p>
-              <h3 className="text-2xl font-black mb-1">Advanced</h3>
+              <h3 className="text-2xl font-black mb-1">Pro</h3>
               <p className="text-slate-500 text-sm mb-6">Cafes & restaurants</p>
               <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black text-blue-700">RM 32</span><span className="text-slate-400 mb-1">/month</span></div>
               <ul className="space-y-3 flex-1 mb-8">
-                {advMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check c="text-blue-600" />{f}</li>)}
+                {proMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check c="text-blue-600" />{f}</li>)}
               </ul>
-              <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'd%20like%20to%20subscribe%20to%20the%20Advanced%20SaaS%20plan.`} className="w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl font-bold text-sm">Contact to Subscribe</Link>
+              <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'd%20like%20to%20subscribe%20to%20the%20Pro%20SaaS%20plan.`} className="w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl font-bold text-sm">Contact to Subscribe</Link>
             </div>
           </div>
         </div>
       </section>
 
       {/* ADD-ONS */}
-      <section id="addons" className="py-16 px-6 max-w-6xl mx-auto">
+      <section id="addons" className="py-16 px-6 max-w-[90rem] mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-black text-slate-900 mb-3">Add-ons</h2>
           <p className="text-slate-500 font-medium">Power up your plan with the extras you actually need.</p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
           {[
+            { icon: <Smartphone size={22} />, label: "Listener App", sub: "For Buffet Users", price: "RM 14", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
             { icon: <Smartphone size={22} />, label: "Listener App", sub: "For Lite Pack users", price: "RM 12", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
             { icon: <Bell size={22} />, label: "Listener App", sub: "For Starter Pack users", price: "RM 10", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-blue-100 text-blue-600", priceCls: "text-slate-900" },
             { icon: <Bell size={22} />, label: "Listener App", sub: "For Pro Pack users", price: "RM 7", unit: "/month", desc: "Same full Listener App — discounted for Pro Pack subscribers.", bg: "bg-blue-50 border-blue-200", iconBg: "bg-blue-200 text-blue-700", priceCls: "text-blue-700" },
