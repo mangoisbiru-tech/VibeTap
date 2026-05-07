@@ -29,7 +29,8 @@ export default function AdminDashboardPage() {
         return;
       }
 
-      if (user.email !== "tappaymy@outlook.com") {
+      const adminEmails = ["tappaymy@outlook.com", "tappaymy@hotmail.com"];
+      if (!user.email || !adminEmails.includes(user.email)) {
         router.push("/dashboard");
         return;
       }
