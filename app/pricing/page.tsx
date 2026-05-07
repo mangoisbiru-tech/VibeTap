@@ -4,11 +4,13 @@ import { Zap, CheckCircle2, Star, Package, Smartphone, Tag, Mail, ArrowRight, Sp
 
 const Check = ({ c = "text-blue-500" }: { c?: string }) => <CheckCircle2 size={16} className={`${c} mt-0.5 shrink-0`} />;
 
-const diyFeatures = ["0x Physical Stickers (Bring your own)", "Plan 1: Real-time Payment Inbox", "Plan 2: Table Tracking & Sound Alerts", "Plan 3: Call for Waiter & Bill Request", "Full Access to Android Listener App", "DIY Account Badge"];
-const proFeatures = ["12x Premium NFC Stickers & Stands", "Pre-configured & Ready to Tap", "Plan 1: Real-time Payment Inbox", "Plan 2: Table Tracking & Sound Alerts", "Plan 3: Call for Waiter & Bill Request", "Full Access to Android Listener App", "Pro Account Badge"];
+const liteKitFeatures = ["2x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Lite Account Badge"];
+const starterFeatures = ["5x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Cheaper price for the add-on: Listening App", "Starter Account Badge"];
+const proFeatures = ["12x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Plan 2: Table Tracking & Instant Sound Alerts", "Plan 3: Call for Waiter & Bill Request", "Android Listener App (Connects with Phone)", "Cheaper price for the add-on: Listening App", "Pro Account Badge"];
 
-const diyMonthly = ["Full Dashboard Access (Plan 1, 2, 3)", "Android Listener App Included", "No hardware purchase required"];
-const proMonthly = ["Full Dashboard Access (Plan 1, 2, 3)", "Android Listener App Included", "Special discounted monthly rate"];
+const liteMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log"];
+const basicMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log", "Cheaper price for the add-on: Listening App"];
+const advMonthly = ["Everything in Basic", "Table Management & Amount Push In", "Call for Staff & Call for Bill", "Call for Bills Button", "Cheaper price for the add-on: Listening App"];
 
 function PromoBox({ msg, sub, dark = false }: { msg: string; sub: string; dark?: boolean }) {
   return dark ? (
@@ -120,49 +122,67 @@ export default function PricingPage() {
       </section>
 
       {/* STARTER KITS */}
-      <section id="packs" className="py-16 px-6 max-w-5xl mx-auto">
+      <section id="packs" className="py-16 px-6 max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-black text-slate-900 mb-3">Step 1: Choose Your Hardware Setup</h2>
-          <p className="text-slate-500 font-medium">Use your own stickers or get our premium pre-configured stands.</p>
+          <h2 className="text-3xl font-black text-slate-900 mb-3">Starter Kits</h2>
+          <p className="text-slate-500 font-medium">Badge acc + Monthly SAAS bundle</p>
         </div>
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-3 gap-8">
 
-          {/* DIY PACK */}
+          {/* LITE KIT */}
           <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-8 flex flex-col">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center"><Tag size={22} /></div>
-              <div><p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Digital Only</p><h3 className="text-xl font-black">DIY Pack</h3></div>
+              <div><p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Lite Pack</p><h3 className="text-xl font-black">Entry Level</h3></div>
             </div>
             <div className="mb-6">
-              <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 0</span><span className="text-slate-400 mb-2">one-time</span></div>
-              <PromoBox msg="🎉 Bring your own hardware" sub="Buy cheap NFC stickers online, configure them yourself, and connect to our software." />
+              <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 25</span><span className="text-slate-400 mb-2">one-time</span></div>
+              <PromoBox msg="🎉 Includes Plan 1 SaaS plan" sub="1st month free + 1 bonus month. Then RM 12/month for SaaS ONLY." />
             </div>
             <ul className="space-y-3 flex-1 mb-8">
-              {diyFeatures.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
+              {liteKitFeatures.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
             </ul>
-            <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'm%20interested%20in%20the%20DIY%20Pack.`} className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white py-3.5 rounded-2xl font-bold transition-all">
-              Start with DIY <ArrowRight size={17} />
+            <Link href="/signup" className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white py-3.5 rounded-2xl font-bold transition-all">
+              Get Lite Pack <ArrowRight size={17} />
+            </Link>
+          </div>
+
+          {/* STARTER PACK */}
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-8 flex flex-col">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-600 flex items-center justify-center"><Package size={22} /></div>
+              <div><p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Starter Pack</p><h3 className="text-xl font-black">Solo Stall</h3></div>
+            </div>
+            <div className="mb-6">
+              <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 35</span><span className="text-slate-400 mb-2">one-time</span></div>
+              <PromoBox msg="🎉 Includes Plan 1 SaaS plan" sub="1st month free + 1 bonus month. Then RM 12/month for SaaS ONLY." />
+            </div>
+            <ul className="space-y-3 flex-1 mb-8">
+              {starterFeatures.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
+            </ul>
+            <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'm%20interested%20in%20the%20Solo%20Stall%20Starter%20Pack.`} className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-700 text-white py-3.5 rounded-2xl font-bold transition-all">
+              Contact to Buy <ArrowRight size={17} />
             </Link>
           </div>
 
           {/* PRO PACK */}
           <div className="relative bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl shadow-2xl shadow-blue-600/30 p-8 flex flex-col text-white overflow-hidden">
             <div className="absolute -top-1 -right-1">
-              <div className="flex items-center gap-1 bg-yellow-400 text-yellow-900 text-xs font-black px-3 py-1.5 rounded-bl-2xl rounded-tr-3xl"><Star size={12} fill="currentColor" /> Best Value</div>
+              <div className="flex items-center gap-1 bg-yellow-400 text-yellow-900 text-xs font-black px-3 py-1.5 rounded-bl-2xl rounded-tr-3xl"><Star size={12} fill="currentColor" /> Most Popular</div>
             </div>
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center"><Zap size={22} /></div>
-              <div><p className="text-xs font-bold text-blue-200 uppercase tracking-widest">Premium Hardware</p><h3 className="text-xl font-black">Pro Pack</h3></div>
+              <div><p className="text-xs font-bold text-blue-200 uppercase tracking-widest">Pro Pack</p><h3 className="text-xl font-black">Cafe & Restaurant</h3></div>
             </div>
             <div className="mb-6">
-              <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 65</span><span className="text-blue-200 mb-2">one-time</span></div>
-              <PromoBox dark msg="🎉 Plug & Play Setup" sub="We send you beautiful, pre-configured acrylic stands. Plus, get a discount on monthly SaaS!" />
+              <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 95</span><span className="text-blue-200 mb-2">one-time</span></div>
+              <PromoBox dark msg="🎉 Includes Plan 1,2,3 SaaS + App" sub="1st month free + 1 bonus month. Then RM 32/month for SaaS with RM 7/month for the Add-on App." />
             </div>
             <ul className="space-y-3 flex-1 mb-8">
               {proFeatures.map(f => <li key={f} className="flex items-start gap-3 font-medium text-sm"><Check c="text-yellow-300" />{f}</li>)}
             </ul>
-            <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'm%20interested%20in%20the%20Pro%20Pack.`} className="w-full flex items-center justify-center gap-2 bg-white text-blue-700 hover:bg-blue-50 py-3.5 rounded-2xl font-bold transition-all">
-              Buy Pro Pack <ArrowRight size={17} />
+            <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'm%20interested%20in%20the%20Pro%20Pack%20for%20my%20business.`} className="w-full flex items-center justify-center gap-2 bg-white text-blue-700 hover:bg-blue-50 py-3.5 rounded-2xl font-bold transition-all">
+              Contact to Buy <ArrowRight size={17} />
             </Link>
           </div>
         </div>
@@ -170,38 +190,75 @@ export default function PricingPage() {
 
       {/* MONTHLY SAAS */}
       <section id="saas" className="py-16 px-6 bg-white border-y border-slate-100">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-black text-slate-900 mb-3">Step 2: Monthly SaaS Subscription</h2>
-            <p className="text-slate-500 font-medium">Simple, bundled pricing. Includes the Dashboard + Android Listener App.</p>
+            <h2 className="text-3xl font-black text-slate-900 mb-3">Monthly SaaS Plans</h2>
+            <p className="text-slate-500 font-medium">Already have accounts verified and stickers?</p>
           </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            
-            {/* DIY SAAS */}
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="bg-slate-50 rounded-3xl border border-slate-200 p-8 flex flex-col">
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">For DIY Pack Users</p>
-              <h3 className="text-2xl font-black mb-1">DIY Subscription</h3>
-              <p className="text-slate-500 text-sm mb-6">Full software access for BYO hardware</p>
-              <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black">RM 57</span><span className="text-slate-400 mb-1">/month</span></div>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Plan 1</p>
+              <h3 className="text-2xl font-black mb-1">Lite</h3>
+              <p className="text-slate-500 text-sm mb-6">Just getting started</p>
+              <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black">RM 12</span><span className="text-slate-400 mb-1">/month</span></div>
               <ul className="space-y-3 flex-1 mb-8">
-                {diyMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
+                {liteMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
               </ul>
-              <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'd%20like%20to%20subscribe%20to%20the%20DIY%20SaaS%20plan.`} className="w-full text-center bg-slate-900 hover:bg-slate-700 text-white py-3 rounded-2xl font-bold text-sm">Subscribe (DIY)</Link>
+              <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'd%20like%20to%20subscribe%20to%20the%20Lite%20SaaS%20plan.`} className="w-full text-center bg-slate-900 hover:bg-slate-700 text-white py-3 rounded-2xl font-bold text-sm">Contact to Subscribe</Link>
             </div>
 
-            {/* PRO SAAS */}
-            <div className="bg-blue-50 rounded-3xl border border-blue-200 p-8 flex flex-col">
-              <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">For Pro Pack Users</p>
-              <h3 className="text-2xl font-black mb-1">Pro Subscription</h3>
-              <p className="text-slate-500 text-sm mb-6">Discounted rate for hardware buyers</p>
-              <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black text-blue-700">RM 50</span><span className="text-slate-400 mb-1">/month</span></div>
+            <div className="bg-slate-50 rounded-3xl border border-slate-200 p-8 flex flex-col">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Plan 1</p>
+              <h3 className="text-2xl font-black mb-1">Basic</h3>
+              <p className="text-slate-500 text-sm mb-6">Solo stall owner</p>
+              <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black">RM 12</span><span className="text-slate-400 mb-1">/month</span></div>
               <ul className="space-y-3 flex-1 mb-8">
-                {proMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check c="text-blue-600" />{f}</li>)}
+                {basicMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
               </ul>
-              <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'd%20like%20to%20subscribe%20to%20the%20Pro%20SaaS%20plan.`} className="w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl font-bold text-sm">Subscribe (Pro)</Link>
+              <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'd%20like%20to%20subscribe%20to%20the%20Basic%20SaaS%20plan.`} className="w-full text-center bg-slate-900 hover:bg-slate-700 text-white py-3 rounded-2xl font-bold text-sm">Contact to Subscribe</Link>
             </div>
-            
+
+            <div className="bg-blue-50 rounded-3xl border border-blue-200 p-8 flex flex-col">
+              <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">Plan 1, 2 & 3</p>
+              <h3 className="text-2xl font-black mb-1">Advanced</h3>
+              <p className="text-slate-500 text-sm mb-6">Cafes & restaurants</p>
+              <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black text-blue-700">RM 32</span><span className="text-slate-400 mb-1">/month</span></div>
+              <ul className="space-y-3 flex-1 mb-8">
+                {advMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check c="text-blue-600" />{f}</li>)}
+              </ul>
+              <Link href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'd%20like%20to%20subscribe%20to%20the%20Advanced%20SaaS%20plan.`} className="w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl font-bold text-sm">Contact to Subscribe</Link>
+            </div>
           </div>
+        </div>
+      </section>
+
+      {/* ADD-ONS */}
+      <section id="addons" className="py-16 px-6 max-w-6xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-black text-slate-900 mb-3">Add-ons</h2>
+          <p className="text-slate-500 font-medium">Power up your plan with the extras you actually need.</p>
+        </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { icon: <Smartphone size={22} />, label: "Listener App", sub: "For Lite Pack users", price: "RM 12", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
+            { icon: <Bell size={22} />, label: "Listener App", sub: "For Starter Pack users", price: "RM 10", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-blue-100 text-blue-600", priceCls: "text-slate-900" },
+            { icon: <Bell size={22} />, label: "Listener App", sub: "For Pro Pack users", price: "RM 7", unit: "/month", desc: "Same full Listener App — discounted for Pro Pack subscribers.", bg: "bg-blue-50 border-blue-200", iconBg: "bg-blue-200 text-blue-700", priceCls: "text-blue-700" },
+            { icon: <Tag size={22} />, label: "NFC Sticker", sub: "Standard (plain)", price: "RM 4.99", unit: "/piece", desc: "Replacement or extra stickers. Minimum order may apply.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
+          ].map(({ icon, label, sub, price, unit, desc, bg, iconBg, priceCls }) => (
+            <div key={sub} className={`${bg} rounded-3xl border shadow-sm p-6 flex flex-col gap-4`}>
+              <div className={`w-11 h-11 rounded-2xl flex items-center justify-center ${iconBg}`}>{icon}</div>
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Add-on</p>
+                <h3 className="font-black text-slate-900 text-lg">{label}</h3>
+                <p className="text-xs font-medium mt-1 text-slate-500">{sub}</p>
+              </div>
+              <div className="mt-auto">
+                <span className={`text-3xl font-black ${priceCls}`}>{price}</span>
+                <span className="text-slate-400 text-sm">{unit}</span>
+                <p className="text-xs text-slate-500 mt-2 leading-relaxed">{desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
