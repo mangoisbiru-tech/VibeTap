@@ -41,12 +41,6 @@ const INITIAL_STICKERS: Sticker[] = [
   { id: "s4", tableName: "Table 4", pushedBill: null },
   { id: "s5", tableName: "Table 5", pushedBill: null },
   { id: "s6", tableName: "Table 6", pushedBill: null },
-  { id: "s7", tableName: "Table 7", pushedBill: null },
-  { id: "s8", tableName: "Table 8", pushedBill: null },
-  { id: "s9", tableName: "Table 9", pushedBill: null },
-  { id: "s10", tableName: "VIP 1", pushedBill: null },
-  { id: "s11", tableName: "VIP 2", pushedBill: null },
-  { id: "s12", tableName: "VIP 3", pushedBill: null },
 ];
 
 const INITIAL_HISTORY = [
@@ -422,7 +416,7 @@ export default function DemoPage() {
                     </div>
                     
                     <div className="grid grid-cols-3 gap-3">
-                      {stickers.slice(0, plan === "plan2" ? 6 : 12).map((s) => (
+                      {stickers.map((s) => (
                         <div key={s.id} className="relative">
                           <button
                             onClick={() => {
@@ -660,20 +654,10 @@ export default function DemoPage() {
                     </div>
                   </div>
 
-                  {(plan === 'plan3' || plan === 'plan2') && (
-                    <div className="space-y-4 animate-in slide-in-from-top-4 duration-300 relative">
-                      <div className="flex items-center justify-between px-1">
-                        <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black">Plan 3 Customer Experience</p>
-                        {plan === 'plan2' && <span className="bg-blue-600 text-white text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest">Enterprise Only</span>}
-                      </div>
-                      <div className={`bg-orange-50/50 border-4 border-orange-100 rounded-[2.5rem] p-8 space-y-6 relative overflow-hidden ${plan === 'plan2' ? 'opacity-40 grayscale pointer-events-none' : ''}`}>
-                        {plan === 'plan2' && (
-                          <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/10 backdrop-blur-[2px]">
-                            <button onClick={() => setPlan('plan3')} className="bg-slate-950 text-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-2xl flex items-center gap-2 hover:scale-105 transition-transform">
-                              <Zap size={14} className="fill-blue-500 text-blue-500" /> Unlock Enterprise Mode
-                            </button>
-                          </div>
-                        )}
+                  {plan === 'plan3' && (
+                    <div className="space-y-4 animate-in slide-in-from-top-4 duration-300">
+                      <p className="text-[10px] text-slate-950 uppercase tracking-[0.2em] font-black px-1">Plan 3 Customer Experience</p>
+                      <div className="bg-orange-50/50 border-4 border-orange-100 rounded-[2.5rem] p-8 space-y-6">
                         <button 
                           onClick={() => setPlan3Mode("summing_up")}
                           className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all border-4 ${
