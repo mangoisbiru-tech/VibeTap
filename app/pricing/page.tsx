@@ -4,10 +4,10 @@ import { Zap, CheckCircle2, Star, Package, Smartphone, Tag, Mail, ArrowRight, Sp
 
 const Check = ({ c = "text-blue-500" }: { c?: string }) => <CheckCircle2 size={16} className={`${c} mt-0.5 shrink-0`} />;
 
-const buffetFeatures = ["0x Physical NFC Stickers (BYO)", "Plan 1: Real-time Payment Inbox", "Plan 2 & 3 Access (Monthly SaaS required)", "Buffet Account Badge"];
+const buffetFeatures = ["0x Physical NFC Stickers (BYO)", "Buffet Account Badge"];
 const liteKitFeatures = ["2x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Lite Account Badge"];
 const starterFeatures = ["5x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Cheaper price for the add-on: Listening App", "Starter Account Badge"];
-const proFeatures = ["8x Physical NFC Stickers (Premium)", "Plan 1: Real-time Payment Inbox", "Plan 2: Table Tracking & Instant Sound Alerts", "Plan 3: Call for Waiter & Bill Request", "Cheaper price for the add-on: Listening App", "Pro Account Badge"];
+const proFeatures = ["8x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Plan 2: Table Tracking & Instant Sound Alerts", "Plan 3: Call for Waiter & Bill Request", "Cheaper price for the add-on: Listening App after promotion ended", "Pro Account Badge"];
 
 const liteMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log"];
 const starterMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log", "Cheaper price for the add-on: Listening App"];
@@ -320,41 +320,43 @@ export default function PricingPage() {
       </section>
 
       {/* COMPARISON TABLE */}
-      <section className="py-16 px-6 max-w-5xl mx-auto">
+      <section className="py-16 px-6 max-w-6xl mx-auto">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-black text-slate-900 mb-3">Quick Comparison</h2>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm font-medium border-collapse table-fixed">
+          <table className="w-full text-sm font-medium border-collapse table-fixed min-w-[700px]">
             <colgroup>
-              <col className="w-1/3 md:w-2/5" />
-              <col className="w-1/5" />
-              <col className="w-1/5" />
-              <col className="w-1/5" />
+              <col className="w-1/4" />
+              <col className="w-[15%]" />
+              <col className="w-[15%]" />
+              <col className="w-[15%]" />
+              <col className="w-[20%]" />
             </colgroup>
             <thead>
               <tr className="bg-slate-100">
                 <th className="text-left px-5 py-4 rounded-l-2xl text-slate-600 font-bold">Feature</th>
-                <th className="text-center px-5 py-4 text-slate-600 font-bold">Lite Pack<br /><span className="font-black text-slate-900">RM 25</span></th>
-                <th className="text-center px-5 py-4 text-slate-600 font-bold">Starter Pack<br /><span className="font-black text-slate-900">RM 35</span></th>
-                <th className="text-center px-5 py-4 rounded-r-2xl text-blue-700 font-bold">Pro Pack<br /><span className="font-black text-blue-700">RM 95</span></th>
+                <th className="text-center px-2 py-4 text-slate-600 font-bold leading-snug">Buffet User<br /><span className="font-black text-slate-900">RM 0</span></th>
+                <th className="text-center px-2 py-4 text-slate-600 font-bold leading-snug">Lite Pack<br /><span className="font-black text-slate-900">RM 25</span></th>
+                <th className="text-center px-2 py-4 text-slate-600 font-bold leading-snug">Starter Pack<br /><span className="font-black text-slate-900">RM 35</span></th>
+                <th className="text-center px-2 py-4 rounded-r-2xl text-blue-700 font-bold leading-snug">Pro Pack<br /><span className="font-black text-blue-700">RM 75</span></th>
               </tr>
             </thead>
             <tbody>
               {[
-                ["NFC Stickers", "2x", "5x", "12x"],
-                ["Payment Inbox", "✓", "✓", "✓"],
-                ["Table Tracking & Sound Alerts", "—", "—", "✓"],
-                ["Call for Waiter & Bill Request", "—", "—", "✓"],
-                ["Listener App Add-on", "+RM12/mo", "+RM10/mo", "+RM7/mo"],
-                ["Included Plan", "Plan 1", "Plan 1", "Plan 1, 2, 3"],
-                ["Badge Acc", "Lite", "Starter", "Pro"],
-                ["Monthly SaaS", "RM 12/mo", "RM 12/mo", "RM 32/mo"],
+                ["NFC Stickers", "0x (BYO)", "2x", "5x", "8x"],
+                ["Payment Inbox", "✓", "✓", "✓", "✓"],
+                ["Table Tracking & Sound Alerts", "—", "—", "—", "✓"],
+                ["Call for Waiter & Bill Request", "—", "—", "—", "✓"],
+                ["Listener App Add-on", "+RM14/mo", "+RM12/mo", "+RM10/mo", "+RM7/mo"],
+                ["Included Plan", "Plan 1, 2, 3", "Plan 1", "Plan 1", "Plan 1, 2, 3"],
+                ["Badge Acc", "Buffet", "Lite", "Starter", "Pro"],
+                ["Monthly SaaS", "RM 57/mo", "RM 12/mo", "RM 12/mo", "RM 32/mo"],
               ].map(([feature, ...cols], i) => (
                 <tr key={feature} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
                   <td className="px-5 py-3.5 text-slate-700 font-semibold rounded-l-xl">{feature}</td>
                   {cols.map((val, j) => (
-                    <td key={j} className={`px-5 py-3.5 text-center ${j === 2 ? "rounded-r-xl text-blue-700 font-bold" : val === "✓" ? "text-green-600 font-bold" : val === "—" ? "text-slate-300" : "text-slate-600"}`}>
+                    <td key={j} className={`px-2 py-3.5 text-center ${j === 3 ? "rounded-r-xl text-blue-700 font-bold" : val === "✓" ? "text-green-600 font-bold" : val === "—" ? "text-slate-300" : "text-slate-600"}`}>
                       {val}
                     </td>
                   ))}
@@ -363,9 +365,6 @@ export default function PricingPage() {
             </tbody>
           </table>
         </div>
-        <p className="mt-4 text-center text-sm text-slate-500 font-medium italic">
-          * if want to upgrade badge, please contact us!
-        </p>
       </section>
 
       {/* CTA */}
