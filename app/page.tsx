@@ -52,7 +52,8 @@ function InteractiveSticker() {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center p-8 bg-blue-50/50 rounded-[3rem] border border-blue-100 shadow-inner w-full overflow-hidden h-full min-h-[340px]">
+    <div className="relative flex flex-col items-center justify-center p-8 bg-blue-100/20 rounded-[3rem] border border-blue-100 shadow-inner w-full overflow-hidden h-full min-h-[340px]">
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-400/5 to-transparent pointer-events-none" />
       <div className="text-center mb-8 z-30 transition-opacity duration-300">
         <h3 className="font-black text-slate-900 text-xl mb-1">Simulate a Tap</h3>
         <p className="text-slate-500 text-sm font-medium">Hover your mouse over the sticker</p>
@@ -90,12 +91,17 @@ export default function LandingPage() {
   const [activePlanTab, setActivePlanTab] = useState(1);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans overflow-x-hidden selection:bg-blue-200">
+    <div className="min-h-screen bg-[#F8FAFF] text-slate-900 font-sans overflow-x-hidden selection:bg-blue-200 relative">
       
+      {/* Decorative Background Blobs */}
+      <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-400/5 blur-[120px] rounded-full pointer-events-none z-0" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-400/5 blur-[150px] rounded-full pointer-events-none z-0" />
+      <div className="fixed top-[20%] right-[10%] w-[30%] h-[30%] bg-purple-400/5 blur-[120px] rounded-full pointer-events-none z-0" />
+
       <ParticleBackground />
 
       {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-white border-b border-slate-100">
+      <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-slate-200/50">
         <div className="flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
           <Link href="/" className="flex items-center gap-3">
             <img src="/TapPay_Logo.png" alt="TapPay Logo" className="w-10 h-10 object-contain" />
