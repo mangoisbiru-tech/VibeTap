@@ -57,7 +57,58 @@ export default function PricingPage() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
 
+  const handleKitSelect = (id: string | null) => {
+    if (selectedKit === id) {
+      setSelectedKit(null);
+      setSelectedPlan(null);
+      setSelectedAddons([]);
+      return;
+    }
+
+    setSelectedKit(id);
+    if (id === 'pro') {
+      setSelectedPlan('pro');
+      setSelectedAddons(['app-pro']);
+    } else if (id === 'starter') {
+      setSelectedPlan('starter');
+      setSelectedAddons(['app-starter']);
+    } else if (id === 'lite') {
+      setSelectedPlan('lite');
+      setSelectedAddons(['app-lite']);
+    } else if (id === 'buffet') {
+      setSelectedPlan(null);
+      setSelectedAddons([]);
+    }
+  };
+
+  const isOptionDisabled = (type: 'plan' | 'addon', id: string) => {
+    if (!selectedKit) return false;
+    
+    if (selectedKit === 'pro') {
+      if (type === 'plan') return id !== 'pro';
+      if (type === 'addon' && id.startsWith('app-')) return id !== 'app-pro';
+    }
+    
+    if (selectedKit === 'starter') {
+      if (type === 'plan') return id !== 'starter';
+      if (type === 'addon' && id.startsWith('app-')) return id !== 'app-starter';
+    }
+    
+    if (selectedKit === 'lite') {
+      if (type === 'plan') return id !== 'lite';
+      if (type === 'addon' && id.startsWith('app-')) return id !== 'app-lite';
+    }
+    
+    if (selectedKit === 'buffet') {
+      // Buffet can ONLY choose app-buffet (RM 14)
+      if (type === 'addon' && id.startsWith('app-')) return id !== 'app-buffet';
+    }
+    
+    return false;
+  };
+
   const toggleAddon = (id: string) => {
+    if (isOptionDisabled('addon', id)) return;
     setSelectedAddons(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
   };
 
@@ -169,7 +220,7 @@ export default function PricingPage() {
 
           {/* BUFFET PACK */}
           <div 
-            onClick={() => setSelectedKit(selectedKit === 'buffet' ? null : 'buffet')}
+            onClick={() => handleKitSelect('buffet')}
             className={`cursor-pointer rounded-3xl border-4 transition-all p-8 flex flex-col ${selectedKit === 'buffet' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-white border-slate-200 shadow-md hover:border-blue-200'}`}
           >
             <div className="flex items-center gap-3 mb-6">
@@ -190,7 +241,7 @@ export default function PricingPage() {
 
           {/* LITE KIT */}
           <div 
-            onClick={() => setSelectedKit(selectedKit === 'lite' ? null : 'lite')}
+            onClick={() => handleKitSelect('lite')}
             className={`cursor-pointer rounded-3xl border-4 transition-all p-8 flex flex-col ${selectedKit === 'lite' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-white border-slate-200 shadow-md hover:border-blue-200'}`}
           >
             <div className="flex items-center gap-3 mb-6">
@@ -211,7 +262,7 @@ export default function PricingPage() {
 
           {/* STARTER PACK */}
           <div 
-            onClick={() => setSelectedKit(selectedKit === 'starter' ? null : 'starter')}
+            onClick={() => handleKitSelect('starter')}
             className={`cursor-pointer rounded-3xl border-4 transition-all p-8 flex flex-col ${selectedKit === 'starter' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-white border-slate-200 shadow-md hover:border-blue-200'}`}
           >
             <div className="flex items-center gap-3 mb-6">
@@ -232,7 +283,7 @@ export default function PricingPage() {
 
           {/* PRO PACK */}
           <div 
-            onClick={() => setSelectedKit(selectedKit === 'pro' ? null : 'pro')}
+            onClick={() => handleKitSelect('pro')}
             className={`relative cursor-pointer rounded-3xl border-4 transition-all p-8 flex flex-col overflow-hidden ${selectedKit === 'pro' ? 'bg-blue-600 border-yellow-400 shadow-2xl text-white' : 'bg-gradient-to-br from-blue-600 to-blue-700 border-transparent shadow-2xl text-white'}`}
           >
             <div className="absolute -top-1 -right-1">
@@ -265,8 +316,8 @@ export default function PricingPage() {
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div 
-              onClick={() => setSelectedPlan(selectedPlan === 'lite' ? null : 'lite')}
-              className={`cursor-pointer rounded-3xl border-4 transition-all p-8 flex flex-col ${selectedPlan === 'lite' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-slate-50 border-slate-200'}`}
+              onClick={() => !isOptionDisabled('plan', 'lite') && setSelectedPlan(selectedPlan === 'lite' ? null : 'lite')}
+              className={`rounded-3xl border-4 transition-all p-8 flex flex-col ${isOptionDisabled('plan', 'lite') ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedPlan === 'lite' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-slate-50 border-slate-200'}`}
             >
               <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Plan 1</p>
               <h3 className="text-2xl font-black mb-1">Lite</h3>
@@ -281,8 +332,8 @@ export default function PricingPage() {
             </div>
 
             <div 
-              onClick={() => setSelectedPlan(selectedPlan === 'starter' ? null : 'starter')}
-              className={`cursor-pointer rounded-3xl border-4 transition-all p-8 flex flex-col ${selectedPlan === 'starter' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-slate-50 border-slate-200'}`}
+              onClick={() => !isOptionDisabled('plan', 'starter') && setSelectedPlan(selectedPlan === 'starter' ? null : 'starter')}
+              className={`rounded-3xl border-4 transition-all p-8 flex flex-col ${isOptionDisabled('plan', 'starter') ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedPlan === 'starter' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-slate-50 border-slate-200'}`}
             >
               <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Plan 1</p>
               <h3 className="text-2xl font-black mb-1">Starter</h3>
@@ -297,8 +348,8 @@ export default function PricingPage() {
             </div>
 
             <div 
-              onClick={() => setSelectedPlan(selectedPlan === 'pro' ? null : 'pro')}
-              className={`cursor-pointer rounded-3xl border-4 transition-all p-8 flex flex-col ${selectedPlan === 'pro' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-blue-50 border-blue-200'}`}
+              onClick={() => !isOptionDisabled('plan', 'pro') && setSelectedPlan(selectedPlan === 'pro' ? null : 'pro')}
+              className={`rounded-3xl border-4 transition-all p-8 flex flex-col ${isOptionDisabled('plan', 'pro') ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedPlan === 'pro' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-blue-50 border-blue-200'}`}
             >
               <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">Plan 1, 2 & 3</p>
               <h3 className="text-2xl font-black mb-1">Pro</h3>
@@ -343,7 +394,7 @@ export default function PricingPage() {
                   toggleAddon(id);
                 }
               }}
-              className={`cursor-pointer rounded-3xl border-4 transition-all p-6 flex flex-col gap-4 ${selectedAddons.includes(id) ? 'bg-blue-50/50 border-blue-500 shadow-xl' : `${bg} border-transparent hover:border-blue-200`}`}
+              className={`rounded-3xl border-4 transition-all p-6 flex flex-col gap-4 ${isOptionDisabled('addon', id) ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedAddons.includes(id) ? 'bg-blue-50/50 border-blue-500 shadow-xl' : `${bg} border-transparent hover:border-blue-200`}`}
             >
               <div className={`w-11 h-11 rounded-2xl flex items-center justify-center ${iconBg}`}>{icon}</div>
               <div>
@@ -356,7 +407,7 @@ export default function PricingPage() {
               </div>
               <p className="text-xs text-slate-500 leading-relaxed flex-1">{desc}</p>
               <div className={`text-[10px] font-bold px-2 py-1 rounded-md self-start ${selectedAddons.includes(id) ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                {selectedAddons.includes(id) ? 'SELECTED' : 'ADD TO PLAN'}
+                {isOptionDisabled('addon', id) && selectedAddons.includes(id) ? 'INCLUDED' : (selectedAddons.includes(id) ? 'SELECTED' : 'ADD TO PLAN')}
               </div>
             </div>
           ))}
