@@ -29,14 +29,14 @@ const ADDONS = [
 
 const WHATSAPP_NUMBER = "601112345678";
 
-const buffetFeatures = ["0x Physical NFC Stickers (BYO)", "Buffet Account Badge"];
+const buffetFeatures = ["0x Physical NFC Stickers (BYO)", "Buffet Account Badge", "choose your own plan 1 or plan 1,2,3"];
 const liteKitFeatures = ["2x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Lite Account Badge"];
-const starterFeatures = ["5x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Cheaper price for the add-on: Listening App", "Starter Account Badge"];
-const proFeatures = ["8x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Plan 2: Table Tracking & Instant Sound Alerts", "Plan 3: Call for Waiter & Bill Request", "Cheaper price for the add-on: Listening App after promotion ended", "Pro Account Badge"];
+const starterFeatures = ["5x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Cheaper price for the add-on: Listening App (eligible for Starter badge user ONLY)", "Starter Account Badge"];
+const proFeatures = ["8x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Plan 2: Table Tracking & Instant Sound Alerts", "Plan 3: Call for Waiter & Bill Request", "Cheaper price for the add-on: Listening App (eligible for Pro badge user ONLY)", "Pro Account Badge"];
 
 const liteMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log"];
-const starterMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log", "Cheaper price for the add-on: Listening App"];
-const proMonthly = ["Everything in Starter", "Table Management & Amount Push In", "Call for Staff & Call for Bill", "Call for Bills Button", "Cheaper price for the add-on: Listening App"];
+const starterMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log", "Cheaper price for the add-on: Listening App (eligible for Starter badge user ONLY)"];
+const proMonthly = ["Everything in Starter", "Table Management & Amount Push In", "Call for Staff & Call for Bill", "Call for Bills Button", "Cheaper price for the add-on: Listening App (eligible for Pro badge user ONLY)"];
 
 function PromoBox({ msg, sub, dark = false }: { msg: string; sub: string; dark?: boolean }) {
   return dark ? (
