@@ -84,24 +84,17 @@ export default function PricingPage() {
   const isOptionDisabled = (type: 'plan' | 'addon', id: string) => {
     if (!selectedKit) return false;
     
-    if (selectedKit === 'pro') {
-      if (type === 'plan') return id !== 'pro';
-      if (type === 'addon' && id.startsWith('app-')) return id !== 'app-pro';
-    }
-    
-    if (selectedKit === 'starter') {
-      if (type === 'plan') return id !== 'starter';
-      if (type === 'addon' && id.startsWith('app-')) return id !== 'app-starter';
-    }
-    
-    if (selectedKit === 'lite') {
-      if (type === 'plan') return id !== 'lite';
-      if (type === 'addon' && id.startsWith('app-')) return id !== 'app-lite';
+    // Lite, Starter, and Pro are all-in-one. Disable all other plan/app selections.
+    if (selectedKit === 'lite' || selectedKit === 'starter' || selectedKit === 'pro') {
+      if (type === 'plan') return true;
+      if (type === 'addon' && id.startsWith('app-')) return true;
+      // Note: 'nfc' (Extra Sticker) remains enabled
     }
     
     if (selectedKit === 'buffet') {
-      // Buffet can ONLY choose app-buffet (RM 14)
-      if (type === 'addon' && id.startsWith('app-')) return id !== 'app-buffet';
+      // Buffet users MUST choose their own plan and app
+      // But they can ONLY choose the RM 14 listener app
+      if (type === 'addon' && id.startsWith('app-') && id !== 'app-buffet') return true;
     }
     
     return false;
@@ -117,7 +110,10 @@ export default function PricingPage() {
   const activeAddons = ADDONS.filter(a => selectedAddons.includes(a.id));
 
   const oneTimeTotal = (currentKit?.price || 0) + activeAddons.filter(a => a.id === 'nfc').reduce((sum, a) => sum + a.price, 0);
-  const monthlyTotal = (currentPlan?.price || 0) + activeAddons.filter(a => a.id !== 'nfc').reduce((sum, a) => sum + a.price, 0);
+  const isPromoActive = selectedKit && selectedKit !== 'buffet';
+  const monthlyTotal = isPromoActive 
+    ? 0 
+    : (currentPlan?.price || 0) + activeAddons.filter(a => a.id !== 'nfc').reduce((sum, a) => sum + a.price, 0);
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans overflow-x-hidden">
       <nav className="sticky top-0 z-50 bg-white border-b border-slate-100 shadow-sm">
@@ -450,7 +446,10 @@ export default function PricingPage() {
                 </div>
                 <div>
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Monthly Subscription</p>
-                  <p className="text-2xl font-black text-blue-600">RM {monthlyTotal.toFixed(2)}<span className="text-xs text-slate-400 ml-1">/mo</span></p>
+                  <p className="text-2xl font-black text-blue-600">
+                    RM {monthlyTotal.toFixed(2)}
+                    <span className="text-xs text-slate-400 ml-1">{isPromoActive ? '(First 2 Months Free)' : '/mo'}</span>
+                  </p>
                 </div>
               </div>
             </div>
