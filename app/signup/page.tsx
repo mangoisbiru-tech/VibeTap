@@ -170,7 +170,7 @@ export default function SignupPage() {
             </button>
 
             <p className="text-[10px] text-slate-400 text-center font-bold uppercase tracking-wider">
-              By joining, you agree to our Terms & Privacy
+              By joining, you agree to our <Link href="/legal" className="text-blue-600 hover:underline">Terms & Privacy</Link>
             </p>
           </form>
 
