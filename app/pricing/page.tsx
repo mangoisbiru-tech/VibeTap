@@ -98,38 +98,6 @@ function PlanVisualizer({ plan }: { plan: 'lite' | 'starter' | 'pro' }) {
   );
 }
 
-function AddonVisualizer({ type }: { type: 'app' | 'nfc' }) {
-  if (type === 'app') {
-    return (
-      <div className="w-full h-24 bg-slate-900 rounded-xl mb-4 relative overflow-hidden flex items-center justify-center">
-        <div className="absolute inset-0 opacity-20 bg-[linear-gradient(90deg,transparent_0%,#3B82F6_50%,transparent_100%)] bg-[length:200%_100%] animate-shimmer" />
-        <div className="relative z-10 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center animate-pulse">
-            <Wifi className="text-white rotate-90" size={16} />
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="flex gap-0.5">
-              {[1, 2, 3, 4, 5].map(i => (
-                <div key={i} className="w-1 bg-blue-400 rounded-full animate-wave" style={{ height: `${Math.random() * 15 + 5}px`, animationDelay: `${i * 0.1}s` }} />
-              ))}
-            </div>
-            <div className="bg-blue-500/20 px-2 py-0.5 rounded-full border border-blue-500/30">
-              <span className="text-[7px] font-bold text-blue-300 uppercase italic tracking-tighter">"Payment Received"</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-  return (
-    <div className="w-full h-24 bg-blue-50 rounded-xl mb-4 flex items-center justify-center border border-blue-100">
-      <div className="w-12 h-12 bg-slate-900 rounded-full shadow-lg flex items-center justify-center rotate-[-15deg] animate-float">
-        <Zap className="text-blue-500" size={20} />
-      </div>
-    </div>
-  );
-}
-
 export default function PricingPage() {
   const [selectedKit, setSelectedKit] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
@@ -478,7 +446,6 @@ export default function PricingPage() {
               }}
               className={`rounded-3xl border-4 transition-all p-6 flex flex-col gap-4 ${isOptionDisabled('addon', id) ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedAddons.includes(id) ? 'bg-blue-50/50 border-blue-500 shadow-xl' : `${bg} border-transparent hover:border-blue-200`}`}
             >
-              <AddonVisualizer type={id === 'nfc' ? 'nfc' : 'app'} />
               <div className={`w-11 h-11 rounded-2xl flex items-center justify-center ${iconBg}`}>{icon}</div>
               <div>
                 <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{label}</p>
