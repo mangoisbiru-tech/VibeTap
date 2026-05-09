@@ -65,7 +65,7 @@ export default function LegalPage() {
               <div className="space-y-4">
                 <h3 className="text-xl font-bold text-slate-900">4. Third-Party Dependencies & Deep Links</h3>
                 <p>TapPay's functionality relies on deep-linking technology to third-party mobile applications (including, but not limited to, Touch 'n Go eWallet). We do not own, control, or guarantee the persistence of these third-party links.</p>
-                <p className="bg-yellow-50 p-4 rounded-xl border border-yellow-100 italic">Important: If a third-party provider changes their technical architecture, deep link format, or mobile app behavior, TapPay is not responsible for any resulting service interruptions or transaction failures.</p>
+                <p className="bg-yellow-50 p-4 rounded-xl border border-yellow-100 italic font-bold">Important: If a third-party provider changes their technical architecture, deep link format, or mobile app behavior, TapPay is not responsible for any resulting service interruptions or transaction failures.</p>
               </div>
 
               <div className="space-y-4">
