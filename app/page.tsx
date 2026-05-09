@@ -551,7 +551,7 @@ export default function LandingPage() {
             © 2026 TapPay Malaysia. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <Link href="/legal" className="text-sm font-bold hover:text-blue-600 transition-colors">
+            <Link href="/legal" className="text-sm font-bold text-black hover:text-blue-600 transition-colors">
               Terms & Privacy
             </Link>
           </div>
