@@ -52,6 +52,66 @@ function PromoBox({ msg, sub, dark = false }: { msg: string; sub: string; dark?:
   );
 }
 
+function PlanVisualizer({ plan }: { plan: 'lite' | 'starter' | 'pro' }) {
+  if (plan === 'lite') {
+    return (
+      <div className="w-full h-32 bg-slate-100 rounded-2xl mb-6 relative overflow-hidden flex items-center justify-center border border-slate-200/50">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent" />
+        <div className="w-20 h-28 bg-white rounded-t-xl border-2 border-slate-200 p-2 shadow-sm translate-y-4">
+          <div className="w-full h-1 bg-slate-100 rounded-full mb-3" />
+          <div className="space-y-1.5">
+            {[1, 2, 3].map(i => (
+              <div key={i} className={`w-full h-4 rounded-md flex items-center px-1.5 gap-1 animate-in slide-in-from-bottom duration-500 fill-mode-both`} style={{ animationDelay: `${i * 200}ms` }}>
+                <div className="w-2 h-2 rounded-full bg-green-400" />
+                <div className="w-8 h-1 bg-slate-100 rounded-full" />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="absolute top-4 right-4 bg-green-500 text-[8px] font-black text-white px-1.5 py-0.5 rounded-full animate-bounce">
+          LIVE
+        </div>
+      </div>
+    );
+  }
+  
+  if (plan === 'starter') {
+    return (
+      <div className="w-full h-32 bg-slate-100 rounded-2xl mb-6 relative overflow-hidden flex items-center justify-center border border-slate-200/50">
+        <div className="grid grid-cols-3 gap-2 p-4">
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className={`w-8 h-8 rounded-lg border-2 transition-all duration-1000 ${i === 2 ? 'bg-blue-500 border-blue-600 scale-110 shadow-lg shadow-blue-500/20' : 'bg-white border-slate-200'}`}>
+              <div className={`w-full h-full flex items-center justify-center text-[10px] font-bold ${i === 2 ? 'text-white' : 'text-slate-300'}`}>
+                T{i}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="absolute top-2 right-2 flex items-center gap-1 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-full border border-blue-100 shadow-sm">
+          <Store size={10} className="text-blue-600" />
+          <span className="text-[8px] font-black text-slate-600 uppercase">Table Tracking</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full h-32 bg-blue-600 rounded-2xl mb-6 relative overflow-hidden flex items-center justify-center border border-blue-400/20">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/10 to-transparent animate-pulse" />
+      <div className="relative z-10 flex flex-col items-center gap-2">
+        <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-xl animate-bounce">
+          <Bell className="text-blue-600" size={24} />
+        </div>
+        <div className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30">
+          <span className="text-[10px] font-black text-white uppercase tracking-widest italic">Staff Alert!</span>
+        </div>
+      </div>
+      <div className="absolute bottom-[-10px] left-4 w-12 h-20 bg-white/10 rounded-t-lg rotate-[-10deg]" />
+      <div className="absolute bottom-[-10px] right-4 w-12 h-20 bg-white/10 rounded-t-lg rotate-[10deg]" />
+    </div>
+  );
+}
+
 export default function PricingPage() {
   const [selectedKit, setSelectedKit] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
@@ -320,6 +380,7 @@ export default function PricingPage() {
               onClick={() => !isOptionDisabled('plan', 'lite') && setSelectedPlan(selectedPlan === 'lite' ? null : 'lite')}
               className={`rounded-3xl border-4 transition-all p-8 flex flex-col ${isOptionDisabled('plan', 'lite') ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedPlan === 'lite' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-slate-50 border-slate-200'}`}
             >
+              <PlanVisualizer plan="lite" />
               <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Plan 1</p>
               <h3 className="text-2xl font-black mb-1">Lite</h3>
               <p className="text-slate-500 text-sm mb-6">Just getting started</p>
@@ -336,6 +397,7 @@ export default function PricingPage() {
               onClick={() => !isOptionDisabled('plan', 'starter') && setSelectedPlan(selectedPlan === 'starter' ? null : 'starter')}
               className={`rounded-3xl border-4 transition-all p-8 flex flex-col ${isOptionDisabled('plan', 'starter') ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedPlan === 'starter' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-slate-50 border-slate-200'}`}
             >
+              <PlanVisualizer plan="starter" />
               <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Plan 1</p>
               <h3 className="text-2xl font-black mb-1">Starter</h3>
               <p className="text-slate-500 text-sm mb-6">Solo stall owner</p>
@@ -352,6 +414,7 @@ export default function PricingPage() {
               onClick={() => !isOptionDisabled('plan', 'pro') && setSelectedPlan(selectedPlan === 'pro' ? null : 'pro')}
               className={`rounded-3xl border-4 transition-all p-8 flex flex-col ${isOptionDisabled('plan', 'pro') ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedPlan === 'pro' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-blue-50 border-blue-200'}`}
             >
+              <PlanVisualizer plan="pro" />
               <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">Plan 1, 2 & 3</p>
               <h3 className="text-2xl font-black mb-1">Pro</h3>
               <p className="text-slate-500 text-sm mb-6">Cafes & restaurants</p>
