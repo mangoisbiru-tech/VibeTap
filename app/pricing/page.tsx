@@ -53,48 +53,32 @@ function PromoBox({ msg, sub, dark = false }: { msg: string; sub: string; dark?:
 }
 
 function PlanVisualizer({ plan }: { plan: 'lite' | 'starter' | 'pro' }) {
-  if (plan === 'lite') {
+  if (plan === 'lite' || plan === 'starter') {
     return (
       <div className="w-full h-32 bg-slate-100 rounded-2xl mb-6 relative overflow-hidden flex items-center justify-center border border-slate-200/50">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent" />
         <div className="w-20 h-28 bg-white rounded-t-xl border-2 border-slate-200 p-2 shadow-sm translate-y-4">
-          <div className="w-full h-1 bg-slate-100 rounded-full mb-3" />
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-8 h-1 bg-slate-100 rounded-full" />
+            <div className="w-3 h-3 rounded-full bg-blue-100" />
+          </div>
           <div className="space-y-1.5">
             {[1, 2, 3].map(i => (
-              <div key={i} className={`w-full h-4 rounded-md flex items-center px-1.5 gap-1 animate-in slide-in-from-bottom duration-500 fill-mode-both`} style={{ animationDelay: `${i * 200}ms` }}>
-                <div className="w-2 h-2 rounded-full bg-green-400" />
-                <div className="w-8 h-1 bg-slate-100 rounded-full" />
+              <div key={i} className={`w-full h-4 rounded-md bg-slate-50 border border-slate-100 flex items-center px-1.5 gap-1 animate-in slide-in-from-bottom duration-500 fill-mode-both`} style={{ animationDelay: `${i * 200}ms` }}>
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                <div className="w-10 h-0.5 bg-slate-200 rounded-full" />
               </div>
             ))}
           </div>
         </div>
-        <div className="absolute top-4 right-4 bg-green-500 text-[8px] font-black text-white px-1.5 py-0.5 rounded-full animate-bounce">
-          LIVE
+        <div className="absolute top-3 left-3 flex items-center gap-1 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-full border border-blue-100 shadow-sm">
+          <div className="w-1 h-1 rounded-full bg-blue-500 animate-ping" />
+          <span className="text-[8px] font-black text-slate-600 uppercase">Live Inbox</span>
         </div>
       </div>
     );
   }
   
-  if (plan === 'starter') {
-    return (
-      <div className="w-full h-32 bg-slate-100 rounded-2xl mb-6 relative overflow-hidden flex items-center justify-center border border-slate-200/50">
-        <div className="grid grid-cols-3 gap-2 p-4">
-          {[1, 2, 3, 4, 5, 6].map(i => (
-            <div key={i} className={`w-8 h-8 rounded-lg border-2 transition-all duration-1000 ${i === 2 ? 'bg-blue-500 border-blue-600 scale-110 shadow-lg shadow-blue-500/20' : 'bg-white border-slate-200'}`}>
-              <div className={`w-full h-full flex items-center justify-center text-[10px] font-bold ${i === 2 ? 'text-white' : 'text-slate-300'}`}>
-                T{i}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="absolute top-2 right-2 flex items-center gap-1 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-full border border-blue-100 shadow-sm">
-          <Store size={10} className="text-blue-600" />
-          <span className="text-[8px] font-black text-slate-600 uppercase">Table Tracking</span>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full h-32 bg-blue-600 rounded-2xl mb-6 relative overflow-hidden flex items-center justify-center border border-blue-400/20">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/10 to-transparent animate-pulse" />
@@ -106,8 +90,42 @@ function PlanVisualizer({ plan }: { plan: 'lite' | 'starter' | 'pro' }) {
           <span className="text-[10px] font-black text-white uppercase tracking-widest italic">Staff Alert!</span>
         </div>
       </div>
-      <div className="absolute bottom-[-10px] left-4 w-12 h-20 bg-white/10 rounded-t-lg rotate-[-10deg]" />
-      <div className="absolute bottom-[-10px] right-4 w-12 h-20 bg-white/10 rounded-t-lg rotate-[10deg]" />
+      <div className="absolute top-2 right-2 flex items-center gap-1 bg-white/10 backdrop-blur-sm px-2 py-1 rounded-full border border-white/20">
+        <Store size={10} className="text-white" />
+        <span className="text-[8px] font-black text-white uppercase">Table Tracking</span>
+      </div>
+    </div>
+  );
+}
+
+function AddonVisualizer({ type }: { type: 'app' | 'nfc' }) {
+  if (type === 'app') {
+    return (
+      <div className="w-full h-24 bg-slate-900 rounded-xl mb-4 relative overflow-hidden flex items-center justify-center">
+        <div className="absolute inset-0 opacity-20 bg-[linear-gradient(90deg,transparent_0%,#3B82F6_50%,transparent_100%)] bg-[length:200%_100%] animate-shimmer" />
+        <div className="relative z-10 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center animate-pulse">
+            <Wifi className="text-white rotate-90" size={16} />
+          </div>
+          <div className="flex flex-col gap-1">
+            <div className="flex gap-0.5">
+              {[1, 2, 3, 4, 5].map(i => (
+                <div key={i} className="w-1 bg-blue-400 rounded-full animate-wave" style={{ height: `${Math.random() * 15 + 5}px`, animationDelay: `${i * 0.1}s` }} />
+              ))}
+            </div>
+            <div className="bg-blue-500/20 px-2 py-0.5 rounded-full border border-blue-500/30">
+              <span className="text-[7px] font-bold text-blue-300 uppercase italic tracking-tighter">"Payment Received"</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="w-full h-24 bg-blue-50 rounded-xl mb-4 flex items-center justify-center border border-blue-100">
+      <div className="w-12 h-12 bg-slate-900 rounded-full shadow-lg flex items-center justify-center rotate-[-15deg] animate-float">
+        <Zap className="text-blue-500" size={20} />
+      </div>
     </div>
   );
 }
@@ -460,6 +478,7 @@ export default function PricingPage() {
               }}
               className={`rounded-3xl border-4 transition-all p-6 flex flex-col gap-4 ${isOptionDisabled('addon', id) ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedAddons.includes(id) ? 'bg-blue-50/50 border-blue-500 shadow-xl' : `${bg} border-transparent hover:border-blue-200`}`}
             >
+              <AddonVisualizer type={id === 'nfc' ? 'nfc' : 'app'} />
               <div className={`w-11 h-11 rounded-2xl flex items-center justify-center ${iconBg}`}>{icon}</div>
               <div>
                 <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{label}</p>
