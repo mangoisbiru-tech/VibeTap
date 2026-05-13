@@ -135,7 +135,7 @@ export default function PricingPage() {
       } else {
         const errMsg = data.toyyibpay_response 
           ? `ToyyibPay: ${JSON.stringify(data.toyyibpay_response)}`
-          : data.error || 'Payment failed to initialize.';
+          : data.error || '[DEBUG] Payment failed to initialize. Check Vercel logs.';
         alert(errMsg);
       }
     } catch (err) {
