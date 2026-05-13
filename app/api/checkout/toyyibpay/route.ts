@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
     const secretKey = process.env.TOYYIBPAY_SECRET_KEY;
     const categoryCode = process.env.TOYYIBPAY_CATEGORY_CODE;
-    const apiUrl = process.env.TOYYIBPAY_API_URL || 'https://toyyibpay.com';
+    const apiUrl = 'https://toyyibpay.com'; // hardcoded - not sensitive
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://tappay-malaysia-nfc.vercel.app';
 
     // Debug: log env vars presence (not values for security)
