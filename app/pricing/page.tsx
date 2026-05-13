@@ -134,13 +134,13 @@ export default function PricingPage() {
         window.location.href = data.paymentUrl;
       } else {
         const errMsg = data.toyyibpay_response 
-          ? `ToyyibPay: ${JSON.stringify(data.toyyibpay_response)}`
-          : data.error || '[DEBUG] Payment failed to initialize. Check Vercel logs.';
+          ? `ToyyibPay says: ${JSON.stringify(data.toyyibpay_response)}`
+          : `ERROR: ${data.error}\nDETAILS: ${data.details || 'none'}\nENV: ${JSON.stringify(data.env_check || {})}`;
         alert(errMsg);
       }
     } catch (err) {
       console.error(err);
-      alert('An error occurred during checkout.');
+      alert('Network error - could not reach the server: ' + String(err));
     } finally {
       setLoading(false);
     }
