@@ -106,6 +106,7 @@ export default function PricingPage() {
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [checkoutData, setCheckoutData] = useState({ name: '', email: '', phone: '' });
 
+  // Deployment trigger: ToyyibPay production keys verified
   const handleCheckout = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!checkoutData.email || !checkoutData.name) {
