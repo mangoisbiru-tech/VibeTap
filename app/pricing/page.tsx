@@ -133,7 +133,10 @@ export default function PricingPage() {
       if (data.paymentUrl) {
         window.location.href = data.paymentUrl;
       } else {
-        alert('Payment failed to initialize. Please try again.');
+        const errMsg = data.toyyibpay_response 
+          ? `ToyyibPay: ${JSON.stringify(data.toyyibpay_response)}`
+          : data.error || 'Payment failed to initialize.';
+        alert(errMsg);
       }
     } catch (err) {
       console.error(err);
