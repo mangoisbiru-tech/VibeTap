@@ -102,6 +102,45 @@ export default function PricingPage() {
   const [selectedKit, setSelectedKit] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [checkoutData, setCheckoutData] = useState({ name: '', email: '', phone: '' });
+
+  const handleCheckout = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!checkoutData.email || !checkoutData.name) {
+      setShowCheckoutModal(true);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch('/api/checkout/toyyibpay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          oneTimeTotal,
+          monthlyTotal,
+          selectedKit,
+          selectedPlan,
+          selectedAddons,
+          ...checkoutData
+        })
+      });
+
+      const data = await res.json();
+      if (data.paymentUrl) {
+        window.location.href = data.paymentUrl;
+      } else {
+        alert('Payment failed to initialize. Please try again.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred during checkout.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleKitSelect = (id: string | null) => {
     if (selectedKit === id) {
@@ -508,12 +547,75 @@ export default function PricingPage() {
               </div>
             </div>
 
-            <Link 
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20YK!%20I'd%20like%20to%20get:%0A-%20${currentKit?.name || 'No Kit'}%0A-%20${currentPlan?.name || 'No'}%20Plan%0A-${activeAddons.length > 0 ? activeAddons.map(a => `%0A-%20${a.name}`).join('') : ''}%0A%0AOne-time:%20RM%20${oneTimeTotal.toFixed(2)}%0AMonthly:%20RM%20${monthlyTotal.toFixed(2)}`}
-              className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-600/20 flex items-center justify-center gap-3"
+            <button 
+              onClick={() => setShowCheckoutModal(true)}
+              disabled={loading}
+              className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-600/20 flex items-center justify-center gap-3 disabled:opacity-50"
             >
-              Confirm Selection <ArrowRight size={20} />
-            </Link>
+              {loading ? (
+                <>Loading...</>
+              ) : (
+                <>Secure Checkout <ArrowRight size={20} /></>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* CHECKOUT MODAL */}
+      {showCheckoutModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm">
+          <div className="bg-white rounded-[2.5rem] w-full max-w-md p-10 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-2xl font-black">Your Details</h3>
+              <button onClick={() => setShowCheckoutModal(false)} className="text-slate-400 hover:text-slate-600">
+                <ArrowLeft size={24} />
+              </button>
+            </div>
+            <form onSubmit={handleCheckout} className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Full Name</label>
+                <input 
+                  required
+                  type="text" 
+                  value={checkoutData.name}
+                  onChange={e => setCheckoutData({...checkoutData, name: e.target.value})}
+                  className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  placeholder="Business or Personal Name"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Email Address</label>
+                <input 
+                  required
+                  type="email" 
+                  value={checkoutData.email}
+                  onChange={e => setCheckoutData({...checkoutData, email: e.target.value})}
+                  className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  placeholder="name@company.com"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Phone Number (Optional)</label>
+                <input 
+                  type="tel" 
+                  value={checkoutData.phone}
+                  onChange={e => setCheckoutData({...checkoutData, phone: e.target.value})}
+                  className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  placeholder="0123456789"
+                />
+              </div>
+              <button 
+                type="submit"
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-5 rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-600/20 flex items-center justify-center gap-3 disabled:opacity-50"
+              >
+                {loading ? 'Processing...' : 'Proceed to Payment'}
+              </button>
+              <p className="text-center text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                You will be redirected to ToyyibPay
+              </p>
+            </form>
           </div>
         </div>
       )}
