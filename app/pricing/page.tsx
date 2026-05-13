@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Zap, CheckCircle2, Star, Package, Smartphone, Tag, Mail, ArrowRight, Sparkles, Wifi, UtensilsCrossed, Bell, Lightbulb, ShieldCheck, X, Store } from "lucide-react";
+import { Zap, CheckCircle2, Star, Package, Smartphone, Tag, Mail, ArrowRight, Sparkles, Wifi, UtensilsCrossed, Bell, Lightbulb, ShieldCheck, X, Store, ArrowLeft } from "lucide-react";
 
 import { useState } from "react";
 
