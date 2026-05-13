@@ -97,8 +97,17 @@ export async function POST(req: Request) {
       }, { status: 500 });
     }
 
-  } catch (error) {
-    console.error('[ToyyibPay] Checkout Error:', error);
-    return NextResponse.json({ error: 'Internal server error', details: String(error) }, { status: 500 });
+  } catch (error: any) {
+    console.error('[ToyyibPay] FATAL ERROR:', error);
+    return NextResponse.json({ 
+      error: 'Internal server error', 
+      details: error.message || String(error),
+      stack: error.stack,
+      env_check: {
+        hasSecret: !!process.env.TOYYIBPAY_SECRET_KEY,
+        hasCategory: !!process.env.TOYYIBPAY_CATEGORY_CODE,
+        apiUrl: process.env.TOYYIBPAY_API_URL
+      }
+    }, { status: 500 });
   }
 }
