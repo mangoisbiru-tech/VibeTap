@@ -98,16 +98,10 @@ export async function POST(req: Request) {
     }
 
   } catch (error: any) {
-    console.error('[ToyyibPay] FATAL ERROR:', error);
+    console.error('[ToyyibPay] Error:', error);
     return NextResponse.json({ 
       error: 'Internal server error', 
-      details: error.message || String(error),
-      stack: error.stack,
-      env_check: {
-        hasSecret: !!process.env.TOYYIBPAY_SECRET_KEY,
-        hasCategory: !!process.env.TOYYIBPAY_CATEGORY_CODE,
-        apiUrl: process.env.TOYYIBPAY_API_URL
-      }
+      details: error.message || String(error)
     }, { status: 500 });
   }
 }

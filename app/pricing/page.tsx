@@ -8,35 +8,29 @@ const Check = ({ c = "text-blue-500" }: { c?: string }) => <CheckCircle2 size={1
 
 const KITS = [
   { id: "buffet", name: "Buffet Pack", price: 0, sub: "BYO Setup" },
-  { id: "lite", name: "Lite Pack", price: 25, sub: "Entry Level" },
-  { id: "starter", name: "Starter Pack", price: 35, sub: "Solo Stall" },
+  { id: "starter", name: "Starter Pack", price: 30, sub: "Solo Stall" },
   { id: "pro", name: "Pro Pack", price: 75, sub: "Cafe & Restaurant" },
 ];
 
 const PLANS = [
-  { id: "lite", name: "Lite", price: 12 },
   { id: "starter", name: "Starter", price: 12 },
-  { id: "pro", name: "Pro", price: 32 },
+  { id: "pro", name: "Pro", price: 35 },
 ];
 
 const ADDONS = [
   { id: "app-buffet", name: "Listener App (Buffet)", price: 14 },
-  { id: "app-lite", name: "Listener App (Lite)", price: 12 },
   { id: "app-starter", name: "Listener App (Starter)", price: 10 },
-  { id: "app-pro", name: "Listener App (Pro)", price: 7 },
-  { id: "nfc", name: "NFC Sticker", price: 4.99 },
+  { id: "nfc", name: "Extra NFC Sticker", price: 5 },
 ];
 
 const WHATSAPP_NUMBER = "601112345678";
 
-const buffetFeatures = ["0x Physical NFC Stickers (BYO)", "Buffet Account Badge", "choose your own plan 1 or plan 1,2,3"];
-const liteKitFeatures = ["2x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Lite Account Badge"];
-const starterFeatures = ["5x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Cheaper price for the add-on: Listening App (eligible for Starter badge user ONLY)", "Starter Account Badge"];
-const proFeatures = ["8x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Plan 2: Table Tracking & Instant Sound Alerts", "Plan 3: Call for Waiter & Bill Request", "Cheaper price for the add-on: Listening App (eligible for Pro badge user ONLY)", "Pro Account Badge"];
+const buffetFeatures = ["0x Physical NFC Stickers (BYO)", "Buffet Account Badge", "Access to Starter or Pro Plan features"];
+const starterFeatures = ["3x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Starter Account Badge"];
+const proFeatures = ["8x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Plan 2: Table Tracking & Instant Sound Alerts", "Plan 3: Call for Waiter & Bill Request", "Listener App (Included Free)", "Pro Account Badge"];
 
-const liteMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log"];
-const starterMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log", "Cheaper price for the add-on: Listening App (eligible for Starter badge user ONLY)"];
-const proMonthly = ["Everything in Starter", "Table Management & Amount Push In", "Call for Staff & Call for Bill", "Call for Bills Button", "Cheaper price for the add-on: Listening App (eligible for Pro badge user ONLY)"];
+const starterMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log", "Merchant Dashboard Access"];
+const proMonthly = ["Everything in Starter", "Table Management & Amount Push In", "Call for Staff & Call for Bill", "Listener App Included (No extra charge)", "Priority Support"];
 
 function PromoBox({ msg, sub, dark = false }: { msg: string; sub: string; dark?: boolean }) {
   return dark ? (
@@ -52,8 +46,8 @@ function PromoBox({ msg, sub, dark = false }: { msg: string; sub: string; dark?:
   );
 }
 
-function PlanVisualizer({ plan }: { plan: 'lite' | 'starter' | 'pro' }) {
-  if (plan === 'lite' || plan === 'starter') {
+function PlanVisualizer({ plan }: { plan: 'starter' | 'pro' }) {
+  if (plan === 'starter') {
     return (
       <div className="w-full h-32 bg-slate-100 rounded-2xl mb-6 relative overflow-hidden flex items-center justify-center border border-slate-200/50">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent" />
@@ -133,14 +127,11 @@ export default function PricingPage() {
       if (data.paymentUrl) {
         window.location.href = data.paymentUrl;
       } else {
-        const errMsg = data.toyyibpay_response 
-          ? `ToyyibPay says: ${JSON.stringify(data.toyyibpay_response)}`
-          : `ERROR: ${data.error}\nDETAILS: ${data.details || 'none'}\nENV: ${JSON.stringify(data.env_check || {})}`;
-        alert(errMsg);
+        alert(data.error || 'Payment failed to initialize. Please try again.');
       }
     } catch (err) {
       console.error(err);
-      alert('Network error - could not reach the server: ' + String(err));
+      alert('An error occurred during checkout. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -157,33 +148,20 @@ export default function PricingPage() {
     setSelectedKit(id);
     if (id === 'pro') {
       setSelectedPlan('pro');
-      setSelectedAddons(['app-pro']);
     } else if (id === 'starter') {
       setSelectedPlan('starter');
-      setSelectedAddons(['app-starter']);
-    } else if (id === 'lite') {
-      setSelectedPlan('lite');
-      setSelectedAddons(['app-lite']);
     } else if (id === 'buffet') {
       setSelectedPlan(null);
-      setSelectedAddons([]);
     }
+    setSelectedAddons([]);
   };
 
   const isOptionDisabled = (type: 'plan' | 'addon', id: string) => {
     if (!selectedKit) return false;
     
-    // Lite, Starter, and Pro are all-in-one. Disable all other plan/app selections.
-    if (selectedKit === 'lite' || selectedKit === 'starter' || selectedKit === 'pro') {
+    // Starter and Pro are all-in-one. Disable all other plan selections.
+    if (selectedKit === 'starter' || selectedKit === 'pro') {
       if (type === 'plan') return true;
-      if (type === 'addon' && id.startsWith('app-')) return true;
-      // Note: 'nfc' (Extra Sticker) remains enabled
-    }
-    
-    if (selectedKit === 'buffet') {
-      // Buffet users MUST choose their own plan and app
-      // But they can ONLY choose the RM 14 listener app
-      if (type === 'addon' && id.startsWith('app-') && id !== 'app-buffet') return true;
     }
     
     return false;
@@ -306,7 +284,7 @@ export default function PricingPage() {
           <h2 className="text-3xl font-black text-slate-900 mb-3">Starter Kits</h2>
           <p className="text-slate-500 font-medium">Badge acc + Monthly SAAS bundle</p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-3 gap-6">
 
           {/* BUFFET PACK */}
           <div 
@@ -329,27 +307,6 @@ export default function PricingPage() {
             </button>
           </div>
 
-          {/* LITE KIT */}
-          <div 
-            onClick={() => handleKitSelect('lite')}
-            className={`cursor-pointer rounded-3xl border-4 transition-all p-8 flex flex-col ${selectedKit === 'lite' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-white border-slate-200 shadow-md hover:border-blue-200'}`}
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center"><Tag size={22} /></div>
-              <div><p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Lite Pack</p><h3 className="text-xl font-black">Entry Level</h3></div>
-            </div>
-            <div className="mb-6">
-              <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 25</span><span className="text-slate-400 mb-2">one-time</span></div>
-              <PromoBox msg="🎉 Includes Plan 1 SaaS plan" sub="1st month free + 1 bonus month. Then RM 12/month for SaaS ONLY." />
-            </div>
-            <ul className="space-y-3 flex-1 mb-8">
-              {liteKitFeatures.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
-            </ul>
-            <button className={`w-full py-3.5 rounded-2xl font-bold transition-all ${selectedKit === 'lite' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-white hover:bg-slate-700'}`}>
-              {selectedKit === 'lite' ? 'Selected' : 'Select'}
-            </button>
-          </div>
-
           {/* STARTER PACK */}
           <div 
             onClick={() => handleKitSelect('starter')}
@@ -360,8 +317,8 @@ export default function PricingPage() {
               <div><p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Starter Pack</p><h3 className="text-xl font-black">Solo Stall</h3></div>
             </div>
             <div className="mb-6">
-              <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 35</span><span className="text-slate-400 mb-2">one-time</span></div>
-              <PromoBox msg="🎉 Includes Plan 1 SaaS plan" sub="1st month free + 1 bonus month. Then RM 12/month for SaaS ONLY." />
+              <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 30</span><span className="text-slate-400 mb-2">one-time</span></div>
+              <PromoBox msg="🎉 Starter Bundle" sub="Includes 3x stickers. Then RM 12/month for Starter SaaS." />
             </div>
             <ul className="space-y-3 flex-1 mb-8">
               {starterFeatures.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
@@ -385,7 +342,7 @@ export default function PricingPage() {
             </div>
             <div className="mb-6">
               <div className="flex items-end gap-2"><span className="text-5xl font-black">RM 75</span><span className="text-blue-200 mb-2">one-time</span></div>
-              <PromoBox dark msg="🎉 Includes Plan 1,2,3 SaaS" sub="1st month free + 1 bonus month. Then RM 32/month for SaaS with RM 7/month for the Add-on App." />
+              <PromoBox dark msg="🎉 Pro Bundle" sub="Includes 8x stickers. Then RM 35/month (Listener App Included)." />
             </div>
             <ul className="space-y-3 flex-1 mb-8">
               {proFeatures.map(f => <li key={f} className="flex items-start gap-3 font-medium text-sm"><Check c={selectedKit === 'pro' ? "text-yellow-300" : "text-yellow-300"} />{f}</li>)}
@@ -404,24 +361,7 @@ export default function PricingPage() {
             <h2 className="text-3xl font-black text-slate-900 mb-3">Monthly SaaS Plans</h2>
             <p className="text-slate-500 font-medium">Already have accounts verified and stickers?</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div 
-              onClick={() => !isOptionDisabled('plan', 'lite') && setSelectedPlan(selectedPlan === 'lite' ? null : 'lite')}
-              className={`rounded-3xl border-4 transition-all p-8 flex flex-col ${isOptionDisabled('plan', 'lite') ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedPlan === 'lite' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-slate-50 border-slate-200'}`}
-            >
-              <PlanVisualizer plan="lite" />
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Plan 1</p>
-              <h3 className="text-2xl font-black mb-1">Lite</h3>
-              <p className="text-slate-500 text-sm mb-6">Just getting started</p>
-              <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black">RM 12</span><span className="text-slate-400 mb-1">/month</span></div>
-              <ul className="space-y-3 flex-1 mb-8">
-                {liteMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
-              </ul>
-              <button className={`w-full py-3 rounded-2xl font-bold text-sm transition-all ${selectedPlan === 'lite' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-white hover:bg-slate-700'}`}>
-                {selectedPlan === 'lite' ? 'Selected' : 'Select'}
-              </button>
-            </div>
-
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div 
               onClick={() => !isOptionDisabled('plan', 'starter') && setSelectedPlan(selectedPlan === 'starter' ? null : 'starter')}
               className={`rounded-3xl border-4 transition-all p-8 flex flex-col ${isOptionDisabled('plan', 'starter') ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedPlan === 'starter' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-slate-50 border-slate-200'}`}
@@ -447,7 +387,7 @@ export default function PricingPage() {
               <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">Plan 1, 2 & 3</p>
               <h3 className="text-2xl font-black mb-1">Pro</h3>
               <p className="text-slate-500 text-sm mb-6">Cafes & restaurants</p>
-              <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black text-blue-700">RM 32</span><span className="text-slate-400 mb-1">/month</span></div>
+              <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black text-blue-700">RM 35</span><span className="text-slate-400 mb-1">/month</span></div>
               <ul className="space-y-3 flex-1 mb-8">
                 {proMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check c="text-blue-600" />{f}</li>)}
               </ul>
@@ -468,10 +408,8 @@ export default function PricingPage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
           {[
             { id: "app-buffet", icon: <Smartphone size={22} />, label: "Listener App", sub: "For Buffet Users", price: "RM 14", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
-            { id: "app-lite", icon: <Smartphone size={22} />, label: "Listener App", sub: "For Lite Pack users", price: "RM 12", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
             { id: "app-starter", icon: <Bell size={22} />, label: "Listener App", sub: "For Starter Pack users", price: "RM 10", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-blue-100 text-blue-600", priceCls: "text-slate-900" },
-            { id: "app-pro", icon: <Bell size={22} />, label: "Listener App", sub: "For Pro Pack users", price: "RM 7", unit: "/month", desc: "Same full Listener App — discounted for Pro Pack subscribers.", bg: "bg-blue-50 border-blue-200", iconBg: "bg-blue-200 text-blue-700", priceCls: "text-blue-700" },
-            { id: "nfc", icon: <Tag size={22} />, label: "NFC Sticker", sub: "Standard (plain)", price: "RM 4.99", unit: "/piece", desc: "Replacement or extra stickers. Minimum order may apply.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
+            { id: "nfc", icon: <Tag size={22} />, label: "NFC Sticker", sub: "Standard (plain)", price: "RM 5", unit: "/piece", desc: "Replacement or extra stickers. Minimum order may apply.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
           ].map(({ id, icon, label, sub, price, unit, desc, bg, iconBg, priceCls }) => (
             <div 
               key={id} 
@@ -679,26 +617,23 @@ export default function PricingPage() {
               <tr className="bg-slate-100">
                 <th className="text-left px-5 py-4 rounded-l-2xl text-slate-600 font-bold">Feature</th>
                 <th className="text-center px-2 py-4 text-slate-600 font-bold leading-snug">Buffet User<br /><span className="font-black text-slate-900">RM 0</span></th>
-                <th className="text-center px-2 py-4 text-slate-600 font-bold leading-snug">Lite Pack<br /><span className="font-black text-slate-900">RM 25</span></th>
-                <th className="text-center px-2 py-4 text-slate-600 font-bold leading-snug">Starter Pack<br /><span className="font-black text-slate-900">RM 35</span></th>
+                <th className="text-center px-2 py-4 text-slate-600 font-bold leading-snug">Starter Pack<br /><span className="font-black text-slate-900">RM 30</span></th>
                 <th className="text-center px-2 py-4 rounded-r-2xl text-blue-700 font-bold leading-snug">Pro Pack<br /><span className="font-black text-blue-700">RM 75</span></th>
               </tr>
             </thead>
             <tbody>
               {[
-                ["NFC Stickers", "0x (BYO)", "2x", "5x", "8x"],
-                ["Payment Inbox", "—", "✓", "✓", "✓"],
-                ["Table Tracking & Sound Alerts", "—", "—", "—", "✓"],
-                ["Call for Waiter & Bill Request", "—", "—", "—", "✓"],
-                ["Listener App Add-on", "+RM14/mo", "+RM12/mo", "+RM10/mo", "+RM7/mo"],
-                ["Included Plan", "—", "Plan 1", "Plan 1", "Plan 1, 2, 3"],
-                ["Badge Acc", "Buffet", "Lite", "Starter", "Pro"],
-                ["Monthly SaaS", "—", "RM 12/mo", "RM 12/mo", "RM 32/mo"],
+                ["NFC Stickers", "0x (BYO)", "3x", "8x"],
+                ["Payment Inbox", "✓", "✓", "✓"],
+                ["Table Tracking & Alerts", "—", "—", "✓"],
+                ["Call Waiter / Bill", "—", "—", "✓"],
+                ["Listener App", "+RM 14/mo", "+RM 10/mo", "INCLUDED"],
+                ["Monthly SaaS", "RM 12/mo", "RM 12/mo", "RM 35/mo"],
               ].map(([feature, ...cols], i) => (
                 <tr key={feature} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
                   <td className="px-5 py-3.5 text-slate-700 font-semibold rounded-l-xl">{feature}</td>
                   {cols.map((val, j) => (
-                    <td key={j} className={`px-2 py-3.5 text-center ${j === 3 ? "rounded-r-xl text-blue-700 font-bold" : val === "✓" ? "text-green-600 font-bold" : val === "—" ? "text-slate-300" : "text-slate-600"}`}>
+                    <td key={j} className={`px-2 py-3.5 text-center ${j === 2 ? "rounded-r-xl text-blue-700 font-bold" : val === "✓" ? "text-green-600 font-bold" : val === "—" ? "text-slate-300" : "text-slate-600"}`}>
                       {val}
                     </td>
                   ))}
