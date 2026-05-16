@@ -22,7 +22,7 @@ export default function SolutionsPage() {
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans overflow-x-hidden">
 
       {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-white border-b border-slate-100 shadow-sm">
+      <nav className="sticky top-0 z-50 bg-[#F8FAFF]/80 backdrop-blur-xl border-b border-slate-200/50">
         <div className="flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
           <Link href="/" className="flex items-center gap-3">
             <img src="/TapPay_Logo.png" alt="TapPay" className="w-10 h-10 object-contain" />
