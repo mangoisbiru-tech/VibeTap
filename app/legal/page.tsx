@@ -11,7 +11,7 @@ export default function LegalPage() {
       <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-400/5 blur-[150px] rounded-full pointer-events-none z-0" />
 
       {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-[#F8FAFF]/80 backdrop-blur-xl border-b border-slate-200/50">
+      <nav className="sticky top-0 z-50 bg-[#F8FAFF] border-b border-slate-200/50">
         <div className="flex items-center justify-between px-6 py-5 max-w-5xl mx-auto">
           <Link href="/" className="flex items-center gap-3">
             <img src="/TapPay_Logo.png" alt="TapPay Logo" className="w-10 h-10 object-contain" />

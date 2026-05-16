@@ -101,7 +101,7 @@ export default function LandingPage() {
       <ParticleBackground />
 
       {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-[#F8FAFF]/80 backdrop-blur-xl border-b border-slate-200/50">
+      <nav className="sticky top-0 z-50 bg-[#F8FAFF] border-b border-slate-200/50">
         <div className="flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
           <Link href="/" className="flex items-center gap-3">
             <img src="/TapPay_Logo.png" alt="TapPay Logo" className="w-10 h-10 object-contain" />
@@ -267,48 +267,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="relative z-10 py-24 bg-white border-y border-blue-50">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="font-[family-name:var(--font-sora)] text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              Built for Fast-Moving Stalls
-            </h2>
-          </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:shadow-lg hover:shadow-blue-500/5 transition-all">
-              <div className="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-6">
-                <Store size={28} />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Premium Style</h3>
-              <p className="text-slate-600 leading-relaxed font-medium">
-                Upgrade from a dirty paper QR code. Give your customers a modern, stylish payment method that elevates your stall's image.
-              </p>
-            </div>
-
-            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:shadow-lg hover:shadow-blue-500/5 transition-all">
-              <div className="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-6">
-                <CreditCard size={28} />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Pay at the Table</h3>
-              <p className="text-slate-600 leading-relaxed font-medium">
-                Customers can settle bills directly from their seats. They just click the button to pay—no need for the boss to walk over.
-              </p>
-            </div>
-
-            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:shadow-lg hover:shadow-blue-500/5 transition-all">
-              <div className="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-6">
-                <ShieldCheck size={28} />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Complete Control</h3>
-              <p className="text-slate-600 leading-relaxed font-medium">
-                Our real-time backend dashboard lets merchants control and monitor exactly how much customers need to pay. Just watch the payments roll in.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Android Listener App */}
       <section className="relative z-10 py-24 px-6 max-w-6xl mx-auto">
