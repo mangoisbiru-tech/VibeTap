@@ -163,7 +163,7 @@ export default function SolutionsPage() {
       </section>
 
       {/* How it Works - The Loop */}
-      <section className="py-24 bg-transparent border-y border-slate-100/50 relative z-10">
+      <section className="py-12 bg-transparent border-y border-slate-100/50 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-black mb-4">Start in 3 Simple Steps</h2>
@@ -198,7 +198,7 @@ export default function SolutionsPage() {
       </section>
 
       {/* Founder Section */}
-      <section className="py-24 bg-transparent relative z-10">
+      <section className="py-12 bg-transparent relative z-10">
         <div className="max-w-4xl mx-auto px-6">
           <div className="bg-white rounded-[3rem] p-12 md:p-16 border border-slate-200 shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16" />
@@ -228,7 +228,7 @@ export default function SolutionsPage() {
       </section>
 
       {/* Target Audiences */}
-      <section className="py-24 bg-slate-900 text-white">
+      <section className="py-12 bg-slate-900 text-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-black mb-4">Built for Every Business</h2>
