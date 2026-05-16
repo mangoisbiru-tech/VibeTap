@@ -19,7 +19,7 @@ import ParticleBackground from "@/components/ParticleBackground";
 
 export default function SolutionsPage() {
   return (
-    <div className="min-h-screen bg-[#F8FAFF] text-slate-900 font-sans overflow-x-hidden relative">
+    <div className="min-h-screen bg-blue-50 text-slate-900 font-sans overflow-x-hidden relative">
 
       {/* Decorative Background Blobs */}
       <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-400/10 blur-[120px] rounded-full animate-blob pointer-events-none z-0" />
@@ -27,7 +27,7 @@ export default function SolutionsPage() {
       <div className="fixed top-[20%] right-[10%] w-[30%] h-[30%] bg-purple-400/10 blur-[120px] rounded-full animate-blob animation-delay-4000 pointer-events-none z-0" />
 
       {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-[#F8FAFF] border-b border-slate-200/50">
+      <nav className="sticky top-0 z-50 bg-blue-50 border-b border-blue-200/50">
         <div className="flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
           <Link href="/" className="flex items-center gap-3">
             <img src="/TapPay_Logo.png" alt="TapPay" className="w-10 h-10 object-contain" />
@@ -266,24 +266,6 @@ export default function SolutionsPage() {
         </div>
       </section>
 
-      {/* ROI CTA */}
-      <section className="py-24 px-6 text-center">
-        <div className="max-w-3xl mx-auto">
-          <div className="w-20 h-20 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-8">
-            <HeartHandshake size={40} />
-          </div>
-          <h2 className="text-4xl font-black mb-6">Stop Waiting. Start Serving.</h2>
-          <p className="text-xl text-slate-500 mb-10">Join 200+ Malaysian merchants who have upgraded to TapPay.</p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/pricing" className="bg-blue-600 text-white px-10 py-5 rounded-2xl font-bold text-lg shadow-xl shadow-blue-600/20 hover:-translate-y-1 transition-all flex items-center justify-center gap-2">
-              See Pricing <ArrowRight size={20} />
-            </Link>
-            <Link href="/signup" className="bg-white border border-slate-200 text-slate-900 px-10 py-5 rounded-2xl font-bold text-lg hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
-              Create Account
-            </Link>
-          </div>
-        </div>
-      </section>
 
       <footer className="bg-transparent border-t border-slate-100/50 py-10 px-6 relative z-10">
         <div className="max-w-6xl mx-auto flex flex-col items-center gap-4 text-slate-500 text-center">
