@@ -509,84 +509,45 @@ export default function PricingPage() {
       )}
 
       {/* EXTRA SERVICES */}
-      <section className="py-16 px-6 bg-white border-t border-slate-100">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-[2.5rem] p-10 md:p-14 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full pointer-events-none" />
-            <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-8">
+      <section className="py-20 px-6 bg-white border-t border-slate-100">
+        <div className="max-w-5xl mx-auto">
+          <div className="bg-slate-900 rounded-[3rem] p-10 md:p-16 text-white relative overflow-hidden shadow-2xl group border border-slate-800">
+            {/* Animated background elements */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-violet-600/40 to-fuchsia-600/40 blur-[100px] rounded-full pointer-events-none animate-pulse" />
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-blue-600/40 to-cyan-600/40 blur-[100px] rounded-full pointer-events-none animate-pulse" style={{ animationDelay: '1s' }} />
+            
+            <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-10">
               <div className="flex-1">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-bold uppercase tracking-widest mb-6">
-                  <Sparkles size={12} /> Custom Service
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-white text-xs font-bold uppercase tracking-widest mb-6 border border-white/20 backdrop-blur-md shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                  <Sparkles size={14} className="text-yellow-300 animate-pulse" /> Custom Service
                 </div>
-                <h2 className="text-3xl md:text-4xl font-black mb-4">Alternative NFC<br />Extra Services</h2>
-                <p className="text-slate-400 mb-6 leading-relaxed">Want something more? We can set up your NFC stickers for a whole lot more than just payments.</p>
-                <div className="grid grid-cols-2 gap-3 mb-6">
+                <h2 className="text-3xl md:text-5xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-indigo-200">Alternative NFC<br />Extra Services</h2>
+                <p className="text-slate-300 mb-8 leading-relaxed text-lg max-w-lg">Want something more? We can set up your NFC stickers for a whole lot more than just payments.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                   {[
-                    { icon: <UtensilsCrossed size={15} />, label: "Digital E-Menu" },
-                    { icon: <Bell size={15} />, label: "Call Waiter Button" },
-                    { icon: <Wifi size={15} />, label: "WiFi Auto-Connect" },
-                    { icon: <Sparkles size={15} />, label: "Event Promotions" },
-                    { icon: <Lightbulb size={15} />, label: "Your Ideas to Shine" },
+                    { icon: <UtensilsCrossed size={16} />, label: "Digital E-Menu" },
+                    { icon: <Bell size={16} />, label: "Call Waiter Button" },
+                    { icon: <Wifi size={16} />, label: "WiFi Auto-Connect" },
+                    { icon: <Sparkles size={16} />, label: "Event Promotions" },
+                    { icon: <Lightbulb size={16} />, label: "Your Ideas to Shine" },
                   ].map(({ icon, label }) => (
-                    <div key={label} className="flex items-center gap-2 text-slate-300 text-sm font-semibold">
-                      <span className="text-blue-400">{icon}</span>{label}
+                    <div key={label} className="flex items-center gap-3 text-white/90 text-sm font-semibold hover:text-white transition-colors group/item cursor-default">
+                      <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-blue-300 group-hover/item:scale-110 group-hover/item:bg-blue-500 group-hover/item:text-white transition-all duration-300">
+                        {icon}
+                      </div>
+                      {label}
                     </div>
                   ))}
                 </div>
                 <p className="text-slate-400 text-sm">Pricing depends on what you need. Drop us an email and we'll figure it out together.</p>
               </div>
-              <div className="shrink-0">
-                <a href="mailto:tappaymy@outlook.com" className="flex items-center gap-3 bg-blue-600 hover:bg-blue-500 text-white px-7 py-4 rounded-2xl font-bold transition-all">
-                  <Mail size={20} /> Contact Us
+              <div className="shrink-0 relative z-10 w-full md:w-auto">
+                <a href="mailto:tappaymy@outlook.com" className="flex items-center justify-center gap-3 bg-white hover:bg-blue-50 text-slate-900 px-8 py-5 rounded-2xl font-black transition-all shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:scale-105 duration-300 text-lg group/btn w-full md:w-auto">
+                  <Mail size={24} className="group-hover/btn:rotate-12 transition-transform text-blue-600" /> Let's Talk
                 </a>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* COMPARISON TABLE */}
-      <section className="py-16 px-6 max-w-6xl mx-auto">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-black text-slate-900 mb-3">Quick Comparison</h2>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm font-medium border-collapse table-fixed min-w-[700px]">
-            <colgroup>
-              <col className="w-1/4" />
-              <col className="w-[15%]" />
-              <col className="w-[15%]" />
-              <col className="w-[15%]" />
-              <col className="w-[20%]" />
-            </colgroup>
-            <thead>
-              <tr className="bg-slate-100">
-                <th className="text-left px-5 py-4 rounded-l-2xl text-slate-600 font-bold">Feature</th>
-                <th className="text-center px-2 py-4 text-slate-600 font-bold leading-snug">Buffet User<br /><span className="font-black text-slate-900">RM 0</span></th>
-                <th className="text-center px-2 py-4 text-slate-600 font-bold leading-snug">Starter Pack<br /><span className="font-black text-slate-900">RM 30</span></th>
-                <th className="text-center px-2 py-4 rounded-r-2xl text-blue-700 font-bold leading-snug">Pro Pack<br /><span className="font-black text-blue-700">RM 75</span></th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                ["NFC Stickers", "0x (BYO)", "3x", "8x"],
-                ["Payment Inbox", "✓", "✓", "✓"],
-                ["Table Tracking & Alerts", "—", "—", "✓"],
-                ["Call Waiter / Bill", "—", "—", "✓"],
-                ["Listener App", "+RM 10/mo", "+RM 10/mo", "INCLUDED"],
-                ["Monthly SaaS", "RM 12/mo", "RM 12/mo", "RM 35/mo"],
-              ].map(([feature, ...cols], i) => (
-                <tr key={feature} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
-                  <td className="px-5 py-3.5 text-slate-700 font-semibold rounded-l-xl">{feature}</td>
-                  {cols.map((val, j) => (
-                    <td key={j} className={`px-2 py-3.5 text-center ${j === 2 ? "rounded-r-xl text-blue-700 font-bold" : val === "✓" ? "text-green-600 font-bold" : val === "—" ? "text-slate-300" : "text-slate-600"}`}>
-                      {val}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </div>
       </section>
 
