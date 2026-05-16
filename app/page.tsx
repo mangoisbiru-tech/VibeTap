@@ -270,7 +270,7 @@ export default function LandingPage() {
 
 
       {/* Android Listener App */}
-      <section className="relative z-10 py-24 px-6 max-w-6xl mx-auto">
+      <section className="relative z-10 py-12 px-6 max-w-6xl mx-auto">
         <div className="bg-blue-50 rounded-[3rem] p-8 md:p-16 border border-blue-100 shadow-xl shadow-blue-900/5 flex flex-col md:flex-row items-center gap-12">
           <div className="flex-1">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-200/50 text-blue-700 text-sm font-bold mb-6">
@@ -327,7 +327,7 @@ export default function LandingPage() {
       </section>
 
       {/* Ecosystem Plans Tabbed Interface */}
-      <section className="relative z-10 py-24 bg-slate-900 text-white border-y border-slate-800">
+      <section className="relative z-10 py-16 bg-slate-900 text-white border-y border-slate-800">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/20 text-blue-300 text-sm font-bold mb-6">
@@ -467,7 +467,7 @@ export default function LandingPage() {
       </section>
 
       {/* Customization */}
-      <section id="custom" className="relative z-10 py-12">
+      <section id="custom" className="relative z-10 pt-4 pb-16">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-8">
             <Wifi size={32} />
