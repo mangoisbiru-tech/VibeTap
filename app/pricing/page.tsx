@@ -511,17 +511,20 @@ export default function PricingPage() {
       {/* EXTRA SERVICES */}
       <section className="py-20 px-6 bg-white border-t border-slate-100">
         <div className="max-w-[90rem] mx-auto">
-          <div className="bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500 rounded-[2rem] p-8 md:p-12 text-white shadow-xl relative overflow-hidden">
-            {/* Colorful subtle overlay without neon/blur/pulse */}
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPHBhdGggZD0iTTAgMEg0VjRIMHoiIGZpbGw9IiMwMDAiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPgo8L3N2Zz4=')] opacity-30 mix-blend-overlay pointer-events-none" />
+          <div className="bg-[#0B1120] rounded-[2rem] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden border border-slate-800">
+            {/* Starry Night Background Pattern */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjgpIi8+PGNpcmNsZSBjeD0iMzAiIGN5PSI0MCIgcj0iMC41IiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuNSkiLz48Y2lyY2xlIGN4PSI2MCIgY3k9IjIwIiByPSIxLjUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC42KSIvPjxjaXJjbGUgY3g9IjcwIiBjeT0iNjAiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC43KSIvPjxjaXJjbGUgY3g9IjIwIiBjeT0iNzAiIHI9IjAuNSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjQpIi8+PC9zdmc+')] opacity-70 pointer-events-none" />
+            
+            {/* Subtle Gradient Overlay to give depth without neon lights */}
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/30 via-transparent to-transparent pointer-events-none" />
             
             <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center gap-10 lg:gap-16 justify-between">
               <div className="flex-1 max-w-3xl">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 text-white text-xs font-bold uppercase tracking-widest mb-6">
-                  <Sparkles size={14} className="text-yellow-300" /> Custom Service
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-slate-300 text-xs font-bold uppercase tracking-widest mb-6 border border-white/5">
+                  <Sparkles size={14} className="text-yellow-100" /> Custom Service
                 </div>
-                <h2 className="text-3xl md:text-5xl font-serif italic font-black mb-4 tracking-tight">Alternative NFC<br />Extra Services</h2>
-                <p className="text-white/90 mb-8 leading-relaxed text-lg font-medium">Want something more? We can set up your NFC stickers for a whole lot more than just payments.</p>
+                <h2 className="text-3xl md:text-5xl font-serif italic font-black mb-4 tracking-tight text-white">Alternative NFC<br />Extra Services</h2>
+                <p className="text-slate-300 mb-8 leading-relaxed text-lg font-medium">Want something more? We can set up your NFC stickers for a whole lot more than just payments.</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-8 mb-8">
                   {[
                     { icon: <UtensilsCrossed size={18} />, label: "Digital E-Menu" },
@@ -530,18 +533,18 @@ export default function PricingPage() {
                     { icon: <Sparkles size={18} />, label: "Event Promotions" },
                     { icon: <Lightbulb size={18} />, label: "Your Ideas to Shine" },
                   ].map(({ icon, label }) => (
-                    <div key={label} className="flex items-center gap-3 text-white text-base font-bold font-serif">
-                      <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white shrink-0">
+                    <div key={label} className="flex items-center gap-3 text-slate-200 text-base font-bold font-serif">
+                      <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 shrink-0">
                         {icon}
                       </div>
                       {label}
                     </div>
                   ))}
                 </div>
-                <p className="text-white/80 text-sm font-medium">Pricing depends on what you need. Drop us an email and we'll figure it out together.</p>
+                <p className="text-slate-400 text-sm font-medium">Pricing depends on what you need. Drop us an email and we'll figure it out together.</p>
               </div>
               <div className="shrink-0 w-full lg:w-auto">
-                <a href="mailto:tappaymy@outlook.com" className="flex items-center justify-center gap-3 bg-white text-teal-700 px-10 py-5 rounded-2xl font-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 duration-300 text-xl w-full lg:w-auto">
+                <a href="mailto:tappaymy@outlook.com" className="flex items-center justify-center gap-3 bg-white text-slate-900 px-10 py-5 rounded-2xl font-black transition-all hover:-translate-y-1 duration-300 text-xl w-full lg:w-auto">
                   <Mail size={24} /> Let's Talk
                 </a>
               </div>
