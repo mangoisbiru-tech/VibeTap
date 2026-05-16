@@ -204,7 +204,7 @@ export default function PricingPage() {
           </Link>
           <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-slate-600">
             <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
-            <Link href="/solutions" className="hover:text-blue-600 transition-colors">Our Value</Link>
+            <Link href="/solutions" className="hover:text-blue-600 transition-colors">Solutions</Link>
             <Link href="/pricing" className="hover:text-blue-600 transition-colors">Pricing</Link>
           </div>
           <Link href="/signup" className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold transition-all">Get Started</Link>

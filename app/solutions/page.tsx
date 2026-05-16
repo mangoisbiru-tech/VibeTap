@@ -35,7 +35,7 @@ export default function SolutionsPage() {
           </Link>
           <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-slate-600">
             <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
-            <Link href="/solutions" className="hover:text-blue-600 transition-colors">Our Value</Link>
+            <Link href="/solutions" className="hover:text-blue-600 transition-colors">Solutions</Link>
             <Link href="/pricing" className="hover:text-blue-600 transition-colors">Pricing</Link>
           </div>
           <Link href="/signup" className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-blue-500/20">
@@ -45,9 +45,9 @@ export default function SolutionsPage() {
       </nav>
 
       {/* Hero Header */}
-      <section className="relative z-10 pt-16 pb-4 px-6 max-w-7xl mx-auto text-center">
+      <section className="relative z-10 pt-10 pb-4 px-6 max-w-7xl mx-auto text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-sm font-bold mb-8">
-          <Zap size={16} /> Our Value: Why Merchants Upgrade to TapPay
+          <Zap size={16} /> Solutions: Why Merchants Upgrade to TapPay
         </div>
         <h1 className="text-5xl md:text-7xl font-black leading-[1.1] tracking-tight mb-8">
           The End of the <br />
