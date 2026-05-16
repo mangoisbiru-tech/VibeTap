@@ -165,6 +165,10 @@ export default function PricingPage() {
       if (type === 'plan') return true;
     }
     
+    if (type === 'addon' && id === 'app-listener') {
+      if (selectedKit === 'pro' || selectedPlan === 'pro') return true;
+    }
+    
     return false;
   };
 
@@ -175,7 +179,10 @@ export default function PricingPage() {
 
   const currentKit = KITS.find(k => k.id === selectedKit);
   const currentPlan = PLANS.find(p => p.id === selectedPlan);
-  const activeAddons = ADDONS.filter(a => selectedAddons.includes(a.id));
+  const activeAddons = ADDONS.filter(a => {
+    if (a.id === 'app-listener' && (selectedKit === 'pro' || selectedPlan === 'pro')) return false;
+    return selectedAddons.includes(a.id);
+  });
 
   const oneTimeTotal = (currentKit?.price || 0) + (nfcQuantity * 5);
   const isPromoActive = selectedKit && selectedKit !== 'buffet';
@@ -363,24 +370,37 @@ export default function PricingPage() {
                     );
                   }
 
+                  const isIncluded = id === 'app-listener' && (selectedKit === 'pro' || selectedPlan === 'pro');
+                  const isSelected = selectedAddons.includes(id);
+                  const disabled = isOptionDisabled('addon', id);
+
+                  let containerClasses = 'cursor-pointer bg-white border-transparent hover:border-blue-200';
+                  if (isIncluded) {
+                    containerClasses = 'opacity-80 cursor-not-allowed bg-blue-50/30 border-blue-400 shadow-sm';
+                  } else if (disabled) {
+                    containerClasses = 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent';
+                  } else if (isSelected) {
+                    containerClasses = 'cursor-pointer bg-blue-50/50 border-blue-500 shadow-md';
+                  }
+
                   return (
                     <div 
                       key={id} 
                       onClick={() => toggleAddon(id)}
-                      className={`rounded-2xl border-4 transition-all p-4 flex gap-4 items-center ${isOptionDisabled('addon', id) ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedAddons.includes(id) ? 'bg-blue-50/50 border-blue-500 shadow-md' : `${bg} border-transparent hover:border-blue-200`}`}
+                      className={`rounded-2xl border-4 transition-all p-4 flex gap-4 items-center ${containerClasses}`}
                     >
                       <div className={`w-12 h-12 rounded-xl shrink-0 flex items-center justify-center ${iconBg}`}>{icon}</div>
                       <div className="flex-1 min-w-0">
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{label} {sub && <span className="lowercase normal-case font-bold text-slate-600">({sub})</span>}</p>
                         <div className="flex items-end gap-1 mb-1">
-                          <span className={`text-lg font-black leading-none ${priceCls}`}>{price}</span>
+                          <span className={`text-lg font-black leading-none ${priceCls}`}>{isIncluded ? 'RM 0' : price}</span>
                           <span className="text-slate-400 text-[10px] leading-none mb-0.5">{unit}</span>
                         </div>
                         <p className="text-[10px] text-slate-500 truncate">{desc}</p>
                       </div>
                       <div className="shrink-0">
-                        <div className={`text-[9px] font-bold px-2 py-1.5 rounded self-center ${selectedAddons.includes(id) ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                          {isOptionDisabled('addon', id) && selectedAddons.includes(id) ? 'INCLUDED' : (selectedAddons.includes(id) ? 'SELECTED' : 'ADD')}
+                        <div className={`text-[9px] font-bold px-2 py-1.5 rounded self-center ${(isSelected || isIncluded) ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                          {isIncluded ? 'INCLUDED' : (isSelected ? 'SELECTED' : 'ADD')}
                         </div>
                       </div>
                     </div>
