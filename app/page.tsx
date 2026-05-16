@@ -327,9 +327,9 @@ export default function LandingPage() {
       </section>
 
       {/* Ecosystem Plans Tabbed Interface */}
-      <section className="relative z-10 py-16 bg-slate-900 text-white border-y border-slate-800">
+      <section className="relative z-10 py-8 bg-slate-900 text-white border-y border-slate-800">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/20 text-blue-300 text-sm font-bold mb-6">
               <Store size={16} /> Scalable Solutions
             </div>
