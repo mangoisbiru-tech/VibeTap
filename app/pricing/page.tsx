@@ -30,7 +30,7 @@ const starterFeatures = ["3x Physical NFC Stickers (Standard)", "Plan 1: Real-ti
 const proFeatures = ["8x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Plan 2: Table Tracking & Instant Sound Alerts", "Plan 3: Call for Waiter & Bill Request", "Listener App (Included Free)", "Pro Account Badge"];
 
 const starterMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log", "Merchant Dashboard Access"];
-const proMonthly = ["Everything in Starter", "Table Management & Amount Push In", "Call for Staff & Call for Bill", "Listener App Included (No extra charge for pro badge)", "Priority Support"];
+const proMonthly = ["Everything in Starter", "Table Management & Amount Push In", "Call for Staff & Call for Bill", "Listener App Included (No extra charge)", "Priority Support"];
 
 function PromoBox({ msg, sub, dark = false }: { msg: string; sub: string; dark?: boolean }) {
   return dark ? (
@@ -283,119 +283,125 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* MONTHLY SAAS */}
-      <section id="saas" className="py-16 px-6 bg-white border-y border-slate-100">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-black text-slate-900 mb-3">Monthly SaaS Plans</h2>
-            <p className="text-slate-500 font-medium">Already have accounts verified and stickers?</p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div 
-              onClick={() => !isOptionDisabled('plan', 'starter') && setSelectedPlan(selectedPlan === 'starter' ? null : 'starter')}
-              className={`rounded-3xl border-4 transition-all p-8 flex flex-col ${isOptionDisabled('plan', 'starter') ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedPlan === 'starter' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-slate-50 border-slate-200'}`}
-            >
-              <PlanVisualizer plan="starter" />
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Plan 1</p>
-              <h3 className="text-2xl font-black mb-1">Starter</h3>
-              <p className="text-slate-500 text-sm mb-6">Solo stall owner</p>
-              <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black">RM 12</span><span className="text-slate-400 mb-1">/month</span></div>
-              <ul className="space-y-3 flex-1 mb-8">
-                {starterMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check />{f}</li>)}
-              </ul>
-              <button className={`w-full py-3 rounded-2xl font-bold text-sm transition-all ${selectedPlan === 'starter' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-white hover:bg-slate-700'}`}>
-                {selectedPlan === 'starter' ? 'Selected' : 'Select'}
-              </button>
-            </div>
-
-            <div 
-              onClick={() => !isOptionDisabled('plan', 'pro') && setSelectedPlan(selectedPlan === 'pro' ? null : 'pro')}
-              className={`rounded-3xl border-4 transition-all p-8 flex flex-col ${isOptionDisabled('plan', 'pro') ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedPlan === 'pro' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-blue-50 border-blue-200'}`}
-            >
-              <PlanVisualizer plan="pro" />
-              <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">Plan 1, 2 & 3</p>
-              <h3 className="text-2xl font-black mb-1">Pro</h3>
-              <p className="text-slate-500 text-sm mb-6">Cafes & restaurants</p>
-              <div className="flex items-end gap-1 mb-6"><span className="text-4xl font-black text-blue-700">RM 35</span><span className="text-slate-400 mb-1">/month</span></div>
-              <ul className="space-y-3 flex-1 mb-8">
-                {proMonthly.map(f => <li key={f} className="flex items-start gap-3 text-slate-700 font-medium text-sm"><Check c="text-blue-600" />{f}</li>)}
-              </ul>
-              <button className={`w-full py-3 rounded-2xl font-bold text-sm transition-all ${selectedPlan === 'pro' ? 'bg-blue-600 text-white' : 'bg-blue-600 text-white hover:bg-blue-700'}`}>
-                {selectedPlan === 'pro' ? 'Selected' : 'Select'}
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ADD-ONS */}
-      <section id="addons" className="py-16 px-6 max-w-[90rem] mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-black text-slate-900 mb-3">Add-ons</h2>
-          <p className="text-slate-500 font-medium">Power up your plan with the extras you actually need.</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-          {[
-            { id: "app-buffet", icon: <Smartphone size={20} />, label: "Listener App", sub: "For Buffet Users", price: "RM 14", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
-            { id: "app-starter", icon: <Bell size={20} />, label: "Listener App", sub: "For Starter Pack users", price: "RM 10", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-blue-100 text-blue-600", priceCls: "text-slate-900" },
-            { id: "nfc", icon: <Tag size={20} />, label: "NFC Sticker", sub: "Standard (plain)", price: "RM 5", unit: "/piece", desc: "Replacement or extra stickers.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
-          ].map(({ id, icon, label, sub, price, unit, desc, bg, iconBg, priceCls }) => {
+      {/* MONTHLY SAAS & ADD-ONS */}
+      <section id="saas-addons" className="py-16 px-6 bg-white border-y border-slate-100">
+        <div className="max-w-[90rem] mx-auto">
+          <div className="grid lg:grid-cols-[1.5fr_1fr] gap-10 max-w-6xl mx-auto">
             
-            if (id === 'nfc') {
-              return (
-                <div key={id} className={`rounded-3xl border-4 transition-all p-5 flex flex-col gap-3 ${nfcQuantity > 0 ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-white border-slate-200 hover:border-blue-200'}`}>
-                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${iconBg}`}>{icon}</div>
-                  <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
-                    <p className="text-sm font-bold text-slate-600">{sub}</p>
-                  </div>
-                  <div className="flex items-end gap-1">
-                    <span className={`text-xl font-black ${priceCls}`}>{price}</span>
-                    <span className="text-slate-400 text-xs mb-1">{unit}</span>
-                  </div>
-                  <p className="text-xs text-slate-500 leading-relaxed flex-1">{desc}</p>
-                  <div className="flex items-center gap-3 self-start bg-slate-100 rounded-lg p-1 mt-2">
-                    <button onClick={(e) => { e.stopPropagation(); setNfcQuantity(Math.max(0, nfcQuantity - 1)); }} className="w-8 h-8 flex items-center justify-center rounded-md bg-white shadow-sm text-slate-600 font-bold">-</button>
-                    <span className="text-sm font-bold w-4 text-center">{nfcQuantity}</span>
-                    <button onClick={(e) => { e.stopPropagation(); setNfcQuantity(Math.min(5, nfcQuantity + 1)); }} className="w-8 h-8 flex items-center justify-center rounded-md bg-white shadow-sm text-slate-600 font-bold">+</button>
-                  </div>
+            {/* MONTHLY SAAS */}
+            <div>
+              <div className="text-left mb-8">
+                <h2 className="text-3xl font-black text-slate-900 mb-2">Monthly SaaS Plans</h2>
+                <p className="text-slate-500 font-medium">Already have accounts verified and stickers?</p>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-6">
+                <div 
+                  onClick={() => !isOptionDisabled('plan', 'starter') && setSelectedPlan(selectedPlan === 'starter' ? null : 'starter')}
+                  className={`rounded-3xl border-4 transition-all p-6 flex flex-col ${isOptionDisabled('plan', 'starter') ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedPlan === 'starter' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-slate-50 border-slate-200 hover:border-blue-200'}`}
+                >
+                  <PlanVisualizer plan="starter" />
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Plan 1</p>
+                  <h3 className="text-xl font-black mb-1">Starter</h3>
+                  <p className="text-slate-500 text-xs mb-4">Solo stall owner</p>
+                  <div className="flex items-end gap-1 mb-6"><span className="text-3xl font-black">RM 12</span><span className="text-slate-400 text-xs mb-1">/month</span></div>
+                  <ul className="space-y-3 flex-1 mb-6">
+                    {starterMonthly.map(f => <li key={f} className="flex items-start gap-2 text-slate-700 font-medium text-xs"><Check />{f}</li>)}
+                  </ul>
+                  <button className={`w-full py-3 rounded-2xl font-bold text-sm transition-all ${selectedPlan === 'starter' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-white hover:bg-slate-700'}`}>
+                    {selectedPlan === 'starter' ? 'Selected' : 'Select'}
+                  </button>
                 </div>
-              );
-            }
 
-            return (
-              <div 
-                key={id} 
-                onClick={() => {
-                  if (id.startsWith('app-')) {
-                    // Mutually exclusive listener app selection
-                    if (selectedAddons.includes(id)) {
-                      setSelectedAddons(selectedAddons.filter(a => a !== id));
-                    } else {
-                      setSelectedAddons([...selectedAddons.filter(a => !a.startsWith('app-')), id]);
-                    }
-                  } else {
-                    toggleAddon(id);
-                  }
-                }}
-                className={`rounded-3xl border-4 transition-all p-5 flex flex-col gap-3 ${isOptionDisabled('addon', id) ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedAddons.includes(id) ? 'bg-blue-50/50 border-blue-500 shadow-xl' : `${bg} border-transparent hover:border-blue-200`}`}
-              >
-                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${iconBg}`}>{icon}</div>
-                <div>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
-                  <p className="text-sm font-bold text-slate-600">{sub}</p>
-                </div>
-                <div className="flex items-end gap-1">
-                  <span className={`text-xl font-black ${priceCls}`}>{price}</span>
-                  <span className="text-slate-400 text-xs mb-1">{unit}</span>
-                </div>
-                <p className="text-xs text-slate-500 leading-relaxed flex-1">{desc}</p>
-                <div className={`text-[10px] font-bold px-2 py-1 rounded-md self-start ${selectedAddons.includes(id) ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                  {isOptionDisabled('addon', id) && selectedAddons.includes(id) ? 'INCLUDED' : (selectedAddons.includes(id) ? 'SELECTED' : 'ADD TO PLAN')}
+                <div 
+                  onClick={() => !isOptionDisabled('plan', 'pro') && setSelectedPlan(selectedPlan === 'pro' ? null : 'pro')}
+                  className={`rounded-3xl border-4 transition-all p-6 flex flex-col ${isOptionDisabled('plan', 'pro') ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedPlan === 'pro' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-blue-50 border-blue-200 hover:border-blue-300'}`}
+                >
+                  <PlanVisualizer plan="pro" />
+                  <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">Plan 1, 2 & 3</p>
+                  <h3 className="text-xl font-black mb-1">Pro</h3>
+                  <p className="text-slate-500 text-xs mb-4">Cafes & restaurants</p>
+                  <div className="flex items-end gap-1 mb-6"><span className="text-3xl font-black text-blue-700">RM 35</span><span className="text-slate-400 text-xs mb-1">/month</span></div>
+                  <ul className="space-y-3 flex-1 mb-6">
+                    {proMonthly.map(f => <li key={f} className="flex items-start gap-2 text-slate-700 font-medium text-xs"><Check c="text-blue-600" />{f}</li>)}
+                  </ul>
+                  <button className={`w-full py-3 rounded-2xl font-bold text-sm transition-all ${selectedPlan === 'pro' ? 'bg-blue-600 text-white' : 'bg-blue-600 text-white hover:bg-blue-700'}`}>
+                    {selectedPlan === 'pro' ? 'Selected' : 'Select'}
+                  </button>
                 </div>
               </div>
-            );
-          })}
+            </div>
+
+            {/* ADD-ONS */}
+            <div>
+              <div className="text-left mb-8">
+                <h2 className="text-3xl font-black text-slate-900 mb-2">Add-ons</h2>
+                <p className="text-slate-500 font-medium">Power up your plan.</p>
+              </div>
+              <div className="flex flex-col gap-3">
+                {[
+                  { id: "app-buffet", icon: <Smartphone size={18} />, label: "Listener App", sub: "For Buffet", price: "RM 14", unit: "/mo", desc: "Auto-sync TNG payments. Android only.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
+                  { id: "app-starter", icon: <Bell size={18} />, label: "Listener App", sub: "For Starter", price: "RM 10", unit: "/mo", desc: "Auto-sync TNG payments. Android only.", bg: "bg-white border-slate-200", iconBg: "bg-blue-100 text-blue-600", priceCls: "text-slate-900" },
+                  { id: "nfc", icon: <Tag size={18} />, label: "NFC Sticker", sub: "Standard", price: "RM 5", unit: "/pc", desc: "Extra stickers.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
+                ].map(({ id, icon, label, sub, price, unit, desc, bg, iconBg, priceCls }) => {
+                  
+                  if (id === 'nfc') {
+                    return (
+                      <div key={id} className={`rounded-2xl border-4 transition-all p-4 flex gap-4 items-center ${nfcQuantity > 0 ? 'bg-blue-50/50 border-blue-500 shadow-md' : 'bg-white border-slate-200 hover:border-blue-200'}`}>
+                        <div className={`w-12 h-12 rounded-xl shrink-0 flex items-center justify-center ${iconBg}`}>{icon}</div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{label}</p>
+                          <div className="flex items-end gap-1 mb-1">
+                            <span className={`text-lg font-black leading-none ${priceCls}`}>{price}</span>
+                            <span className="text-slate-400 text-[10px] leading-none mb-0.5">{unit}</span>
+                          </div>
+                          <p className="text-[10px] text-slate-500 truncate">{desc}</p>
+                        </div>
+                        <div className="flex items-center gap-2 bg-slate-100 rounded-lg p-1 shrink-0">
+                          <button onClick={(e) => { e.stopPropagation(); setNfcQuantity(Math.max(0, nfcQuantity - 1)); }} className="w-6 h-6 flex items-center justify-center rounded bg-white shadow-sm text-slate-600 font-bold text-xs">-</button>
+                          <span className="text-xs font-bold w-3 text-center">{nfcQuantity}</span>
+                          <button onClick={(e) => { e.stopPropagation(); setNfcQuantity(Math.min(5, nfcQuantity + 1)); }} className="w-6 h-6 flex items-center justify-center rounded bg-white shadow-sm text-slate-600 font-bold text-xs">+</button>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div 
+                      key={id} 
+                      onClick={() => {
+                        if (id.startsWith('app-')) {
+                          if (selectedAddons.includes(id)) {
+                            setSelectedAddons(selectedAddons.filter(a => a !== id));
+                          } else {
+                            setSelectedAddons([...selectedAddons.filter(a => !a.startsWith('app-')), id]);
+                          }
+                        } else {
+                          toggleAddon(id);
+                        }
+                      }}
+                      className={`rounded-2xl border-4 transition-all p-4 flex gap-4 items-center ${isOptionDisabled('addon', id) ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedAddons.includes(id) ? 'bg-blue-50/50 border-blue-500 shadow-md' : `${bg} border-transparent hover:border-blue-200`}`}
+                    >
+                      <div className={`w-12 h-12 rounded-xl shrink-0 flex items-center justify-center ${iconBg}`}>{icon}</div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{label} <span className="lowercase normal-case font-bold text-slate-600">({sub})</span></p>
+                        <div className="flex items-end gap-1 mb-1">
+                          <span className={`text-lg font-black leading-none ${priceCls}`}>{price}</span>
+                          <span className="text-slate-400 text-[10px] leading-none mb-0.5">{unit}</span>
+                        </div>
+                        <p className="text-[10px] text-slate-500 truncate">{desc}</p>
+                      </div>
+                      <div className="shrink-0">
+                        <div className={`text-[9px] font-bold px-2 py-1.5 rounded self-center ${selectedAddons.includes(id) ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                          {isOptionDisabled('addon', id) && selectedAddons.includes(id) ? 'INCLUDED' : (selectedAddons.includes(id) ? 'SELECTED' : 'ADD')}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+          </div>
         </div>
       </section>
 
