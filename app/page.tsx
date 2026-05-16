@@ -467,11 +467,8 @@ export default function LandingPage() {
       </section>
 
       {/* Customization */}
-      <section id="custom" className="relative z-10 pt-4 pb-16">
+      <section id="custom" className="relative z-10 pt-0 pb-8">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-8">
-            <Wifi size={32} />
-          </div>
           <h2 className="font-[family-name:var(--font-sora)] text-3xl md:text-5xl font-bold text-slate-900 mb-6">
             Make Your Sticker Work For You
           </h2>
