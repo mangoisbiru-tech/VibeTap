@@ -467,7 +467,7 @@ export default function LandingPage() {
       </section>
 
       {/* Customization */}
-      <section id="custom" className="relative z-10 pt-0 pb-8">
+      <section id="custom" className="relative z-10 pt-16 pb-8">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="font-[family-name:var(--font-sora)] text-3xl md:text-5xl font-bold text-slate-900 mb-6">
             Make Your Sticker Work For You
