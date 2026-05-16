@@ -16,10 +16,10 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Cashier sessions: owner can create, no one can edit after creation
+    // Cashier sessions: owner can create, only owner can read
     match /cashierSessions/{sessionId} {
-      allow create: if request.auth != null;
-      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.merchantId == request.auth.uid;
+      allow read: if request.auth != null && resource.data.merchantId == request.auth.uid;
       // Updates (marking used=true) done by Admin SDK server-side
       allow update, delete: if false;
     }
@@ -33,19 +33,17 @@ service cloud.firestore {
         && resource.data.merchantId == request.auth.uid;
     }
 
-    // Bill requests: customers create, merchant reads/updates
+    // Bill requests: customers create, only owner merchant reads/updates
     match /billRequests/{id} {
       allow create: if true;
-      allow read, update: if request.auth != null;
-      allow delete: if request.auth != null;
+      allow read, update, delete: if request.auth != null 
+        && resource.data.merchantId == request.auth.uid;
     }
 
     // Bill history: merchant can create and read their own history
     match /billHistory/{entryId} {
-      allow create: if request.auth != null;
-      allow read: if request.auth != null
-        && resource.data.merchantId == request.auth.uid;
-      allow update, delete: if request.auth != null
+      allow create: if request.auth != null && request.resource.data.merchantId == request.auth.uid;
+      allow read, update, delete: if request.auth != null
         && resource.data.merchantId == request.auth.uid;
     }
 
@@ -56,9 +54,9 @@ service cloud.firestore {
         && request.auth.uid == merchantId;
     }
 
-    // New collection for payment queue
+    // Received payments queue
     match /receivedPayments/{paymentId} {
-      allow create: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.merchantId == request.auth.uid;
       allow read, update, delete: if request.auth != null
         && resource.data.merchantId == request.auth.uid;
     }
