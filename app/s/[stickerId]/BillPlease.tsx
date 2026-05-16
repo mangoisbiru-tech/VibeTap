@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase/client";
 import { CheckCircle2, ChevronRight, Check } from "lucide-react";
 
 export default function BillPlease({
@@ -27,17 +25,27 @@ export default function BillPlease({
     setLoading(true);
     setError("");
     try {
-      await addDoc(collection(db, "billRequests"), {
-        stickerId,
-        merchantId,
-        tableName,
-        wantsReceipt,
-        status: "pending",
-        createdAt: serverTimestamp(),
+      const res = await fetch("/api/request-bill", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          stickerId,
+          merchantId,
+          tableName,
+          wantsReceipt,
+        }),
       });
+
+      if (!res.ok) {
+        if (res.status === 429) {
+          throw new Error("Too many requests. Please wait a moment.");
+        }
+        throw new Error("Failed to send request.");
+      }
+
       setDone(true);
-    } catch (e) {
-      setError("Something went wrong. Please try again.");
+    } catch (e: any) {
+      setError(e.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
