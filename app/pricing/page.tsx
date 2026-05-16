@@ -553,7 +553,7 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <footer className="bg-slate-50 border-t border-slate-100 py-10 px-6">
+      <footer className="bg-transparent border-t border-slate-100/50 py-10 px-6">
         <div className="max-w-6xl mx-auto flex flex-col items-center gap-4 text-slate-500 text-center">
           <div className="flex items-center gap-2">
             <img src="/TapPay_Logo.png" alt="TapPay" className="w-6 h-6 object-contain" />

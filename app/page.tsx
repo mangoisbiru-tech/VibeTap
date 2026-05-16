@@ -500,7 +500,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-50 py-12 px-6">
+      <footer className="bg-transparent py-8 px-6">
         <div className="max-w-6xl mx-auto flex flex-col items-center gap-6 text-slate-500 font-medium text-center">
           <div className="flex items-center gap-2">
             <img src="/TapPay_Logo.png" alt="TapPay Logo" className="w-6 h-6 object-contain" />

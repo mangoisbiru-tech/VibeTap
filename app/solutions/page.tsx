@@ -19,7 +19,12 @@ import ParticleBackground from "@/components/ParticleBackground";
 
 export default function SolutionsPage() {
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-[#F8FAFF] text-slate-900 font-sans overflow-x-hidden relative">
+
+      {/* Decorative Background Blobs */}
+      <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-400/5 blur-[120px] rounded-full pointer-events-none z-0" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-400/5 blur-[150px] rounded-full pointer-events-none z-0" />
+      <div className="fixed top-[20%] right-[10%] w-[30%] h-[30%] bg-purple-400/5 blur-[120px] rounded-full pointer-events-none z-0" />
 
       {/* Nav */}
       <nav className="sticky top-0 z-50 bg-[#F8FAFF] border-b border-slate-200/50">
@@ -158,7 +163,7 @@ export default function SolutionsPage() {
       </section>
 
       {/* How it Works - The Loop */}
-      <section className="py-24 bg-white border-y border-slate-100">
+      <section className="py-24 bg-transparent border-y border-slate-100/50 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-black mb-4">Start in 3 Simple Steps</h2>
@@ -193,7 +198,7 @@ export default function SolutionsPage() {
       </section>
 
       {/* Founder Section */}
-      <section className="py-24 bg-slate-50">
+      <section className="py-24 bg-transparent relative z-10">
         <div className="max-w-4xl mx-auto px-6">
           <div className="bg-white rounded-[3rem] p-12 md:p-16 border border-slate-200 shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16" />
@@ -280,7 +285,7 @@ export default function SolutionsPage() {
         </div>
       </section>
 
-      <footer className="bg-slate-50 border-t border-slate-100 py-10 px-6">
+      <footer className="bg-transparent border-t border-slate-100/50 py-10 px-6 relative z-10">
         <div className="max-w-6xl mx-auto flex flex-col items-center gap-4 text-slate-500 text-center">
           <div className="flex items-center gap-2">
             <img src="/TapPay_Logo.png" alt="TapPay" className="w-6 h-6 object-contain" />
