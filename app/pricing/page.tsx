@@ -30,7 +30,7 @@ const starterFeatures = ["3x Physical NFC Stickers (Standard)", "Plan 1: Real-ti
 const proFeatures = ["8x Physical NFC Stickers (Standard)", "Plan 1: Real-time Payment Inbox", "Plan 2: Table Tracking & Instant Sound Alerts", "Plan 3: Call for Waiter & Bill Request", "Listener App (Included Free)", "Pro Account Badge"];
 
 const starterMonthly = ["Plan 1: Real-time Payment Inbox", "Payment History Log", "Merchant Dashboard Access"];
-const proMonthly = ["Everything in Starter", "Table Management & Amount Push In", "Call for Staff & Call for Bill", "Listener App Included (No extra charge)", "Priority Support"];
+const proMonthly = ["Everything in Starter", "Table Management & Amount Push In", "Call for Staff & Call for Bill", "Listener App Included (No extra charge for pro badge)", "Priority Support"];
 
 function PromoBox({ msg, sub, dark = false }: { msg: string; sub: string; dark?: boolean }) {
   return dark ? (
@@ -99,6 +99,7 @@ export default function PricingPage() {
   const [loading, setLoading] = useState(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [checkoutData, setCheckoutData] = useState({ name: '', email: '', phone: '' });
+  const [nfcQuantity, setNfcQuantity] = useState(0);
 
   // Deployment trigger: ToyyibPay production keys verified
   const handleCheckout = async (e?: React.FormEvent) => {
@@ -119,6 +120,7 @@ export default function PricingPage() {
           selectedKit,
           selectedPlan,
           selectedAddons,
+          nfcQuantity,
           ...checkoutData
         })
       });
@@ -176,7 +178,7 @@ export default function PricingPage() {
   const currentPlan = PLANS.find(p => p.id === selectedPlan);
   const activeAddons = ADDONS.filter(a => selectedAddons.includes(a.id));
 
-  const oneTimeTotal = (currentKit?.price || 0) + activeAddons.filter(a => a.id === 'nfc').reduce((sum, a) => sum + a.price, 0);
+  const oneTimeTotal = (currentKit?.price || 0) + (nfcQuantity * 5);
   const isPromoActive = selectedKit && selectedKit !== 'buffet';
   const monthlyTotal = isPromoActive 
     ? 0 
@@ -204,29 +206,6 @@ export default function PricingPage() {
       </nav>
 
 
-
-      {/* WHY UPGRADE GRID */}
-      <section className="py-20 px-6 bg-slate-900 text-white border-y border-slate-800">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-black mb-4">Why Merchants Upgrade</h2>
-            <p className="text-slate-400 max-w-xl mx-auto">Investing in TapPay isn't a cost—it's an upgrade to your shop's efficiency.</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-12">
-            {[
-              { icon: <Zap className="text-yellow-400" />, title: "3x Faster Checkout", desc: "Reduce peak-hour queues by eliminating the 'open app -> scan -> wait' friction. Tap and pay instantly." },
-              { icon: <ShieldCheck className="text-blue-400" />, title: "Instant Verification", desc: "Your phone announces the payment amount out loud. No more squinting at the customer's phone screen." },
-              { icon: <Store className="text-green-400" />, title: "Premium Brand Image", desc: "A sleek NFC sticker looks 10x more professional than a faded, crumpled paper QR code on your counter." }
-            ].map(v => (
-              <div key={v.title} className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6">{v.icon}</div>
-                <h3 className="text-xl font-bold mb-3">{v.title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{v.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* STARTER KITS */}
       <section id="packs" className="py-16 px-6 max-w-[90rem] mx-auto">
@@ -355,48 +334,73 @@ export default function PricingPage() {
           <h2 className="text-3xl font-black text-slate-900 mb-3">Add-ons</h2>
           <p className="text-slate-500 font-medium">Power up your plan with the extras you actually need.</p>
         </div>
-        <div className="flex flex-wrap justify-center gap-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
           {[
-            { id: "app-buffet", icon: <Smartphone size={22} />, label: "Listener App", sub: "For Buffet Users", price: "RM 14", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
-            { id: "app-starter", icon: <Bell size={22} />, label: "Listener App", sub: "For Starter Pack users", price: "RM 10", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-blue-100 text-blue-600", priceCls: "text-slate-900" },
-            { id: "nfc", icon: <Tag size={22} />, label: "NFC Sticker", sub: "Standard (plain)", price: "RM 5", unit: "/piece", desc: "Replacement or extra stickers. Minimum order may apply.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
-          ].map(({ id, icon, label, sub, price, unit, desc, bg, iconBg, priceCls }) => (
-            <div 
-              key={id} 
-              onClick={() => {
-                if (id.startsWith('app-')) {
-                  // Mutually exclusive listener app selection
-                  if (selectedAddons.includes(id)) {
-                    setSelectedAddons(selectedAddons.filter(a => a !== id));
+            { id: "app-buffet", icon: <Smartphone size={20} />, label: "Listener App", sub: "For Buffet Users", price: "RM 14", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
+            { id: "app-starter", icon: <Bell size={20} />, label: "Listener App", sub: "For Starter Pack users", price: "RM 10", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-blue-100 text-blue-600", priceCls: "text-slate-900" },
+            { id: "nfc", icon: <Tag size={20} />, label: "NFC Sticker", sub: "Standard (plain)", price: "RM 5", unit: "/piece", desc: "Replacement or extra stickers.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
+          ].map(({ id, icon, label, sub, price, unit, desc, bg, iconBg, priceCls }) => {
+            
+            if (id === 'nfc') {
+              return (
+                <div key={id} className={`rounded-3xl border-4 transition-all p-5 flex flex-col gap-3 ${nfcQuantity > 0 ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-white border-slate-200 hover:border-blue-200'}`}>
+                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${iconBg}`}>{icon}</div>
+                  <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
+                    <p className="text-sm font-bold text-slate-600">{sub}</p>
+                  </div>
+                  <div className="flex items-end gap-1">
+                    <span className={`text-xl font-black ${priceCls}`}>{price}</span>
+                    <span className="text-slate-400 text-xs mb-1">{unit}</span>
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed flex-1">{desc}</p>
+                  <div className="flex items-center gap-3 self-start bg-slate-100 rounded-lg p-1 mt-2">
+                    <button onClick={(e) => { e.stopPropagation(); setNfcQuantity(Math.max(0, nfcQuantity - 1)); }} className="w-8 h-8 flex items-center justify-center rounded-md bg-white shadow-sm text-slate-600 font-bold">-</button>
+                    <span className="text-sm font-bold w-4 text-center">{nfcQuantity}</span>
+                    <button onClick={(e) => { e.stopPropagation(); setNfcQuantity(Math.min(5, nfcQuantity + 1)); }} className="w-8 h-8 flex items-center justify-center rounded-md bg-white shadow-sm text-slate-600 font-bold">+</button>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div 
+                key={id} 
+                onClick={() => {
+                  if (id.startsWith('app-')) {
+                    // Mutually exclusive listener app selection
+                    if (selectedAddons.includes(id)) {
+                      setSelectedAddons(selectedAddons.filter(a => a !== id));
+                    } else {
+                      setSelectedAddons([...selectedAddons.filter(a => !a.startsWith('app-')), id]);
+                    }
                   } else {
-                    setSelectedAddons([...selectedAddons.filter(a => !a.startsWith('app-')), id]);
+                    toggleAddon(id);
                   }
-                } else {
-                  toggleAddon(id);
-                }
-              }}
-              className={`rounded-3xl border-4 transition-all p-6 flex flex-col gap-4 ${isOptionDisabled('addon', id) ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedAddons.includes(id) ? 'bg-blue-50/50 border-blue-500 shadow-xl' : `${bg} border-transparent hover:border-blue-200`}`}
-            >
-              <div className={`w-11 h-11 rounded-2xl flex items-center justify-center ${iconBg}`}>{icon}</div>
-              <div>
-                <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{label}</p>
-                <p className="text-sm font-bold text-slate-600">{sub}</p>
+                }}
+                className={`rounded-3xl border-4 transition-all p-5 flex flex-col gap-3 ${isOptionDisabled('addon', id) ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedAddons.includes(id) ? 'bg-blue-50/50 border-blue-500 shadow-xl' : `${bg} border-transparent hover:border-blue-200`}`}
+              >
+                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${iconBg}`}>{icon}</div>
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
+                  <p className="text-sm font-bold text-slate-600">{sub}</p>
+                </div>
+                <div className="flex items-end gap-1">
+                  <span className={`text-xl font-black ${priceCls}`}>{price}</span>
+                  <span className="text-slate-400 text-xs mb-1">{unit}</span>
+                </div>
+                <p className="text-xs text-slate-500 leading-relaxed flex-1">{desc}</p>
+                <div className={`text-[10px] font-bold px-2 py-1 rounded-md self-start ${selectedAddons.includes(id) ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                  {isOptionDisabled('addon', id) && selectedAddons.includes(id) ? 'INCLUDED' : (selectedAddons.includes(id) ? 'SELECTED' : 'ADD TO PLAN')}
+                </div>
               </div>
-              <div className="flex items-end gap-1">
-                <span className={`text-2xl font-black ${priceCls}`}>{price}</span>
-                <span className="text-slate-400 text-xs mb-1">{unit}</span>
-              </div>
-              <p className="text-xs text-slate-500 leading-relaxed flex-1">{desc}</p>
-              <div className={`text-[10px] font-bold px-2 py-1 rounded-md self-start ${selectedAddons.includes(id) ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                {isOptionDisabled('addon', id) && selectedAddons.includes(id) ? 'INCLUDED' : (selectedAddons.includes(id) ? 'SELECTED' : 'ADD TO PLAN')}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
       {/* SELECTION SUMMARY */}
-      {(selectedKit || selectedPlan || selectedAddons.length > 0) && (
+      {(selectedKit || selectedPlan || selectedAddons.length > 0 || nfcQuantity > 0) && (
         <div className="sticky bottom-0 z-[60] bg-white border-t border-slate-200 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] p-6 animate-in slide-in-from-bottom duration-500">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="flex flex-wrap items-center gap-10">
@@ -412,12 +416,12 @@ export default function PricingPage() {
                     <span className="w-2 h-2 rounded-full bg-green-500" />
                     <span className="text-sm font-bold text-slate-900">{currentPlan?.name || 'No Plan'} Plan</span>
                   </div>
-                  {activeAddons.length > 0 && (
+                  {(activeAddons.length > 0 || nfcQuantity > 0) && (
                     <>
                       <span className="text-slate-300">|</span>
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-yellow-500" />
-                        <span className="text-sm font-bold text-slate-900">{activeAddons.length} Add-ons</span>
+                        <span className="text-sm font-bold text-slate-900">{activeAddons.length + (nfcQuantity > 0 ? 1 : 0)} Add-ons</span>
                       </div>
                     </>
                   )}
