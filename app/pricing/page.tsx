@@ -203,57 +203,7 @@ export default function PricingPage() {
         </div>
       </nav>
 
-      <section className="relative py-20 px-6 text-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-white pointer-events-none" />
-        <div className="relative z-10 max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-sm font-bold mb-8 shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" /> Stop losing time to QR scanning
-          </div>
-          <h1 className="text-5xl md:text-7xl font-[family-name:var(--font-sora)] font-extrabold leading-[1.1] tracking-tight mb-8">
-            Simple Pricing.<br />
-            <span className="text-blue-600">Infinite ROI.</span>
-          </h1>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto font-medium leading-relaxed">
-            The average merchant loses <span className="text-red-500 font-bold">15+ hours a month</span> waiting for customers to scan QRs. TapPay pays for itself in just 1 week of faster service.
-          </p>
-        </div>
-      </section>
 
-      {/* VALUE ANCHORS / COMPARISON */}
-      <section className="pb-16 px-6 max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
-            <h3 className="text-red-500 font-black text-sm uppercase tracking-widest mb-6">The Old Way (Paper QR)</h3>
-            <div className="space-y-4">
-              <div className="flex items-start gap-3 text-slate-500 text-sm font-medium italic">
-                <X size={18} className="text-red-300 mt-0.5 shrink-0" /> "Can you scan this? It's a bit blur..."
-              </div>
-              <div className="flex items-start gap-3 text-slate-500 text-sm font-medium italic">
-                <X size={18} className="text-red-300 mt-0.5 shrink-0" /> "Wait, the app is loading... 5 seconds... 10 seconds..."
-              </div>
-              <div className="flex items-start gap-3 text-slate-500 text-sm font-medium italic">
-                <X size={18} className="text-red-300 mt-0.5 shrink-0" /> "Oops, I typed RM 1.40 instead of RM 14.00."
-              </div>
-              <p className="pt-4 text-slate-900 font-bold border-t border-slate-100">Result: Long queues & revenue loss.</p>
-            </div>
-          </div>
-          <div className="bg-blue-600 rounded-3xl p-8 shadow-2xl shadow-blue-600/20 text-white">
-            <h3 className="text-blue-200 font-black text-sm uppercase tracking-widest mb-6">The TapPay Way (NFC)</h3>
-            <div className="space-y-4">
-              <div className="flex items-start gap-3 text-blue-50 text-sm font-medium">
-                <CheckCircle2 size={18} className="text-yellow-400 mt-0.5 shrink-0" /> "Just tap your phone here." (TNG opens in 0.5s)
-              </div>
-              <div className="flex items-start gap-3 text-blue-50 text-sm font-medium">
-                <CheckCircle2 size={18} className="text-yellow-400 mt-0.5 shrink-0" /> Instant sound confirmation on your phone.
-              </div>
-              <div className="flex items-start gap-3 text-blue-50 text-sm font-medium">
-                <CheckCircle2 size={18} className="text-yellow-400 mt-0.5 shrink-0" /> Sound alerts announce "Received RM 14!" instantly.
-              </div>
-              <p className="pt-4 text-white font-bold border-t border-blue-500/50">Result: Faster service & happy customers.</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* WHY UPGRADE GRID */}
       <section className="py-20 px-6 bg-slate-900 text-white border-y border-slate-800">
@@ -405,7 +355,7 @@ export default function PricingPage() {
           <h2 className="text-3xl font-black text-slate-900 mb-3">Add-ons</h2>
           <p className="text-slate-500 font-medium">Power up your plan with the extras you actually need.</p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="flex flex-wrap justify-center gap-6 max-w-5xl mx-auto">
           {[
             { id: "app-buffet", icon: <Smartphone size={22} />, label: "Listener App", sub: "For Buffet Users", price: "RM 14", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
             { id: "app-starter", icon: <Bell size={22} />, label: "Listener App", sub: "For Starter Pack users", price: "RM 10", unit: "/month", desc: "Auto-sync TNG payments. Flash + voice alert on Android.", bg: "bg-white border-slate-200", iconBg: "bg-blue-100 text-blue-600", priceCls: "text-slate-900" },
