@@ -299,7 +299,7 @@ export default function PricingPage() {
                   className={`rounded-3xl border-4 transition-all p-6 flex flex-col ${isOptionDisabled('plan', 'starter') ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedPlan === 'starter' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-slate-50 border-slate-200 hover:border-blue-200'}`}
                 >
                   <PlanVisualizer plan="starter" />
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Plan 1</p>
+                  <p className="text-sm font-black text-slate-700 uppercase tracking-wider mb-1 bg-slate-200/50 inline-block px-2 py-0.5 rounded w-fit">Plan 1</p>
                   <h3 className="text-xl font-black mb-1">Starter</h3>
                   <p className="text-slate-500 text-xs mb-4">Solo stall owner</p>
                   <div className="flex items-end gap-1 mb-6"><span className="text-3xl font-black">RM 12</span><span className="text-slate-400 text-xs mb-1">/month</span></div>
@@ -316,7 +316,7 @@ export default function PricingPage() {
                   className={`rounded-3xl border-4 transition-all p-6 flex flex-col ${isOptionDisabled('plan', 'pro') ? 'opacity-40 cursor-not-allowed bg-slate-100 border-transparent' : 'cursor-pointer'} ${selectedPlan === 'pro' ? 'bg-blue-50/50 border-blue-500 shadow-xl' : 'bg-blue-50 border-blue-200 hover:border-blue-300'}`}
                 >
                   <PlanVisualizer plan="pro" />
-                  <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">Plan 1, 2 & 3</p>
+                  <p className="text-sm font-black text-blue-700 uppercase tracking-wider mb-1 bg-blue-100 inline-block px-2 py-0.5 rounded w-fit">Plan 1, 2 & 3</p>
                   <h3 className="text-xl font-black mb-1">Pro</h3>
                   <p className="text-slate-500 text-xs mb-4">Cafes & restaurants</p>
                   <div className="flex items-end gap-1 mb-6"><span className="text-3xl font-black text-blue-700">RM 35</span><span className="text-slate-400 text-xs mb-1">/month</span></div>
@@ -338,7 +338,7 @@ export default function PricingPage() {
               </div>
               <div className="flex flex-col gap-3">
                 {[
-                  { id: "app-listener", icon: <Smartphone size={18} />, label: "Listener App", sub: "For Buffet & Starter", price: "RM 10", unit: "/mo", desc: "Auto-sync TNG payments. Android only.", bg: "bg-white border-slate-200", iconBg: "bg-blue-100 text-blue-600", priceCls: "text-slate-900" },
+                  { id: "app-listener", icon: <Smartphone size={18} />, label: "Listener App", sub: "", price: "RM 10", unit: "/mo", desc: "Auto-sync TNG payments. Android only.", bg: "bg-white border-slate-200", iconBg: "bg-blue-100 text-blue-600", priceCls: "text-slate-900" },
                   { id: "nfc", icon: <Tag size={18} />, label: "NFC Sticker", sub: "Standard", price: "RM 5", unit: "/pc", desc: "Extra stickers.", bg: "bg-white border-slate-200", iconBg: "bg-slate-100 text-slate-600", priceCls: "text-slate-900" },
                 ].map(({ id, icon, label, sub, price, unit, desc, bg, iconBg, priceCls }) => {
                   
@@ -371,7 +371,7 @@ export default function PricingPage() {
                     >
                       <div className={`w-12 h-12 rounded-xl shrink-0 flex items-center justify-center ${iconBg}`}>{icon}</div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{label} <span className="lowercase normal-case font-bold text-slate-600">({sub})</span></p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{label} {sub && <span className="lowercase normal-case font-bold text-slate-600">({sub})</span>}</p>
                         <div className="flex items-end gap-1 mb-1">
                           <span className={`text-lg font-black leading-none ${priceCls}`}>{price}</span>
                           <span className="text-slate-400 text-[10px] leading-none mb-0.5">{unit}</span>
@@ -510,40 +510,39 @@ export default function PricingPage() {
 
       {/* EXTRA SERVICES */}
       <section className="py-20 px-6 bg-white border-t border-slate-100">
-        <div className="max-w-5xl mx-auto">
-          <div className="bg-slate-900 rounded-[3rem] p-10 md:p-16 text-white relative overflow-hidden shadow-2xl group border border-slate-800">
-            {/* Animated background elements */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-violet-600/40 to-fuchsia-600/40 blur-[100px] rounded-full pointer-events-none animate-pulse" />
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-blue-600/40 to-cyan-600/40 blur-[100px] rounded-full pointer-events-none animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="max-w-[90rem] mx-auto">
+          <div className="bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500 rounded-[2rem] p-8 md:p-12 text-white shadow-xl relative overflow-hidden">
+            {/* Colorful subtle overlay without neon/blur/pulse */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPHBhdGggZD0iTTAgMEg0VjRIMHoiIGZpbGw9IiMwMDAiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPgo8L3N2Zz4=')] opacity-30 mix-blend-overlay pointer-events-none" />
             
-            <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-10">
-              <div className="flex-1">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-white text-xs font-bold uppercase tracking-widest mb-6 border border-white/20 backdrop-blur-md shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                  <Sparkles size={14} className="text-yellow-300 animate-pulse" /> Custom Service
+            <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center gap-10 lg:gap-16 justify-between">
+              <div className="flex-1 max-w-3xl">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 text-white text-xs font-bold uppercase tracking-widest mb-6">
+                  <Sparkles size={14} className="text-yellow-300" /> Custom Service
                 </div>
-                <h2 className="text-3xl md:text-5xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-indigo-200">Alternative NFC<br />Extra Services</h2>
-                <p className="text-slate-300 mb-8 leading-relaxed text-lg max-w-lg">Want something more? We can set up your NFC stickers for a whole lot more than just payments.</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                <h2 className="text-3xl md:text-5xl font-serif italic font-black mb-4 tracking-tight">Alternative NFC<br />Extra Services</h2>
+                <p className="text-white/90 mb-8 leading-relaxed text-lg font-medium">Want something more? We can set up your NFC stickers for a whole lot more than just payments.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-8 mb-8">
                   {[
-                    { icon: <UtensilsCrossed size={16} />, label: "Digital E-Menu" },
-                    { icon: <Bell size={16} />, label: "Call Waiter Button" },
-                    { icon: <Wifi size={16} />, label: "WiFi Auto-Connect" },
-                    { icon: <Sparkles size={16} />, label: "Event Promotions" },
-                    { icon: <Lightbulb size={16} />, label: "Your Ideas to Shine" },
+                    { icon: <UtensilsCrossed size={18} />, label: "Digital E-Menu" },
+                    { icon: <Bell size={18} />, label: "Call Waiter Button" },
+                    { icon: <Wifi size={18} />, label: "WiFi Auto-Connect" },
+                    { icon: <Sparkles size={18} />, label: "Event Promotions" },
+                    { icon: <Lightbulb size={18} />, label: "Your Ideas to Shine" },
                   ].map(({ icon, label }) => (
-                    <div key={label} className="flex items-center gap-3 text-white/90 text-sm font-semibold hover:text-white transition-colors group/item cursor-default">
-                      <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-blue-300 group-hover/item:scale-110 group-hover/item:bg-blue-500 group-hover/item:text-white transition-all duration-300">
+                    <div key={label} className="flex items-center gap-3 text-white text-base font-bold font-serif">
+                      <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white shrink-0">
                         {icon}
                       </div>
                       {label}
                     </div>
                   ))}
                 </div>
-                <p className="text-slate-400 text-sm">Pricing depends on what you need. Drop us an email and we'll figure it out together.</p>
+                <p className="text-white/80 text-sm font-medium">Pricing depends on what you need. Drop us an email and we'll figure it out together.</p>
               </div>
-              <div className="shrink-0 relative z-10 w-full md:w-auto">
-                <a href="mailto:tappaymy@outlook.com" className="flex items-center justify-center gap-3 bg-white hover:bg-blue-50 text-slate-900 px-8 py-5 rounded-2xl font-black transition-all shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:scale-105 duration-300 text-lg group/btn w-full md:w-auto">
-                  <Mail size={24} className="group-hover/btn:rotate-12 transition-transform text-blue-600" /> Let's Talk
+              <div className="shrink-0 w-full lg:w-auto">
+                <a href="mailto:tappaymy@outlook.com" className="flex items-center justify-center gap-3 bg-white text-teal-700 px-10 py-5 rounded-2xl font-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 duration-300 text-xl w-full lg:w-auto">
+                  <Mail size={24} /> Let's Talk
                 </a>
               </div>
             </div>
