@@ -21,10 +21,8 @@ export default function SolutionsPage() {
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans overflow-x-hidden relative">
 
-      {/* Decorative Background Blobs */}
-      <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-400/10 blur-[120px] rounded-full animate-blob pointer-events-none z-0" />
-      <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-400/10 blur-[150px] rounded-full animate-blob animation-delay-2000 pointer-events-none z-0" />
-      <div className="fixed top-[20%] right-[10%] w-[30%] h-[30%] bg-purple-400/10 blur-[120px] rounded-full animate-blob animation-delay-4000 pointer-events-none z-0" />
+      {/* Decorative Animated Background */}
+      <ParticleBackground />
 
       {/* Nav */}
       <nav className="sticky top-0 z-50 bg-blue-50 border-b border-blue-200">
@@ -47,7 +45,7 @@ export default function SolutionsPage() {
       </nav>
 
       {/* Hero Header */}
-      <section className="relative z-10 pt-16 pb-12 px-6 max-w-7xl mx-auto text-center">
+      <section className="relative z-10 pt-16 pb-4 px-6 max-w-7xl mx-auto text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-sm font-bold mb-8">
           <Zap size={16} /> Our Value: Why Merchants Upgrade to TapPay
         </div>
@@ -62,8 +60,8 @@ export default function SolutionsPage() {
       </section>
 
       {/* The Pain vs Solution */}
-      <section className="py-12 px-6 max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+      <section className="pb-12 pt-4 px-6 max-w-7xl mx-auto">
+        <div className="text-center mb-10">
           <h2 className="text-4xl md:text-5xl font-black mb-4 italic">"Ever had this happen?"</h2>
           <p className="text-slate-500 text-lg">We've all been there. Here is why we built TapPay.</p>
         </div>
