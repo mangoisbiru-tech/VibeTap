@@ -1,6 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 
-export async function POST(req: Request) {
+// Simple in-memory rate limiter
+const rateLimitMap = new Map<string, { count: number, resetTime: number }>();
+const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 10; // Max 10 checkouts per minute per IP
+
+export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { 
@@ -11,6 +16,30 @@ export async function POST(req: Request) {
       email,
       phone 
     } = body;
+
+    const ipRaw =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      req.headers.get("x-real-ip") ||
+      "unknown";
+
+    const ipHash = Buffer.from(ipRaw).toString("base64").slice(0, 12);
+    
+    // Rate Limiting Logic
+    const now = Date.now();
+    const rateData = rateLimitMap.get(ipHash) || { count: 0, resetTime: now + RATE_LIMIT_WINDOW_MS };
+    
+    if (now > rateData.resetTime) {
+      rateData.count = 1;
+      rateData.resetTime = now + RATE_LIMIT_WINDOW_MS;
+    } else {
+      rateData.count++;
+    }
+    
+    rateLimitMap.set(ipHash, rateData);
+    
+    if (rateData.count > MAX_REQUESTS_PER_WINDOW) {
+      return NextResponse.json({ error: "Too many checkout requests, please try again later." }, { status: 429 });
+    }
 
     const secretKey = process.env.TOYYIBPAY_SECRET_KEY;
     const categoryCode = process.env.TOYYIBPAY_CATEGORY_CODE;
