@@ -148,8 +148,7 @@ export default function LandingPage() {
             </h1>
 
             <p className="text-lg text-slate-500 max-w-xl mb-8 leading-relaxed">
-              One premium NFC sticker replaces your crumpled paper QR code. 
-              Customers tap — <strong className="text-slate-700">Touch 'n Go opens instantly</strong>, no searching, no 5-second ads, no typing amounts.
+              One premium NFC sticker replaces your crumpled paper QR code. Customers tap, opening Touch 'n Go payment page instantly, no searching needed, no few second ads in TNG. You need more? <br/>We do!
             </p>
 
             {/* 3 Key Points */}
