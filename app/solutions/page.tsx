@@ -185,10 +185,10 @@ export default function SolutionsPage() {
                 desc: "Paste stickers on your tables. When customers tap and pay via TNG eWallet, your phone announces it out loud!" 
               }
             ].map((v, i) => (
-              <div key={i} className="relative p-8 rounded-3xl bg-slate-50 border border-slate-100 group hover:bg-blue-50 hover:border-blue-100 transition-all">
-                <div className="text-5xl font-black text-slate-200 mb-6 group-hover:text-blue-200 transition-colors">{v.step}</div>
-                <h3 className="text-xl font-bold mb-4">{v.title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">{v.desc}</p>
+              <div key={i} className="relative p-8 rounded-3xl bg-white border-2 border-slate-200 shadow-lg group hover:border-blue-500 hover:shadow-xl hover:-translate-y-1 transition-all">
+                <div className="text-5xl font-black text-blue-600 mb-6">{v.step}</div>
+                <h3 className="text-xl font-bold text-slate-900 mb-4">{v.title}</h3>
+                <p className="text-slate-700 text-sm leading-relaxed">{v.desc}</p>
               </div>
             ))}
           </div>
