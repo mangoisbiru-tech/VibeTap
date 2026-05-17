@@ -15,10 +15,13 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const [success, setSuccess] = useState("");
+
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/dashboard");
@@ -36,13 +39,16 @@ export default function LoginPage() {
 
   async function handleResetPassword() {
     if (!email) {
-      setError("Please enter your email address first.");
+      setError("Please enter your email address first to reset password.");
+      setSuccess("");
       return;
     }
     setLoading(true);
+    setError("");
+    setSuccess("");
     try {
       await sendPasswordResetEmail(auth, email);
-      alert("Password reset email sent! Please check your inbox.");
+      setSuccess("Password reset email sent! Please check your inbox (and spam folder).");
     } catch (err: any) {
       setError(err.message || "Failed to send reset email.");
     } finally {
@@ -119,6 +125,12 @@ export default function LoginPage() {
             {error && (
               <div className="bg-red-50 border border-red-100 text-red-600 text-xs font-bold px-4 py-3 rounded-2xl animate-shake">
                 {error}
+              </div>
+            )}
+
+            {success && (
+              <div className="bg-green-50 border border-green-100 text-green-600 text-xs font-bold px-4 py-3 rounded-2xl">
+                {success}
               </div>
             )}
 
