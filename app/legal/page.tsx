@@ -106,6 +106,11 @@ export default function LegalPage() {
                 <h3 className="text-xl font-bold text-slate-900">4. Cookies</h3>
                 <p>We use essential cookies to keep you logged into your dashboard and to remember your preferences.</p>
               </div>
+
+              <div className="space-y-4" id="data-deletion">
+                <h3 className="text-xl font-bold text-slate-900">5. Data Deletion Requests</h3>
+                <p>You have the right to request the deletion of your account and all associated data. To do so, please contact us via our official email or WhatsApp support channel. Upon verification of your identity, we will permanently delete your account, including your email address, business profile, and transaction history, from our active databases within 14 days.</p>
+              </div>
             </div>
           </section>
         </div>
