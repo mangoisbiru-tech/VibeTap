@@ -196,13 +196,13 @@ export default function PricingPage() {
       <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-400/10 blur-[120px] rounded-full animate-blob pointer-events-none z-0" />
       <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-400/10 blur-[150px] rounded-full animate-blob animation-delay-2000 pointer-events-none z-0" />
       <div className="fixed top-[20%] right-[10%] w-[30%] h-[30%] bg-purple-400/10 blur-[120px] rounded-full animate-blob animation-delay-4000 pointer-events-none z-0" />
-      <nav className="sticky top-0 z-50 bg-blue-50 border-b border-blue-200">
+      <nav className="sticky top-0 z-50 bg-blue-50 border-b border-blue-200 relative">
         <div className="flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
           <Link href="/" className="flex items-center gap-3">
             <img src="/TapPay_Logo.png" alt="TapPay" className="w-10 h-10 object-contain" />
             <span className="text-2xl font-bold text-slate-900">Tap<span className="text-blue-600">Pay</span></span>
           </Link>
-          <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-slate-600">
+          <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-10 text-sm font-semibold text-slate-600">
             <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
             <Link href="/solutions" className="hover:text-blue-600 transition-colors">Solutions</Link>
             <Link href="/pricing" className="hover:text-blue-600 transition-colors">Pricing</Link>

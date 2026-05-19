@@ -25,7 +25,7 @@ export default function SolutionsPage() {
       <ParticleBackground />
 
       {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-blue-50 border-b border-blue-200">
+      <nav className="sticky top-0 z-50 bg-blue-50 border-b border-blue-200 relative">
         <div className="flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
           <Link href="/" className="flex items-center gap-3">
             <img src="/TapPay_Logo.png" alt="TapPay" className="w-10 h-10 object-contain" />
@@ -33,7 +33,7 @@ export default function SolutionsPage() {
               Tap<span className="text-blue-600">Pay</span>
             </span>
           </Link>
-          <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-slate-600">
+          <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-10 text-sm font-semibold text-slate-600">
             <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
             <Link href="/solutions" className="hover:text-blue-600 transition-colors">Solutions</Link>
             <Link href="/pricing" className="hover:text-blue-600 transition-colors">Pricing</Link>
@@ -45,17 +45,17 @@ export default function SolutionsPage() {
       </nav>
 
       {/* Hero Header */}
-      <section className="relative z-10 pt-10 pb-4 px-6 max-w-7xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-sm font-bold mb-8">
-          <Zap size={16} /> Solutions: Why Merchants Upgrade to TapPay
+      <section className="relative z-10 pt-6 pb-2 px-6 max-w-7xl mx-auto text-center">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-indigo-200 bg-indigo-50 text-indigo-700 text-sm font-bold mb-6">
+          <Zap size={16} /> Solutions: Why Merchants Add TapPay
         </div>
-        <h1 className="text-5xl md:text-7xl font-black leading-[1.1] tracking-tight mb-8">
-          The End of the <br />
-          <span className="text-red-500">Scanning Era.</span>
+        <h1 className="text-4xl md:text-6xl font-black leading-[1.1] tracking-tight mb-6">
+          Co-exist with the <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Scanning Era.</span>
         </h1>
-        <p className="text-xl text-slate-500 max-w-3xl mx-auto leading-relaxed">
-          QR codes were a great start, but they are slow, error-prone, and frustrating. 
-          TapPay moves your business into the <strong className="text-blue-600">Tap-to-Pay</strong> era.
+        <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
+          We're not replacing your QR codes—we're giving your customers a faster option. 
+          TapPay adds a seamless <strong className="text-indigo-600">Tap-to-Pay</strong> lane right alongside your existing setup.
         </p>
       </section>
 

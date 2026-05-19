@@ -5,7 +5,7 @@ service cloud.firestore {
     // Merchants: public can read profile, only owner or admin can write
     match /merchants/{uid} {
       allow read: if true;
-      allow write: if request.auth != null && (request.auth.uid == uid || request.auth.token.email == "tappaymy@hotmail.com");
+      allow write: if request.auth != null && (request.auth.uid == uid || request.auth.token.email == "tappaymy@hotmail.com" || request.auth.token.email == "tappaymy@outlook.com");
     }
 
     // Tap events: owner can read their tap history

@@ -101,7 +101,7 @@ export default function LandingPage() {
       <ParticleBackground />
 
       {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-[#F8FAFF] border-b border-slate-200/50">
+      <nav className="sticky top-0 z-50 bg-[#F8FAFF] border-b border-slate-200/50 relative">
         <div className="flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
           <Link href="/" className="flex items-center gap-3">
             <img src="/TapPay_Logo.png" alt="TapPay Logo" className="w-10 h-10 object-contain" />
@@ -109,7 +109,7 @@ export default function LandingPage() {
               Tap<span className="text-blue-600">Pay</span>
             </span>
           </Link>
-          <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-slate-600">
+          <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-10 text-sm font-semibold text-slate-600">
             <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
             <Link href="/solutions" className="hover:text-blue-600 transition-colors">Solutions</Link>
             <Link href="/pricing" className="hover:text-blue-600 transition-colors">Pricing</Link>
