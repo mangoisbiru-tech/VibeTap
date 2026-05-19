@@ -60,49 +60,49 @@ export default function SolutionsPage() {
       </section>
 
       {/* The Pain vs Solution */}
-      <section className="pb-12 pt-4 px-6 max-w-7xl mx-auto">
+      <section className="pb-12 pt-4 px-6 max-w-6xl mx-auto">
         <div className="text-center mb-10">
-          <h2 className="text-4xl md:text-5xl font-black mb-4 italic">"Ever had this happen?"</h2>
-          <p className="text-slate-500 text-lg">We've all been there. Here is why we built TapPay.</p>
+          <h2 className="text-3xl md:text-4xl font-black mb-4 italic">"Ever had this happen?"</h2>
+          <p className="text-slate-500 text-base">We've all been there. Here is why we built TapPay.</p>
         </div>
         
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-6">
           {[
             {
-              icon: <Clock className="text-amber-700" />,
+              icon: <Clock className="text-amber-700" size={20} />,
               scenario: "The 'App Hunt' Stress",
               frustration: "It's your turn to pay. You're scrolling for the e-wallet app, it opens with a big ad, then you have to find the 'Scan' button while everyone behind you waits...",
               relief: "Just tap the NFC sticker. TNG opens instantly. Done in 1 second.",
               color: "bg-yellow-200 rotate-1 shadow-yellow-200/50"
             },
             {
-              icon: <Users className="text-amber-700" />,
+              icon: <Users className="text-amber-700" size={20} />,
               scenario: "The Counter Queue",
               frustration: "You've finished your meal, but you have to walk to the counter, stand in line, and wait for the cashier just to scan a QR code.",
               relief: "Pay right at your table. No queuing, no walking. Total freedom.",
               color: "bg-yellow-100 -rotate-1 shadow-yellow-100/50"
             },
             {
-              icon: <ShieldCheck className="text-amber-700" />,
+              icon: <ShieldCheck className="text-amber-700" size={20} />,
               scenario: "The Dirty Button",
               frustration: "You need help or the bill, but the physical 'Call Waiter' button on the table looks greasy and unhygienic. You don't want to touch it.",
               relief: "NFC is 100% contactless. Tap with your phone to call for service or your bill.",
               color: "bg-yellow-200 rotate-1 shadow-yellow-200/50"
             }
           ].map((item, i) => (
-            <div key={i} className={`group p-10 rounded-sm ${item.color} ${item.color.split(' ')[1]} flex flex-col gap-6 hover:scale-105 hover:rotate-0 transition-all duration-300 shadow-xl relative`}>
+            <div key={i} className={`group p-6 md:p-8 rounded-sm ${item.color} ${item.color.split(' ')[1]} flex flex-col gap-5 hover:scale-105 hover:rotate-0 transition-all duration-300 shadow-xl relative`}>
               {/* Sticky Tape Effect */}
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-8 bg-slate-200 -rotate-2 border-x-4 border-slate-300 shadow-sm" />
-              <div className="w-14 h-14 rounded-full bg-white/60 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">{item.icon}</div>
+              <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-16 h-6 bg-slate-200 -rotate-2 border-x-4 border-slate-300 shadow-sm" />
+              <div className="w-12 h-12 rounded-full bg-white/60 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">{item.icon}</div>
               <div>
-                <h3 className="text-2xl font-black mb-4 text-amber-900 leading-tight">{item.scenario}</h3>
-                <div className="space-y-4">
-                  <div className="flex gap-3 text-amber-800 text-sm leading-relaxed">
-                    <X size={18} className="text-red-600 shrink-0 mt-0.5" />
+                <h3 className="text-xl font-black mb-3 text-amber-900 leading-tight">{item.scenario}</h3>
+                <div className="space-y-3">
+                  <div className="flex gap-2.5 text-amber-800 text-sm leading-relaxed">
+                    <X size={16} className="text-red-600 shrink-0 mt-0.5" />
                     <p><span className="font-bold">Frustration:</span> {item.frustration}</p>
                   </div>
-                  <div className="flex gap-3 text-blue-800 text-sm leading-relaxed bg-white/40 p-3 rounded-lg border border-white/40">
-                    <CheckCircle2 size={18} className="text-blue-600 shrink-0 mt-0.5" />
+                  <div className="flex gap-2.5 text-blue-800 text-sm leading-relaxed bg-white/40 p-2.5 rounded-lg border border-white/40">
+                    <CheckCircle2 size={16} className="text-blue-600 shrink-0 mt-0.5" />
                     <p><span className="font-bold">TapPay Relief:</span> {item.relief}</p>
                   </div>
                 </div>
