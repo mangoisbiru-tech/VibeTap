@@ -135,9 +135,9 @@ export default function LandingPage() {
           {/* Left: Text Content */}
           <div>
             {/* Tech Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-sm font-bold mb-6 shadow-sm">
-              <Nfc size={16} className="text-blue-500" />
-              Powered by Ultra-Fast NFC Technology ⚡
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-xs font-bold mb-6 shadow-sm">
+              <Nfc size={14} className="text-blue-500" />
+              Powered by Ultra-Fast NFC Technology
             </div>
 
             {/* Main Headline */}
