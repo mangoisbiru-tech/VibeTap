@@ -113,44 +113,42 @@ export default function SolutionsPage() {
       </section>
 
       {/* Deep Dive Section */}
-      <section className="py-16 px-6 max-w-7xl mx-auto border-t border-[#8b5e3c]/10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div className="space-y-8">
-            <h2 className="text-4xl font-black">QR Codes are killing your peak-hour sales.</h2>
-            <div className="space-y-6">
+      <section className="py-10 px-6 max-w-6xl mx-auto border-t border-slate-100">
+        <div className="grid lg:grid-cols-2 gap-10 items-center">
+          <div className="space-y-6">
+            <h2 className="text-3xl font-black">QR Codes are killing your peak-hour sales.</h2>
+            <div className="space-y-4">
               {[
                 { title: "The 'Typing' Error", desc: "Customers might enter the wrong amount, but your Listener App announces the payment out loud instantly. You catch errors before they leave." },
                 { title: "The 'Verification' Lag", desc: "Waiting for customers to show their screen is awkward. TapPay gives you a voice confirmation so you can keep serving." },
                 { title: "The 'Ads' Friction", desc: "Most e-wallets show ads before the scan button. TapPay skips the noise and opens the payment screen directly." }
               ].map((item, i) => (
-                <div key={i} className="flex gap-4 p-6 rounded-3xl bg-white border border-[#8b5e3c]/10">
-                  <div className="w-10 h-10 rounded-full bg-red-50 text-red-800 flex items-center justify-center shrink-0"><X size={20} /></div>
+                <div key={i} className="flex gap-4 p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                  <div className="w-8 h-8 rounded-full bg-red-50 text-red-600 flex items-center justify-center shrink-0"><X size={16} /></div>
                   <div>
-                    <h3 className="font-bold text-lg mb-1 text-[#2d1b10]">{item.title}</h3>
-                    <p className="text-[#5c4033] text-sm">{item.desc}</p>
+                    <h3 className="font-bold text-base mb-1 text-slate-900">{item.title}</h3>
+                    <p className="text-slate-600 text-sm leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          <div className="relative">
-            <div className="absolute inset-0 bg-[#8b5e3c]/10 blur-[100px] rounded-full" />
-            <div className="relative bg-white rounded-[3rem] border border-[#8b5e3c]/20 p-10 shadow-2xl">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="w-14 h-14 rounded-2xl bg-[#2d1b10] text-white flex items-center justify-center shadow-lg shadow-[#2d1b10]/30"><Zap size={28} /></div>
-                <h3 className="text-2xl font-black text-[#2d1b10]">The TapPay Solution</h3>
+          <div>
+            <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-md">
+              <div className="mb-6 border-b border-slate-100 pb-4">
+                <h3 className="text-xl font-black text-slate-900">The TapPay Solution</h3>
               </div>
-              <ul className="space-y-8">
+              <ul className="space-y-6">
                 {[
                   { icon: <Nfc />, title: "Instant NFC Deep-linking", desc: "Customer taps sticker. TNG opens in 0.5s. No ads. No scanning." },
                   { icon: <Smartphone />, title: "Instant Audio Alerts", desc: "Your Android phone announces the payment amount out loud the moment they pay via TNG eWallet." },
                   { icon: <ShieldCheck />, title: "Real-time Verification", desc: "Check your Payment Inbox instantly to confirm the success of any TNG eWallet transaction." }
                 ].map((v, i) => (
-                  <li key={i} className="flex gap-5">
-                    <div className="w-12 h-12 rounded-2xl bg-[#f5e6d3] text-[#8b5e3c] flex items-center justify-center shrink-0 border border-[#8b5e3c]/20">{v.icon}</div>
+                  <li key={i} className="flex gap-4 items-start">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100">{v.icon}</div>
                     <div>
-                      <h4 className="font-bold text-[#2d1b10] mb-1">{v.title}</h4>
-                      <p className="text-[#5c4033] text-sm leading-relaxed">{v.desc}</p>
+                      <h4 className="font-bold text-slate-900 mb-1">{v.title}</h4>
+                      <p className="text-slate-600 text-sm leading-relaxed">{v.desc}</p>
                     </div>
                   </li>
                 ))}
